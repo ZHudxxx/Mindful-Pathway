@@ -11,9 +11,11 @@
             padding: 0;
             background-color: #f4f4f9;
             display: flex;
-            justify-content: center;
+            flex-direction: column;
+            justify-content: flex-end;
             align-items: center;
             height: 100vh;
+            position: relative;
         }
         .chatbox {
             width: 350px;
@@ -25,6 +27,9 @@
             background-color: #ffffff;
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
             display: none; /* Hidden by default */
+            position: fixed;
+            right: 20px;
+            bottom: 80px;
         }
         .chatbox-header {
             padding: 10px;
@@ -77,10 +82,33 @@
         .chatbox-input button:hover {
             background-color: #0056b3;
         }
+
+        .toggle-button {
+            padding: 15px 25px;
+            font-size: 18px;
+            cursor: pointer;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            transition: background-color 0.3s, transform 0.2s;
+            position: fixed;
+            right: 20px;
+            bottom: 20px;
+        }
+
+        .toggle-button:hover {
+            background-color: #0056b3;
+        }
+
+        .toggle-button:active {
+            transform: scale(0.95);
+        }
     </style>
 </head>
 <body>
-    <button onclick="toggleChatbox()" style="padding: 10px 20px; font-size: 16px; cursor: pointer;">Open Chatbox</button>
+    <button onclick="toggleChatbox()" class="toggle-button">💬 Chat with Us</button>
 
     <div class="chatbox" id="chatbox">
         <div class="chatbox-header">AI Chatbox</div>
