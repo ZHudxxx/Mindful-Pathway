@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mindful Pathway</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background-color: #f5f5f5;
+    }
+
+    /* Sidebar */
+    .sidebar {
+      background-color: #3cacae;
+      color: white;
+      width: 250px;
+      height: 100vh;
+      position: fixed;
+      padding: 20px 10px;
+    }
+
+    .sidebar h2 {
+      margin-bottom: 30px;
+      text-align: center;
+    }
+
+    .sidebar a {
+      display: block;
+      color: white;
+      padding: 10px;
+      text-decoration: none;
+      margin-bottom: 10px;
+      border-radius: 5px;
+    }
+
+    .sidebar a:hover {
+      background-color: #5ce1e6;
+    }
+
+    .logout-btn {
+      margin-top: 50px;
+      text-align: center;
+    }
+
+    /* Main content */
+    .content {
+      margin-left: 270px;
+      padding: 20px;
+    }
+
+    .header {
+      background-color: #3cacae;
+      padding: 10px 20px;
+      color: white;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .header input[type="search"] {
+      padding: 5px;
+      border: none;
+      border-radius: 3px;
+    }
+
+    .main-banner {
+      background-color: white;
+      padding: 20px;
+      border-radius: 10px;
+      text-align: center;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      margin-bottom: 20px;
+    }
+
+    .main-banner img {
+      max-width: 100%;
+      height: auto;
+      border-radius: 10px;
+    }
+
+    .quote {
+      font-style: italic;
+      color: #555;
+    }
+
+    .articles {
+      background-color: white;
+      padding: 15px;
+      border-radius: 10px;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    .articles h3 {
+      margin-bottom: 15px;
+    }
+
+    .articles p {
+      margin-bottom: 10px;
+      line-height: 1.6;
+    }
+
+    .articles a {
+      color: #3cacae;
+      text-decoration: none;
+    }
+
+    footer {
+      text-align: center;
+      padding: 10px;
+      margin-top: 20px;
+      background-color: #3cacae;
+      color: white;
+    }
+  </style>
+</head>
+<body>
+  <!-- Sidebar -->
+  <div class="sidebar">
+    <h2>MINDFUL PATHWAY</h2>
+    <a href="#">Home</a>
+    <a href="#">About</a>
+    <a href="#">My Profile</a>
+    <a href="#">Articles</a>
+    <a href="#">Users</a>
+    <a href="#">Feedback</a>
+    <div class="logout-btn">
+      <a href="#" style="background-color: #5ce1e6; padding: 10px 20px;">Log Out</a>
+    </div>
+  </div>
+
+  <!-- Main Content -->
+  <div class="content">
+    <!-- Header -->
+    <div class="header">
+      <h1>Admin Dashboard</h1>
+      <input type="search" placeholder="Search...">
+    </div>
+
+    <!-- Main Banner -->
+    <div class="main-banner">
+      <h2>Mental Health Awareness: Let's Talk About It</h2>
+      <p class="quote">"It is not that I'm so smart. But I stay with the questions much longer." — Albert Einstein</p>
+      <p>Let's prevent mental illness.</p>
+      <img src="https://via.placeholder.com/600x200" alt="Mental Health Banner">
+    </div>
+
+    <!-- Articles Section -->
+    <div class="articles">
+      <h3>Mindful Reads Just for You:</h3>
+      <p>10 Simple Practices to Boost Your Mindfulness<br>
+        <a href="#">→ Read More</a>
+      </p>
+      <p>The Beginner’s Guide to Meditation for Mental Clarity<br>
+        <a href="#">→ Read More</a>
+      </p>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <footer>
+    &copy; 2024 Mindful Pathway | All Rights Reserved
+  </footer>
+</body>
+</html>
