@@ -18,28 +18,38 @@
             position: relative;
         }
         .chatbox {
-            width: 350px;
+            width: 400px;
             height: 500px;
-            border: 1px solid #ccc;
             border-radius: 10px;
             display: flex;
             flex-direction: column;
             background-color: #ffffff;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
             display: none; /* Hidden by default */
             position: fixed;
             right: 20px;
             bottom: 80px;
         }
         .chatbox-header {
-            padding: 10px;
+            padding: 15px;
             background-color: #007bff;
             color: white;
             text-align: center;
-            font-size: 18px;
+            font-size: 20px;
             font-weight: bold;
             border-top-left-radius: 10px;
             border-top-right-radius: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .chatbox-header .close-btn {
+            cursor: pointer;
+            background: none;
+            border: none;
+            color: white;
+            font-size: 20px;
+            font-weight: bold;
         }
         .chatbox-messages {
             flex: 1;
@@ -61,26 +71,28 @@
         .chatbox-input {
             display: flex;
             border-top: 1px solid #ccc;
+            padding: 10px;
         }
         .chatbox-input input {
             flex: 1;
             padding: 10px;
-            border: none;
-            border-bottom-left-radius: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
             outline: none;
             font-size: 16px;
         }
         .chatbox-input button {
-            padding: 10px;
+            padding: 10px 20px;
             border: none;
-            background-color: #007bff;
+            background-color: #00c4cc;
             color: white;
             cursor: pointer;
-            border-bottom-right-radius: 10px;
+            border-radius: 5px;
             font-size: 16px;
+            margin-left: 10px;
         }
         .chatbox-input button:hover {
-            background-color: #0056b3;
+            background-color: #008b8f;
         }
 
         .toggle-button {
@@ -111,11 +123,16 @@
     <button onclick="toggleChatbox()" class="toggle-button">💬 Chat with Us</button>
 
     <div class="chatbox" id="chatbox">
-        <div class="chatbox-header">AI Chatbox</div>
-        <div class="chatbox-messages" id="chatboxMessages"></div>
+        <div class="chatbox-header">
+            <span>AI ASSISTANCE</span>
+            <button class="close-btn" onclick="toggleChatbox()">&times;</button>
+        </div>
+        <div class="chatbox-messages" id="chatboxMessages">
+            <div class="message bot">Welcome to ChatBot!<br>Hey, how can I assist you today?</div>
+        </div>
         <div class="chatbox-input">
             <input type="text" id="userInput" placeholder="Type your message...">
-            <button onclick="sendMessage()">Send</button>
+            <button onclick="sendMessage()">SEND</button>
         </div>
     </div>
 
@@ -137,7 +154,7 @@
         function getBotResponse(message) {
             // Simple predefined responses
             const responses = {
-                "hello": "Hi there! How can I assist you today?",
+                "hi": "Hi there! How can I assist you today?",
                 "how are you": "I'm just a bot, but I'm here to help!",
                 "what is your name": "I'm your friendly AI chatbox!",
                 "bye": "Goodbye! Have a great day!"
