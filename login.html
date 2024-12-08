@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Login Form</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+      background-color: #f5f5f5;
+    }
+
+    .login-container {
+      width: 360px;
+      padding: 20px;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      background: #fff;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    .login-container h2 {
+      text-align: center;
+      margin-bottom: 20px;
+      font-size: 24px;
+      color: #333;
+    }
+
+    .input-group {
+      margin-bottom: 15px;
+      position: relative;
+    }
+
+    .input-group input {
+      width: 100%;
+      padding: 10px 40px 10px 10px;
+      font-size: 14px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+    }
+
+    .input-group .toggle-password {
+      position: absolute;
+      right: 10px;
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: 16px;
+      cursor: pointer;
+      color: #999;
+    }
+
+    button {
+      width: 100%;
+      padding: 10px;
+      background-color: #5ce1e6;
+      border: none;
+      color: white;
+      font-size: 16px;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background-color: #3cacae;
+    }
+
+    .options {
+      display: flex;
+      justify-content: space-between;
+      font-size: 12px;
+      margin-top: 10px;
+      color: #666;
+    }
+
+    .options a {
+      color: #3cacae;
+      text-decoration: none;
+    }
+
+    .options a:hover {
+      text-decoration: underline;
+    }
+
+    .signup {
+      text-align: center;
+      margin-top: 10px;
+      font-size: 12px;
+    }
+
+    .signup a {
+      color: #3cacae;
+      text-decoration: none;
+    }
+
+    .signup a:hover {
+      text-decoration: underline;
+    }
+  </style>
+</head>
+<body>
+  <div class="login-container">
+    <h2>Login</h2>
+    <form>
+      <div class="input-group">
+        <input type="text" placeholder="Username..." required>
+      </div>
+      <div class="input-group">
+        <input type="password" placeholder="Password..." required>
+        <span class="toggle-password">👁️</span>
+      </div>
+      <button type="submit">Sign in</button>
+      <div class="options">
+        <label><input type="checkbox"> Remember me</label>
+        <a href="#">Forgot your password?</a>
+      </div>
+      <div class="signup">
+        Not a member? <a href="#">Sign up now</a>
+      </div>
+    </form>
+  </div>
+
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      const passwordInput = document.querySelector(".input-group input[type='password']");
+      const togglePassword = document.querySelector(".toggle-password");
+
+      togglePassword.addEventListener("click", () => {
+        // Toggle the input type between password and text
+        const isPassword = passwordInput.getAttribute("type") === "password";
+        passwordInput.setAttribute("type", isPassword ? "text" : "password");
+
+        // Change the toggle icon accordingly
+        togglePassword.textContent = isPassword ? "🙈" : "👁️"; // Switch between 'eye' and 'eye closed' icons
+      });
+    });
+  </script>
+</body>
+</html>
