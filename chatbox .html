@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Chatbox</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f9;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+        .chatbox {
+            width: 350px;
+            height: 500px;
+            border: 1px solid #ccc;
+            border-radius: 10px;
+            display: flex;
+            flex-direction: column;
+            background-color: #ffffff;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            display: none; /* Hidden by default */
+        }
+        .chatbox-header {
+            padding: 10px;
+            background-color: #007bff;
+            color: white;
+            text-align: center;
+            font-size: 18px;
+            font-weight: bold;
+            border-top-left-radius: 10px;
+            border-top-right-radius: 10px;
+        }
+        .chatbox-messages {
+            flex: 1;
+            padding: 10px;
+            overflow-y: auto;
+            background-color: #f9f9f9;
+        }
+        .message {
+            margin: 10px 0;
+        }
+        .message.user {
+            text-align: right;
+            color: #007bff;
+        }
+        .message.bot {
+            text-align: left;
+            color: #333;
+        }
+        .chatbox-input {
+            display: flex;
+            border-top: 1px solid #ccc;
+        }
+        .chatbox-input input {
+            flex: 1;
+            padding: 10px;
+            border: none;
+            border-bottom-left-radius: 10px;
+            outline: none;
+            font-size: 16px;
+        }
+        .chatbox-input button {
+            padding: 10px;
+            border: none;
+            background-color: #007bff;
+            color: white;
+            cursor: pointer;
+            border-bottom-right-radius: 10px;
+            font-size: 16px;
+        }
+        .chatbox-input button:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <button onclick="toggleChatbox()" style="padding: 10px 20px; font-size: 16px; cursor: pointer;">Open Chatbox</button>
+
+    <div class="chatbox" id="chatbox">
+        <div class="chatbox-header">AI Chatbox</div>
+        <div class="chatbox-messages" id="chatboxMessages"></div>
+        <div class="chatbox-input">
+            <input type="text" id="userInput" placeholder="Type your message...">
+            <button onclick="sendMessage()">Send</button>
+        </div>
+    </div>
+
+    <script>
+        function toggleChatbox() {
+            const chatbox = document.getElementById('chatbox');
+            chatbox.style.display = chatbox.style.display === 'none' || chatbox.style.display === '' ? 'flex' : 'none';
+        }
+
+        function appendMessage(sender, text) {
+            const messagesDiv = document.getElementById('chatboxMessages');
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `message ${sender}`;
+            messageDiv.textContent = text;
+            messagesDiv.appendChild(messageDiv);
+            messagesDiv.scrollTop = messagesDiv.scrollHeight;
+        }
+
+        function getBotResponse(message) {
+            // Simple predefined responses
+            const responses = {
+                "hello": "Hi there! How can I assist you today?",
+                "how are you": "I'm just a bot, but I'm here to help!",
+                "what is your name": "I'm your friendly AI chatbox!",
+                "bye": "Goodbye! Have a great day!"
+            };
+
+            const lowerMessage = message.toLowerCase();
+            return responses[lowerMessage] || "I'm not sure how to answer that, but I'm learning every day!";
+        }
+
+        function sendMessage() {
+            const userInput = document.getElementById('userInput');
+            const userMessage = userInput.value;
+            if (!userMessage.trim()) return;
+
+            appendMessage('user', userMessage);
+            userInput.value = '';
+
+            // Get bot response
+            setTimeout(() => {
+                const botMessage = getBotResponse(userMessage);
+                appendMessage('bot', botMessage);
+            }, 500);
+        }
+    </script>
+</body>
+</html>
