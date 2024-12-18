@@ -1,3 +1,29 @@
+<?php
+require 'dbconnect.php';
+$qArticles = query("SELECT * FROM article");
+
+
+
+// Get the project ID from the URL parameter
+$xId = $_GET['id'];
+
+// Query to fetch project details
+$list = "SELECT * FROM `article` WHERE `articleID`='$xId'";
+$result = mysqli_query($dbc, $list);
+$row = mysqli_fetch_assoc($result);
+if ($row) {
+    $listArticle =
+        "SELECT article.*, user.username 
+        FROM article 
+        JOIN user ON article.authorID = user.userID
+        WHERE article.`articleID`='$xId'";
+    $result_list = mysqli_query($dbc, $listArticle);
+    $rowList = mysqli_fetch_assoc($result_list);
+} else {
+    echo "Project not found";
+}
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -7,7 +33,7 @@
     <title>Mindful Pathway</title>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous">
-        </script>
+    </script>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
         integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
     <style>
@@ -113,7 +139,7 @@
             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
             margin: 20px auto;
             max-width: 1250px;
-            text-align: center;
+            background-color:rgb(167, 229, 232);
         }
 
         .facts a {
@@ -125,6 +151,7 @@
             justify-content: space-between;
             flex-wrap: wrap;
             gap: 15px;
+
         }
 
         .fact {
@@ -139,41 +166,51 @@
         .content {
             flex: 1;
             padding: 20px;
+
         }
 
         .article-container {
             display: flex;
-            flex-wrap: wrap; /* Allow wrapping for smaller screens */
-            gap: 20px; /* Add space between items */
+            flex-wrap: wrap;
+            /* Allow wrapping for smaller screens */
+            gap: 20px;
+
         }
 
-        /* Article section */
         .article {
-            flex: 2; /* Take up twice the space compared to comments */
-            min-width: 300px; /* Minimum width to prevent squishing */
+            flex: 2;
+            min-width: 300px;
+            text-align: left;
+            /* Ensure text is aligned to the left */
+            line-height: 1.6;
+            /* Improve readability with proper line spacing */
+            padding: 15px;
+            /* Optional: Add some padding */
+            background-color: #ffffff;
+            /* Optional: Add a background color for contrast */
+            border-radius: 10px;
+            /* Optional: Add rounded corners */
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            /* Optional: Add a subtle shadow */
         }
 
-        .title {
-            background-image: url("img/pxArt (9).png");
-            background-position-x: center;
-            background-repeat: no-repeat;
-            background-size: cover; 
-            background-size: 400px ,400px;
-            width: 100%; /* Makes the element take up the full width */
-            height: 400px;
-            padding-top: 300px;
+        .title h6 {
+            color: grey;
         }
+
         .title h1 {
-            font-weight: 900; 
+            font-weight: 900;
             font-family: cursive;
-            -webkit-text-stroke: 2px white; 
-            color: #000000;
+            -webkit-text-stroke: 2px #3cacae;
+            color: #5ce1e6;
         }
 
         /* Comments section */
         .comments {
-            flex: 1; /* Take up less space compared to article */
-            min-width: 300px; /* Ensure it doesn't shrink too small */
+            flex: 1;
+            /* Take up less space compared to article */
+            min-width: 300px;
+            /* Ensure it doesn't shrink too small */
             background-color: #f9f9f9;
             padding: 20px;
             border-radius: 10px;
@@ -183,12 +220,14 @@
         /* Media query for smaller screens */
         @media (max-width: 768px) {
             .article-container {
-                flex-direction: column; /* Stack items vertically */
+                flex-direction: column;
+                /* Stack items vertically */
             }
 
             .article,
             .comments {
-                flex: 1; /* Ensure both take up full width when stacked */
+                flex: 1;
+                /* Ensure both take up full width when stacked */
             }
         }
 
@@ -221,17 +260,14 @@
             <div class="article-container">
                 <!-- Article Section -->
                 <div class="article">
-                    <div class="title"><h1>Article: Mental Health Awareness</h1><h6>posted on Date by Author</h6></div>
-                    <p>
-                        "The more that you read, the more things you will know. The more that you learn, the more places you'll
-                        go." — Dr. Seuss
-                    </p>
-                    <p>
-                        Mental health awareness is a critical topic that needs more attention. Recognizing the importance of
-                        mental well-being and seeking help when necessary is vital for leading a fulfilling life.
-                    </p>
+                    <img src="img/<?= $rowList['coverIMG'] ?>">
+                    <div class="title">
+                        <h1><?= $rowList['title'] ?></h1>
+                        <h6>posted on <?= $rowList['timePosted'] ?> by <?= $rowList['username'] ?></h6>
+                    </div>
+                    <?= $rowList['content'] ?>
                 </div>
-        
+
                 <!-- Comments Section -->
                 <div class="comments">
                     <h3>Comments</h3>

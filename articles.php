@@ -216,8 +216,10 @@
             <div class="fact-box">
                 <?php
                 include "DBConnect.php";
-                $sql = "SELECT * FROM article 
-                ORDER BY timePosted"; 
+                $sql = "SELECT article.*, user.username 
+                        FROM article 
+                        JOIN user ON article.authorID = user.userID
+                        ORDER BY timePosted"; 
 
                 $result = mysqli_query($dbc, $sql);
                 if ($result && mysqli_num_rows($result) > 0) {
@@ -235,7 +237,7 @@
                                     <a href="readarticle.php?id=' . $article['articleID'] . '">' . $article['title'] . '</a>
                                 </div>
                                 <div class="detail">
-                                    ' . $article['timePosted'] . ', by ' . $article['authorID'] . '
+                                    ' . $article['timePosted'] . ', by ' . $article['username'] . '
                                 </div>
                                 <div class="content">
                                     ' . $previewContent . '
