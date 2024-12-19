@@ -139,7 +139,7 @@ if ($row) {
             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
             margin: 20px auto;
             max-width: 1250px;
-            background-color:rgb(167, 229, 232);
+            background-color: rgb(167, 229, 232);
         }
 
         .facts a {
@@ -267,14 +267,31 @@ if ($row) {
                     </div>
                     <?= $rowList['content'] ?>
                 </div>
-
+                <?php
+                $commentsQuery = "SELECT comment.content, comment.timePosted, user.username 
+                  FROM comment
+                  JOIN user ON comment.userID = user.userID 
+                  WHERE comment.articleID = '$xId'
+                  ORDER BY comment.timePosted DESC";
+                $commentsResult = mysqli_query($dbc, $commentsQuery);
+                ?>
                 <!-- Comments Section -->
                 <div class="comments">
                     <h3>Comments</h3>
-                    <p>No comments yet. Be the first to share your thoughts!</p>
-                    <form>
+                    <?php if (mysqli_num_rows($commentsResult) > 0): ?>
+                        <?php while ($comment = mysqli_fetch_assoc($commentsResult)): ?>
+                            <div class="comment">
+                                <p><strong><?= htmlspecialchars($comment['username']) ?></strong>: <?= htmlspecialchars($comment['content']) ?></p>
+                                <small>Posted on <?= htmlspecialchars($comment['timePosted']) ?></small>
+                            </div>
+                        <?php endwhile; ?>
+                    <?php else: ?>
+                        <p>No comments yet. Be the first to share your thoughts!</p>
+                    <?php endif; ?>
+                    <form action="add_comment.php" method="post">
                         <textarea placeholder="Write a comment..." rows="3"
                             style="width: 100%; padding: 10px; border-radius: 5px; border: 1px solid #ccc;"></textarea>
+                        <input type="hidden" name="article_id" value="<?= htmlspecialchars($xId) ?>">
                         <button type="submit"
                             style="margin-top: 10px; background-color: #3cacae; color: white; padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer;">
                             Post Comment
