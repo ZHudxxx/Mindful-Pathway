@@ -248,7 +248,7 @@ if ($row) {
         <div class="menu">
             <a href="#">HOME</a>
             <a href="#">ABOUT</a>
-            <a href="articles.html">ARTICLE</a>
+            <a href="articles.php">ARTICLE</a>
             <a href="#">MORE</a>
             <a href="login.html"
                 style="background-color: white; color: #3cacae; padding: 5px 10px; border-radius: 5px;">LOGIN</a>

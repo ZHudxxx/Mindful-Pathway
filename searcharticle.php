@@ -1,3 +1,30 @@
+<?php
+include "DBConnect.php";
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['query'])) {
+    $searchQuery = mysqli_real_escape_string($dbc, $_POST['query']); // Sanitize input to prevent SQL injection
+
+    // Query the database for matching articles
+    $sql = "SELECT article.*, user.username 
+            FROM article 
+            JOIN user ON article.authorID = user.userID
+            WHERE article.title LIKE '%$searchQuery%' OR article.content LIKE '%$searchQuery%'
+            ORDER BY article.timePosted DESC";
+
+    $result = mysqli_query($dbc, $sql);
+    $articles = ($result && mysqli_num_rows($result) > 0) ? mysqli_fetch_all($result, MYSQLI_ASSOC) : [];
+    mysqli_close($dbc);
+} else {
+
+    echo "<script>
+        alert('Server Error Searching.');
+        window.location.href = 'articles.php'; 
+    </script>";
+    exit; // Ensure the script stops executing after the redirect
+
+
+}
+?>
 <!DOCTYPE html>
 <html lang="en">
 
@@ -7,7 +34,7 @@
     <title>Mindful Pathway</title>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous">
-        </script>
+    </script>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
         integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
     <style>
@@ -132,6 +159,7 @@
             color: white;
             padding: 15px;
             border-radius: 10px;
+            
             flex: 1;
             min-width: 250px;
         }
@@ -139,8 +167,17 @@
         .content {
             flex: 1;
             padding: 20px;
+
+            a {
+                text-decoration: none;
+                color: white;
+            }
         }
 
+        .search-results {
+            margin: 20px auto;
+            max-width: 900px;
+        }
 
 
         footer {
@@ -172,16 +209,14 @@
             <table style="width: 100%;">
                 <tr>
                     <td style="width: 70%; vertical-align: top; text-align: left; padding-right: 50px;">
-                        <h2>Article : Mental Health Awareness</h2>
-                        <p>"The more that you read, the more things you will know. The more that you learn, the more
-                            places you'll
-                            go." — Dr. Seuss</p>
+                        <h2>Search Results</h2>
+                        <p>Searching for "<?php echo $searchQuery ?>"</p>
                     </td>
                     <td style="width: 30%; vertical-align: top; text-align: left;">
                         What do you want to learn today?
-                        <form>
+                        <form action="searcharticle.php" method="post">
                             <div style="display: flex; align-items: center;">
-                                <input type="text" placeholder="Search" required
+                                <input type="text" name="query" placeholder="Search" required
                                     style="flex: 1; padding: 10px; border-radius: 5px; border: 1px solid #ccc; font-size: 16px;">
                                 <button type="submit"
                                     style="margin-left: 10px; background-color: #3cacae; color: white; padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer;">
@@ -197,12 +232,22 @@
 
 
             <div class="fact-box">
-                <a href="readarticle.html" class="fact">
-                    The Power of Social Connections: Research has shown that strong social relationships are vital for
-                    mental health. People with solid support systems tend to cope better with stress and have lower
-                    risks of
-                    mental health issues like depression and anxiety.
-                </a>
+                <div class="search-results">
+                    <?php if (!empty($articles)): ?>
+                        <?php foreach ($articles as $article): ?>
+                            <div class="fact">
+                                <h3><a href="readarticle.php?id=<?= $article['articleID'] ?>" style="text-decoration: none;"><?= $article['title'] ?></a></h3>
+                                <p style="color:#ccc;"><strong>Posted on:</strong> <?= $article['timePosted'] ?> by <?= $article['username'] ?></p>
+                                <p><?= substr($article['content'], 0, 500) ?>...</p>
+                                <a href="readarticle.php?id=<?= $article['articleID'] ?>">Read more</a>
+                            </div>
+                        <?php endforeach; ?>
+                    <?php else: ?>
+                        <div class="no-results">
+                            <p>No articles found for your search: <strong><?= htmlspecialchars($searchQuery) ?></strong></p>
+                        </div>
+                    <?php endif; ?>
+                </div>
                 <div class="fact">
                     The Impact of Sleep on Mental Health: Poor sleep can contribute to or worsen mental health issues.
                     Lack

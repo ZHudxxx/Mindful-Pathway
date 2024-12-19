@@ -117,18 +117,21 @@
             text-align: center;
         }
 
-        .title a{
+        .title a {
             text-decoration: none;
             font-size: 20px;
-            
+
         }
+
         .detail {
             color: lightgray;
         }
 
         .content {
             font-size: 12px;
-            a {text-decoration: none;
+
+            a {
+                text-decoration: none;
                 color: white;
             }
         }
@@ -149,7 +152,7 @@
             min-width: 400px;
         }
 
-        .fact img{
+        .fact img {
             width: 350px;
             height: auto;
         }
@@ -195,10 +198,10 @@
                             go." — Dr. Seuss</p>
                     </td>
                     <td style="width: 30%; vertical-align: top; text-align: left;">
-                        What do you want to learn today?
-                        <form action="searcharticle.html" method="post">
+                        <i>What do you want to learn today?</i>
+                        <form action="searcharticle.php" method="post">
                             <div style="display: flex; align-items: center;">
-                                <input type="text" placeholder="Search" required
+                                <input type="text" name="query" placeholder="Search" required
                                     style="flex: 1; padding: 10px; border-radius: 5px; border: 1px solid #ccc; font-size: 16px;">
                                 <button type="submit"
                                     style="margin-left: 10px; background-color: #3cacae; color: white; padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer;">
@@ -219,7 +222,7 @@
                 $sql = "SELECT article.*, user.username 
                         FROM article 
                         JOIN user ON article.authorID = user.userID
-                        ORDER BY timePosted"; 
+                        ORDER BY timePosted";
 
                 $result = mysqli_query($dbc, $sql);
                 if ($result && mysqli_num_rows($result) > 0) {
