@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Dec 18, 2024 at 04:38 AM
+-- Generation Time: Dec 19, 2024 at 03:13 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -81,8 +81,7 @@ INSERT INTO `article` (`articleID`, `title`, `status`, `coverIMG`, `content`, `t
 CREATE TABLE `comment` (
   `commentID` int(11) NOT NULL,
   `content` text NOT NULL,
-  `date` date NOT NULL,
-  `time` time NOT NULL,
+  `timePosted` date NOT NULL DEFAULT current_timestamp(),
   `userID` int(11) DEFAULT NULL,
   `articleID` int(11) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
