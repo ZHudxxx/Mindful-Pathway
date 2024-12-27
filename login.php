@@ -1,59 +1,36 @@
 <?php
+
 session_start();
 
-
 $servername = "localhost";
-$username = "root"; 
-$password = ""; 
-$dbname = "mindfulpathway";
+$dbUsername = "root"; 
+$dbPassword = ""; 
+$dbname = "mindfulpathway"; 
 
-$conn = new mysqli($servername, $username, $password, $dbname);
+$conn = new mysqli($servername, $dbUsername, $dbPassword, $dbname);
 
-
+// Check connection
 if ($conn->connect_error) {
     die("Connection failed: " . $conn->connect_error);
 }
-
-
-if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    $inputUsername = $_POST["username"];
-    $inputPassword = $_POST["password"];
-
-    $sql = "SELECT * FROM users WHERE username = ?";
-    $stmt = $conn->prepare($sql);
-    $stmt->bind_param("s", $inputUsername);
-    $stmt->execute();
-    $result = $stmt->get_result();
-
-    if ($result->num_rows > 0) {
-        $user = $result->fetch_assoc();
-      
-        if (password_verify($inputPassword, $user['password_hash'])) {
-           
-            $_SESSION['userID'] = $user['userID'];
-            $_SESSION['username'] = $user['username'];
-            echo "Login successful. Welcome, " . $user['username'] . "!";
-        } else {
-            echo "Invalid password. Please try again.";
-        }
-    } else {
-        echo "User not found. Please check your username.";
-    }
-    $stmt->close();
-}
-
 
 if (isset($_POST["register"])) {
     $email = $_POST["email"];
     $username = $_POST["username"];
     $password = $_POST["password"];
-    $passwordHash = password_hash($password, PASSWORD_BCRYPT);
-    $bio = $_POST["bio"] ?? "";
-    $imgProfile = $_POST["imgProfile"] ?? "";
+    $confirmPassword = $_POST["confirm-password"];
 
-    $sql = "INSERT INTO users (username, password_hash, email, bio, imgProfile) VALUES (?, ?, ?, ?, ?)";
+    // Check if passwords match
+    if ($password !== $confirmPassword) {
+        die("Passwords do not match.");
+    }
+
+    $passwordHash = password_hash($password, PASSWORD_BCRYPT);
+
+
+    $sql = "INSERT INTO users (username, password_hash, email) VALUES (?, ?, ?)";
     $stmt = $conn->prepare($sql);
-    $stmt->bind_param("sssss", $username, $passwordHash, $email, $bio, $imgProfile);
+    $stmt->bind_param("sss", $username, $passwordHash, $email);
 
     if ($stmt->execute()) {
         echo "Account created successfully!";
