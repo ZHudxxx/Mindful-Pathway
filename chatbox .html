@@ -4,180 +4,136 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>AI Chatbox</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 0;
-            background-color: #f4f4f9;
-            display: flex;
-            flex-direction: column;
-            justify-content: flex-end;
-            align-items: center;
-            height: 100vh;
-            position: relative;
-        }
-        .chatbox {
-            width: 400px;
-            height: 500px;
-            border-radius: 10px;
-            display: flex;
-            flex-direction: column;
-            background-color: #ffffff;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-            display: none; /* Hidden by default */
-            position: fixed;
-            right: 20px;
-            bottom: 80px;
-        }
-        .chatbox-header {
-            padding: 15px;
-            background-color: #007bff;
-            color: white;
-            text-align: center;
-            font-size: 20px;
-            font-weight: bold;
-            border-top-left-radius: 10px;
-            border-top-right-radius: 10px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        .chatbox-header .close-btn {
-            cursor: pointer;
-            background: none;
-            border: none;
-            color: white;
-            font-size: 20px;
-            font-weight: bold;
-        }
-        .chatbox-messages {
-            flex: 1;
-            padding: 10px;
-            overflow-y: auto;
-            background-color: #f9f9f9;
-        }
-        .message {
-            margin: 10px 0;
-        }
-        .message.user {
-            text-align: right;
-            color: #007bff;
-        }
-        .message.bot {
-            text-align: left;
-            color: #333;
-        }
-        .chatbox-input {
-            display: flex;
-            border-top: 1px solid #ccc;
-            padding: 10px;
-        }
-        .chatbox-input input {
-            flex: 1;
-            padding: 10px;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-            outline: none;
-            font-size: 16px;
-        }
-        .chatbox-input button {
-            padding: 10px 20px;
-            border: none;
-            background-color: #00c4cc;
-            color: white;
-            cursor: pointer;
-            border-radius: 5px;
-            font-size: 16px;
-            margin-left: 10px;
-        }
-        .chatbox-input button:hover {
-            background-color: #008b8f;
-        }
-
-        .toggle-button {
-            padding: 15px 25px;
-            font-size: 18px;
-            cursor: pointer;
-            background-color: #007bff;
-            color: white;
-            border: none;
-            border-radius: 5px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            transition: background-color 0.3s, transform 0.2s;
-            position: fixed;
-            right: 20px;
-            bottom: 20px;
-        }
-
-        .toggle-button:hover {
-            background-color: #0056b3;
-        }
-
-        .toggle-button:active {
-            transform: scale(0.95);
-        }
-    </style>
+    <link rel="stylesheet" href="ai.css">
 </head>
 <body>
-    <button onclick="toggleChatbox()" class="toggle-button">💬 Chat with Us</button>
-
-    <div class="chatbox" id="chatbox">
-        <div class="chatbox-header">
-            <span>AI ASSISTANCE</span>
-            <button class="close-btn" onclick="toggleChatbox()">&times;</button>
-        </div>
-        <div class="chatbox-messages" id="chatboxMessages">
-            <div class="message bot">Welcome to ChatBot!<br>Hey, how can I assist you today?</div>
-        </div>
-        <div class="chatbox-input">
-            <input type="text" id="userInput" placeholder="Type your message...">
-            <button onclick="sendMessage()">SEND</button>
-        </div>
+    <!-- AI Picture -->
+    <div class="ai-picture-container">
+        <img id="ai-picture" src="ai.png" alt="AI Assistant" class="ai-picture">
     </div>
 
+<div id="chatbox" class="chatbox">
+    <div class="chatbox-header">
+        <span>AI ASSISTANCE</span>
+        <button id="close-chatbox" class="close-chatbox">&times;</button>
+    </div>
+    <div class="chatbox-body">
+        <div class="ai-message">
+            <img src="ai.png" alt="AI" class="chat-avatar">
+            <div class="chat-message">
+                <strong>Welcome to ChatBot!</strong>
+                <p>Hey, how can I assist you today?</p>
+                <p><strong>Here's how you can use this chatbox:</strong></p>
+                <ul>
+                    <li>Type your questions or concerns in the input box below and press <strong>Send</strong>.</li>
+                    <li>Ask about mental health topics like anxiety, stress, or depression.</li>
+                    <li>Explore self-care tips, coping strategies, and more.</li>
+                    <li>If you're unsure, try typing something like "What can you do?"</li>
+                </ul>
+                <p>Let me know how I can help!</p>
+            </div>
+        </div>
+    </div>
+    <div class="chatbox-footer">
+        <input id="user-input" type="text" placeholder="Type your message here..." />
+        <button id="send-message">SEND</button>
+    </div>
+</div>
+
+
     <script>
-        function toggleChatbox() {
-            const chatbox = document.getElementById('chatbox');
-            chatbox.style.display = chatbox.style.display === 'none' || chatbox.style.display === '' ? 'flex' : 'none';
-        }
+       
+// Select Elements
+const aiPicture = document.getElementById("ai-picture");
+const chatbox = document.getElementById("chatbox");
+const closeChatbox = document.getElementById("close-chatbox");
+const sendMessageButton = document.getElementById("send-message");
+const userInput = document.getElementById("user-input");
+const chatboxBody = document.querySelector(".chatbox-body");  // Fix selection
 
-        function appendMessage(sender, text) {
-            const messagesDiv = document.getElementById('chatboxMessages');
-            const messageDiv = document.createElement('div');
-            messageDiv.className = `message ${sender}`;
-            messageDiv.textContent = text;
-            messagesDiv.appendChild(messageDiv);
-            messagesDiv.scrollTop = messagesDiv.scrollHeight;
-        }
+// Predefined Responses
+const predefinedResponses = {
+    "hi": "Hi there! How can I assist you today?",
+    "hello": "Hello! How can I help?",
+    "how are you": "I'm just a program, but I'm here to help!",
+    "what is your name": "I'm your friendly AI assistant!",
+    "what can you do": "I can answer your questions, help with tasks, and more!",
+    "bye": "Goodbye! Have a great day!",
+    "thank you": "You're welcome! Let me know if you need more help.",
+    "what is mental health": "Mental health refers to your emotional, psychological, and social well-being. It's important for overall health and helps us cope with stress, work productively, and enjoy life.",
+    "how can i deal with anxiety": "Try deep breathing, mindfulness, or journaling to manage anxiety. If it persists, consider reaching out to a therapist or counselor for support.",
+    "how do i know if i am depressed": "Signs of depression include persistent sadness, loss of interest in activities, changes in appetite or sleep, and difficulty concentrating. If you're concerned, it's best to speak with a mental health professional.",
+    "why do i feel stressed all the time": "Chronic stress can result from various factors like work, relationships, or health concerns. It's important to identify triggers and find ways to manage stress, like relaxation techniques or talking to a trusted person.",
+    "how do i improve my mental health": "Taking care of your physical health, staying connected with loved ones, practicing self-care, and seeking help when needed are great ways to improve mental health.",
+    "is therapy helpful": "Yes, therapy can be very helpful. It provides a safe space to explore your feelings, develop coping strategies, and work through challenges with a trained professional.",
+    "what do i do if i feel lonely": "Loneliness is tough, but you're not alone. Try reaching out to a friend or family member, joining a community group, or engaging in hobbies that connect you with others.",
+    "can exercise improve mental health": "Absolutely! Regular exercise releases endorphins, reduces stress, and improves mood. Even a short walk can make a difference.",
+    "what do i do if i feel overwhelmed": "Take a moment to pause and breathe. Break tasks into smaller steps, and don't hesitate to ask for help. Talking to someone about how you're feeling can also be beneficial."
+};
 
-        function getBotResponse(message) {
-            // Simple predefined responses
-            const responses = {
-                "hi": "Hi there! How can I assist you today?",
-                "how are you": "I'm just a bot, but I'm here to help!",
-                "what is your name": "I'm your friendly AI chatbox!",
-                "bye": "Goodbye! Have a great day!"
-            };
+// Open Chatbox when AI Picture is clicked
+aiPicture.addEventListener("click", () => {
+    chatbox.style.display = "flex";
+});
 
-            const lowerMessage = message.toLowerCase();
-            return responses[lowerMessage] || "I'm not sure how to answer that, but I'm learning every day!";
-        }
+// Close Chatbox
+closeChatbox.addEventListener("click", () => {
+    chatbox.style.display = "none";
+});
 
-        function sendMessage() {
-            const userInput = document.getElementById('userInput');
-            const userMessage = userInput.value;
-            if (!userMessage.trim()) return;
+// Handle Sending Messages
+sendMessageButton.addEventListener("click", () => {
+    const userMessage = userInput.value.trim();
+    if (userMessage !== "") {
+        addMessage("User", userMessage); // Add user's message to chatbox
+        userInput.value = ""; // Clear input field
 
-            appendMessage('user', userMessage);
-            userInput.value = '';
+        // Show AI's response with a delay
+        setTimeout(() => {
+            const aiResponse = getAIResponse(userMessage.toLowerCase());
+            addMessage("AI", aiResponse);
+        }, 1000); // 1-second delay for better UX
+    }
+});
 
-            // Get bot response
-            setTimeout(() => {
-                const botMessage = getBotResponse(userMessage);
-                appendMessage('bot', botMessage);
-            }, 500);
-        }
+// Add 'Enter' key functionality
+userInput.addEventListener("keypress", (e) => {
+    if (e.key === "Enter") {
+        sendMessageButton.click(); // Trigger the SEND button click
+    }
+});
+
+// Get AI Response
+function getAIResponse(userMessage) {
+    if (predefinedResponses[userMessage]) {
+        return predefinedResponses[userMessage]; // Return predefined response
+    } else {
+        return "I'm sorry, I don't understand that. Can you try rephrasing?";
+    }
+}
+
+// Add Message to Chatbox
+function addMessage(sender, message) {
+    const messageContainer = document.createElement("div");
+    messageContainer.style.display = "flex";
+    messageContainer.style.marginBottom = "10px";
+    messageContainer.style.justifyContent =
+        sender === "AI" ? "flex-start" : "flex-end";
+
+    const messageElement = document.createElement("div");
+    messageElement.textContent = message;
+    messageElement.style.padding = "10px";
+    messageElement.style.borderRadius = "10px";
+    messageElement.style.maxWidth = "70%";
+    messageElement.style.color = sender === "AI" ? "#333" : "#fff";
+    messageElement.style.backgroundColor =
+        sender === "AI" ? "#eef6ff" : "#007bff";
+
+    messageContainer.appendChild(messageElement);
+    chatboxBody.appendChild(messageContainer);
+    chatboxBody.scrollTop = chatboxBody.scrollHeight; // Scroll to the latest message
+}
+
     </script>
 </body>
 </html>
