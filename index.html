@@ -6,64 +6,150 @@
   <title>Mindful Pathway</title>
   <link rel="shortcut icon" href="img/favicon.png" type="image/x-icon">
  <style>
-    body {
-      margin: 0;
-      font-family: Arial, sans-serif;
-      background-color: #f5f5f5;
-      padding-top: 60px;
-    }
+   body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background-color: #f5f5f5;
+  padding-top: 60px; /* Add top padding to avoid content being hidden behind the fixed header */
+}
 
-    /* Header */
-    .header {
-      background-color: #3cacae;
-      color: white;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 10px 20px;
-      position: fixed; 
-      top: 0;
-      left: 0; 
-       width: 100%; 
-       z-index: 1000;
-    }
+/* Header */
+.header {
+  background-color: #3cacae;
+  color: white;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 20px;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  z-index: 1000;
+}
 
-    .header .logo {
-      font-size: 24px;
-      font-weight: bold;
-      display: flex;
-      align-items: center;
-    }
+.header .logo {
+  font-size: 24px;
+  font-weight: bold;
+  display: flex;
+  align-items: center;
+}
 
-    .header .logo img {
-      width: 40px;
-      height: 40px;
-      margin-right: 10px;
-    }
+.header .logo img {
+  width: 40px;
+  height: 40px;
+  margin-right: 10px;
+}
 
-    .header .menu {
-      display: flex;
-      align-items: center;
-    }
+.header .menu {
+  display: flex;
+  align-items: center;
+}
 
-    .header .menu li {
-      list-style: none;
-      margin: 0 15px;
-      position: relative;
-    }
+.header .menu li {
+  list-style: none;
+  margin: 0 15px;
+  position: relative;
+}
 
-    .header .menu li a {
-      color: rgb(255, 255, 255);
-      text-decoration: none;
-      font-size: 16px;
-      padding: 8px 15px;
-      border-radius: 5px;
-      transition: background-color 0.3s ease;
-    }
+.header .menu li a {
+  color: rgb(255, 255, 255);
+  text-decoration: none;
+  font-size: 16px;
+  padding: 8px 15px;
+  border-radius: 5px;
+  transition: background-color 0.3s ease;
+}
 
-    .header .menu li a:hover {
-      background-color: #5ce1e6;
-    }
+.header .menu li a:hover {
+  background-color: #5ce1e6;
+}
+
+/* Dropdown styles */
+.dropdown-content {
+  display: none;
+  position: absolute;
+  background-color: #42bbbd;
+  min-width: 160px;
+  box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.2);
+  z-index: 1;
+  top: 100%;
+  left: 0;
+  border-radius: 5px;
+}
+
+.dropdown-content a {
+  color: rgb(106, 93, 93);
+  padding: 10px 15px;
+  text-decoration: none;
+  display: block;
+  border-radius: 5px;
+}
+
+.dropdown-content a:hover {
+  background-color: #ddd;
+}
+
+.header .menu li:hover .dropdown-content {
+  display: block;
+}
+
+/* Adjust the login button */
+.header .menu li:last-child a {
+  background-color: white;
+  color: #3cacae;
+  padding: 5px 10px;
+  border-radius: 5px;
+  margin-left: auto; /* Ensures the login button is aligned to the right */
+}
+
+/* Main Banner */
+.main-banner {
+  text-align: center;
+  padding: 20px;
+  background-color: white;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  border-radius: 10px;
+  margin: 20px auto;
+  max-width: 900px;
+  position: relative;
+  overflow: hidden;
+}
+
+.main-banner h2 {
+  color: #3cacae;
+  margin-bottom: 10px;
+}
+
+.main-banner p {
+  margin-top: 10px;
+  font-size: 18px;
+  color: #555;
+}
+
+.main-banner img {
+  width: 100%;
+  max-width: 600px;
+  margin-top: 10px;
+  border-radius: 10px;
+  display: block;
+  transition: opacity 1s ease;
+}
+
+.main-banner button {
+  background-color: #5ce1e6;
+  color: white;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 16px;
+  margin-top: 10px;
+}
+
+.main-banner button:hover {
+  background-color: #3cacae;
+}
 
     /* Dropdown styles */
     .dropdown-content {
