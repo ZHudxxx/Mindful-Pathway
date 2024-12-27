@@ -20,8 +20,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $username = trim($_POST['username']);
     $password = trim($_POST['password']);
     $confirm_password = trim($_POST['confirm_password']);
-    $userType = isset($_POST['userType']) ? $_POST['userType'] : 'user'; 
-
+    
     // Validate passwords
     if ($password !== $confirm_password) {
         echo "<script>alert('Passwords do not match!'); window.location.href='signup.html';</script>";
@@ -31,13 +30,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // Hash the password
     $passwordHash = password_hash($password, PASSWORD_BCRYPT);
 
-    // Check if username or email already exists in the respective table
-    if ($userType === 'admin') {
-        $checkQuery = "SELECT * FROM admin WHERE username = ? OR email = ?";
-    } else {
-        $checkQuery = "SELECT * FROM user WHERE username = ? OR email = ?";
-    }
-
+    // Check if username or email already exists
+    $checkQuery = "SELECT * FROM user WHERE username = ? OR email = ?";
     $stmt = $conn->prepare($checkQuery);
     $stmt->bind_param("ss", $username, $email);
     $stmt->execute();
@@ -48,13 +42,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         exit();
     }
 
-    // Insert user into the respective table
-    if ($userType === 'admin') {
-        $sql = "INSERT INTO admin (username, password_hash, email) VALUES (?, ?, ?)";
-    } else {
-        $sql = "INSERT INTO user (username, password_hash, email) VALUES (?, ?, ?)";
-    }
-
+    // Insert new user
+    $sql = "INSERT INTO user (username, password_hash, email) VALUES (?, ?, ?)";
     $stmt = $conn->prepare($sql);
     $stmt->bind_param("sss", $username, $passwordHash, $email);
 
