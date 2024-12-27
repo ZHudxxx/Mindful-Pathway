@@ -31,7 +31,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         // Verify password
         if (password_verify($password, $admin['password_hash'])) {
             $_SESSION['adminID'] = $admin['adminID'];
-            echo "<script>alert('Welcome, Admin! Redirecting to admin homepage.'); window.location.href='admin_home.php';</script>";
+            echo "<script>alert('Welcome, Admin! Redirecting to admin homepage.'); window.location.href='admin_home.html';</script>";
             exit();
         }
     }
@@ -49,7 +49,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         // Verify password
         if (password_verify($password, $user['password_hash'])) {
             $_SESSION['userID'] = $user['userID'];
-            echo "<script>alert('Login successful! Redirecting to user homepage.'); window.location.href='user_home.php';</script>";
+            echo "<script>alert('Login successful! Redirecting to user homepage.'); window.location.href='user_home.html';</script>";
             exit();
         }
     }
