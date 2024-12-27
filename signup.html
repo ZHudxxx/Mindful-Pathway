@@ -92,10 +92,10 @@
         </a>
         <h2>CREATE AN ACCOUNT</h2>
         <form method="POST" action="signup.php">
-        <input type="email" id="email" placeholder="Email address..." required>
-        <input type="text" id="username" placeholder="Username..." required>
-        <input type="password" id="password" placeholder="Password..." required>
-        <input type="password" id="confirm-password" placeholder="Confirm Password..." required>
+        <input type="email" name="email" id="email" placeholder="Email address..." required>
+        <input type="text" name="username" id="username" placeholder="Username..." required>
+        <input type="password" name="password" id="password" placeholder="Password..." required>
+        <input type="password" name="confirm_password" id="confirm-password" placeholder="Confirm Password..." required>
         <button type="submit" onclick="signUp()">Sign up</button>
         <p class="note">By signing up to create an account, you are accepting our terms of service and privacy policy.</p>
         <p>Already a member? <a href="login.html">Login</a></p>
