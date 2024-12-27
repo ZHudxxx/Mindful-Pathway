@@ -92,6 +92,10 @@
         </a>
         <h2>CREATE AN ACCOUNT</h2>
         <form method="POST" action="signup.php">
+             <select name="userType" required>
+        <option value="user">User</option>
+        <option value="admin">Admin</option>
+    </select>
         <input type="email" id="email" placeholder="Email address..." required>
         <input type="text" id="username" placeholder="Username..." required>
         <input type="password" id="password" placeholder="Password..." required>
