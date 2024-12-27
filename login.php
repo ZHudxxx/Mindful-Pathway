@@ -19,7 +19,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $password = trim($_POST['password']);
 
     // Check in admins table
-    $sql = "SELECT adminID, password_hash FROM admin WHERE username = ?";
+    $sql = "SELECT adminID, password_hash FROM admin WHERE username = admin";
     $stmt = $conn->prepare($sql);
     $stmt->bind_param("s", $username);
     $stmt->execute();
