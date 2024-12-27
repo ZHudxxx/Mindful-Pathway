@@ -1,0 +1,142 @@
+/* General Reset */
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background-color: #f4f4f4;
+}
+
+/* AI Picture */
+.ai-picture-container {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    cursor: pointer;
+    z-index: 1000;
+}
+
+.ai-picture {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease;
+}
+
+.ai-picture:hover {
+    transform: scale(1.1);
+}
+
+/* Chatbox */
+.chatbox {
+    display: none;
+    position: fixed;
+    bottom: 130px; /* Adjusted to create a gap with the AI picture */
+    right: 20px;
+    width: 800px; /* Adjusted width */
+    background: white;
+    border-radius: 12px; /* Rounded corners */
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2); /* Subtle shadow */
+    z-index: 1001;
+    flex-direction: column;
+    overflow: hidden;
+    border: 1px solid #ddd; /* Border for a cleaner look */
+}
+
+/* Chatbox Header */
+.chatbox-header {
+    background-color: #ffffff; /* White background */
+    color: #333; /* Dark text */
+    padding: 10px 20px; /* Padding for spacing */
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid #ddd; /* Subtle bottom border */
+    font-weight: bold;
+    font-size: 16px;
+}
+
+.chatbox-header span {
+    font-size: 18px; /* Larger title */
+}
+
+.close-chatbox {
+    background: none;
+    border: none;
+    color: #333;
+    font-size: 24px;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+/* Chatbox Body */
+.chatbox-body {
+    padding: 20px;
+    height: 250px; /* Adjusted height */
+    overflow-y: auto;
+    background: #f9f9f9;
+    display: flex;
+    flex-direction: column;
+    gap: 15px; /* Space between messages */
+}
+
+.ai-message {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+}
+
+.chat-avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+}
+
+.chat-message {
+    background: #eef6ff;
+    padding: 12px 15px;
+    border-radius: 12px;
+    font-size: 14px;
+    color: #333;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Subtle shadow for bubble */
+    max-width: 80%; /* Limit width for readability */
+}
+
+.user-message {
+    align-self: flex-end; /* Align user messages to the right */
+    background: #007bff;
+    color: white;
+}
+
+/* Chatbox Footer */
+.chatbox-footer {
+    display: flex;
+    border-top: 1px solid #ddd;
+    padding: 15px;
+    background: #fff; /* White background */
+}
+
+#user-input {
+    flex: 1;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    font-size: 14px;
+}
+
+#send-message {
+    background-color: #00d9f9; /* Aqua color matching the image */
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    margin-left: 10px;
+    border-radius: 25px; /* Fully rounded button */
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: bold;
+    text-transform: uppercase;
+    transition: background-color 0.3s ease;
+}
+
+#send-message:hover {
+    background-color: #00b3d1; /* Darker aqua */
+}
