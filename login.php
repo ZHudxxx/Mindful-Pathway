@@ -9,7 +9,7 @@ $dbname = "mindfulpathway";
 
 $conn = new mysqli($servername, $dbUsername, $dbPassword, $dbname);
 
-// Check connection
+
 if ($conn->connect_error) {
     die("Connection failed: " . $conn->connect_error);
 }
@@ -20,7 +20,7 @@ if (isset($_POST["register"])) {
     $password = $_POST["password"];
     $confirmPassword = $_POST["confirm-password"];
 
-    // Check if passwords match
+ 
     if ($password !== $confirmPassword) {
         die("Passwords do not match.");
     }
