@@ -8,7 +8,22 @@ if ($dbc->connect_errno) {
     echo "Failed to Open Database: " . $dbc->connect_error;
     exit();
 }
+// Authentication Check
+if (isset($_SESSION['username'])) {
+    $username = $_SESSION['username'];
+    $stmt = $dbc->prepare("SELECT * FROM admin WHERE username = ?");
+    $stmt->bind_param("s", $username);
+    $stmt->execute();
+    $result = $stmt->get_result();
 
+    if ($result->num_rows == 0) {
+        header('Location: login.php');
+        exit();
+    }
+} else {
+    header('Location: login.php');
+    exit();
+}
 // Check if articleID is passed in the URL
 if (!isset($_GET['articleID']) || !is_numeric($_GET['articleID'])) {
     echo "Invalid Article ID.";
@@ -39,6 +54,7 @@ $article = $result->fetch_assoc();
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><?php echo htmlspecialchars($article['title']); ?> | Mindful Pathway</title>
+    <link rel="shortcut icon" href="img/favicon.png" type="image/x-icon">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
           body {
@@ -266,9 +282,6 @@ footer {
 
 <!-- Main Content Area -->
 <div class="main-content">
-  <h1>Admin Dashboard</h1>
-  <i>"The best way to predict the future is to create it." — Peter Drucker</i>
-
   <!-- Manage Articles Section -->
   <div class="admin-section">
     <div class="admin-card">
