@@ -32,9 +32,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         if ($result->num_rows === 1) {
             $admin = $result->fetch_assoc();
 
-            // Verify pass
+            // Verify password
             if (password_verify($password, $admin['password_hash'])) {
                 $_SESSION['adminID'] = $admin['adminID'];
+                // Redirect with a JavaScript alert
                 echo "<script>alert('Welcome, Admin! Redirecting to admin dashboard.'); window.location.href='admin_home.php';</script>";
                 exit();
             }
@@ -50,16 +51,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         if ($result->num_rows === 1) {
             $user = $result->fetch_assoc();
 
-            // Verify pass
+            // Verify password
             if (password_verify($password, $user['password_hash'])) {
                 $_SESSION['userID'] = $user['userID'];
+                $_SESSION['username'] = $username;  // Store the username in session
+                // Redirect with a JavaScript alert
                 echo "<script>alert('Login successful! Redirecting to user dashboard.'); window.location.href='user_home.php';</script>";
-                exit();
+                exit();  // Ensure no further code is executed
             }
         }
     }
 
-    echo "<script>alert('Invalid username or password!'); window.location.href='login.html';</script>";
+    echo "<script>alert('Invalid username or password!'); window.location.href='login.php';</script>";
 }
 
 $conn->close();
