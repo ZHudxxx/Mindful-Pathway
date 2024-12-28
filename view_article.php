@@ -364,14 +364,15 @@ footer {
    
  <!-- Back Button -->
         <a href="admin_home.php" class="back-button">← Back to Admin Home</a>
+         <!-- Back to Top Button -->
+  <button class="back-to-top" onclick="scrollToTop()">↑</button>
        </div>
      <!-- Footer -->
   <footer>
     &copy; 2024 Mindful Pathway | All Rights Reserved
   </footer>
 
-  <!-- Back to Top Button -->
-  <button class="back-to-top" onclick="scrollToTop()">↑</button>
+
 
   <script>
     function showNotifications() {
