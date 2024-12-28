@@ -324,12 +324,11 @@ footer {
       <?php else: ?>
         <?php foreach ($articles as $article): ?>
           <div class="article-card">
-            <img src="img/<?php echo htmlspecialchars($article['coverIMG'] ?: 'default.jpg'); ?>" 
+            <img src="img/<?php echo htmlspecialchars($article['coverIMG'] ?: 'default.png'); ?>" 
                  alt="<?php echo htmlspecialchars($article['title']); ?>">
             <div class="content">
               <h3><?php echo htmlspecialchars($article['title']); ?></h3>
               <p><?php echo htmlspecialchars(substr($article['content'], 0, 100)); ?>...</p>
-              <!-- Add the link to the article's full page -->
               <a href="article.php?id=<?php echo $article['articleID']; ?>" class="article-button">Read More</a>
             </div>
           </div>
