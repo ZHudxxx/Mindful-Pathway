@@ -136,6 +136,7 @@ while ($row = mysqli_fetch_assoc($result)) {
       font-weight: bold;
       padding-left: 20px;
       margin-bottom: 30px;
+      margin-top: 20px;
     }
 
     .sidebar .active {
