@@ -1,7 +1,14 @@
 <?php
 session_start();
-include('DBConnect.php');
 
+// Directly establish the database connection here
+$dbc = mysqli_connect("localhost", "root", "", "mindfulpathway");
+if (mysqli_connect_errno()) {
+    echo "Failed to Open Database: " . mysqli_connect_error();
+    exit();
+}
+
+// Check if the user is logged in
 if (isset($_SESSION['username'])) {
     $username = $_SESSION['username']; // Assuming 'username' is stored in session
 } else {
@@ -12,12 +19,12 @@ if (isset($_SESSION['username'])) {
 // Initialize articles array to avoid errors if the query returns no results
 $articles = [];
 
-// Query to fetch latest articles
+// Query to fetch the latest articles
 $query = "SELECT * FROM article ORDER BY timePosted DESC LIMIT 3"; 
-$result = mysqli_query($conn, $query);
+$result = mysqli_query($dbc, $query);
 
 if (!$result) {
-    die("Query failed: " . mysqli_error($conn));
+    die("Query failed: " . mysqli_error($dbc));
 }
 
 // Fetch articles into array
@@ -265,7 +272,6 @@ footer {
     </div>
     <div class="menu">
       <i class="fas fa-bell" style="font-size: 20px; margin-right: 20px;" onclick="showNotifications()"></i>
-      <!-- Use a default profile image if none exists -->
       <img src="uploads/<?php echo isset($_SESSION['img_Profile']) ? $_SESSION['img_Profile'] : 'default-profile.jpg'; ?>" 
            alt="Profile" style="width: 20px; height: 20px; border-radius: 50%; margin-right: 70px;">
     </div>
@@ -279,7 +285,6 @@ footer {
     <a href="profile.php">My Profile</a>
     <a href="article.html">Article</a>
     <a href="feedback.html">Feedback</a>
-
     <a href="logout.php" class="logout">Logout</a>
   </div>
 
