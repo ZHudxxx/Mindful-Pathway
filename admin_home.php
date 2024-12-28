@@ -1,8 +1,11 @@
 <?php
 session_start();
 
-include('DBConnect.php');
-
+// Directly establish the database connection here
+$dbc = mysqli_connect("localhost", "root", "", "mindfulpathway");
+if (mysqli_connect_errno()) {
+    echo "Failed to Open Database: " . mysqli_connect_error();
+    exit();
 
 if (isset($_SESSION['username'])) {
     $username = $_SESSION['username'];
