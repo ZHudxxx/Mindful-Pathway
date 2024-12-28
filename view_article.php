@@ -280,8 +280,6 @@ footer {
   <a href="logout.php" class="logout">Logout</a>
 </div>
 
-<!-- Main Content Area -->
-<div class="main-content">
   <!-- Manage Articles Section -->
   <div class="admin-section">
     <div class="admin-card">
