@@ -35,7 +35,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             // Verify password
             if (password_verify($password, $admin['password_hash'])) {
                 $_SESSION['adminID'] = $admin['adminID'];
-                $_SESSION['username'] = $admin['username'];
+                $_SESSION['username'] = ['username'];
                 // Redirect with a JavaScript alert
                 echo "<script>alert('Welcome, Admin! Redirecting to admin dashboard.'); window.location.href='admin_home.php';</script>";
                 exit();
