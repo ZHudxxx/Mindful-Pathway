@@ -24,7 +24,6 @@ if (isset($_SESSION['username'])) {
     header('Location: login.php');
     exit();
 }
-// Check if articleID is passed in the URL
 if (!isset($_GET['articleID']) || !is_numeric($_GET['articleID'])) {
     echo "Invalid Article ID.";
     exit();
@@ -33,7 +32,7 @@ if (!isset($_GET['articleID']) || !is_numeric($_GET['articleID'])) {
 $articleID = intval($_GET['articleID']);
 
 // Fetch the article from the database
-$stmt = $dbc->prepare("SELECT a.title, a.content, a.timePosted, u.username 
+$stmt = $dbc->prepare("SELECT a.title, a.content, a.timePosted, a.coverIMG, u.username 
                        FROM article a 
                        JOIN user u ON a.authorID = u.userID 
                        WHERE a.articleID = ?");
@@ -317,6 +316,11 @@ footer {
         .back-button:hover {
             background-color: #359799;
         }
+        .article-banner {
+    width: 100%;
+    height: auto;
+    margin-bottom: 20px;
+}
     </style>
 </head>
 <body>
@@ -348,6 +352,10 @@ footer {
 
    <div class="main-content">
         <div class="content">
+            <?php if (!empty($article['coverIMG'])): ?>
+            <img src="uploads/<?php echo htmlspecialchars($article['coverIMG']); ?>" alt="Cover Image" class="article-banner">
+        <?php endif; ?>
+
         <h1><?php echo htmlspecialchars($article['title']); ?></h1>
             <div class="metadata">
                 <span>By: <?php echo htmlspecialchars($article['username']); ?></span> |
