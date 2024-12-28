@@ -352,15 +352,16 @@ footer {
 
    <div class="main-content">
         <div class="content">
-            <?php if (!empty($article['coverIMG'])): ?>
-            <img src="uploads/<?php echo htmlspecialchars($article['coverIMG']); ?>" alt="Cover Image" class="article-banner">
-        <?php endif; ?>
-
+    
         <h1><?php echo htmlspecialchars($article['title']); ?></h1>
             <div class="metadata">
                 <span>By: <?php echo htmlspecialchars($article['username']); ?></span> |
                 <span>Submitted on: <?php echo date("d-m-Y", strtotime($article['timePosted'])); ?></span>
             </div>
+             <?php if (!empty($article['coverIMG'])): ?>
+            <img src="uploads/<?php echo htmlspecialchars($article['coverIMG']); ?>" alt="Cover Image" class="article-banner">
+        <?php endif; ?>
+
             <p><?php echo nl2br(htmlspecialchars($article['content'])); ?></p>
             <form method="POST">
                 <input type="hidden" name="articleID" value="<?php echo $articleID; ?>">
