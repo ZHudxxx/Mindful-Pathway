@@ -225,7 +225,28 @@ while ($row = mysqli_fetch_assoc($result)) {
       color: #555;
       font-size: 14px;
     }
+.article-button {
+  display: inline-block;
+  padding: 10px 20px;
+  background-color: #3cacae;
+  color: white;
+  text-decoration: none;
+  border-radius: 25px;
+  font-weight: bold;
+  text-align: center;
+  transition: background-color 0.3s, transform 0.3s;
+  margin-top: 10px;
+}
 
+.article-button:hover {
+  background-color: #2b8c8b;
+  transform: translateY(-3px);
+}
+
+.article-button:active {
+  background-color: #1f6363;
+  transform: translateY(1px);
+}
   
 footer {
   text-align: center;
@@ -310,7 +331,7 @@ footer {
               <h3><?php echo htmlspecialchars($article['title']); ?></h3>
               <p><?php echo htmlspecialchars(substr($article['content'], 0, 100)); ?>...</p>
               <!-- Add the link to the article's full page -->
-              <a href="article.php?id=<?php echo $article['articleID']; ?>" class="btn btn-primary">Read More</a>
+              <a href="article.php?id=<?php echo $article['articleID']; ?>" class="article-button">Read More</a>
             </div>
           </div>
         <?php endforeach; ?>
