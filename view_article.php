@@ -288,7 +288,7 @@ footer {
         .content h1 {
             font-size: 28px;
             margin-bottom: 10px;
-            color: #3cacae;
+            color:#000000;
         }
 
         .content p {
@@ -297,9 +297,10 @@ footer {
         }
 
         .content .metadata {
-            font-size: 14px;
+            font-size: 16px;
             color: #666;
             margin-bottom: 20px;
+             text-align: center;
         }
         .back-button {
             display: inline-block;
@@ -362,17 +363,14 @@ footer {
             </form>
         </div>
    
- <!-- Back Button -->
         <a href="admin_home.php" class="back-button">← Back to Admin Home</a>
-         <!-- Back to Top Button -->
-  <button class="back-to-top" onclick="scrollToTop()">↑</button>
+        
        </div>
      <!-- Footer -->
   <footer>
     &copy; 2024 Mindful Pathway | All Rights Reserved
   </footer>
-
-
+  <button class="back-to-top" onclick="scrollToTop()">↑</button>
 
   <script>
     function showNotifications() {
