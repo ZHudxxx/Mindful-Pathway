@@ -220,6 +220,21 @@ footer {
             color: #666;
             margin-bottom: 20px;
         }
+        .back-button {
+            display: inline-block;
+            margin: 20px 0;
+            padding: 10px 20px;
+            background-color: #3cacae;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            font-size: 16px;
+            transition: background-color 0.3s ease;
+        }
+
+        .back-button:hover {
+            background-color: #359799;
+        }
     </style>
 </head>
 <body>
@@ -268,7 +283,8 @@ footer {
 
         <p><?php echo nl2br(htmlspecialchars($article['content'])); ?></p>
     </div>
-
+ <!-- Back Button -->
+        <a href="admin_home.php" class="back-button">← Back to Admin Home</a>
      <!-- Footer -->
   <footer>
     &copy; 2024 Mindful Pathway | All Rights Reserved
