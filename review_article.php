@@ -385,14 +385,17 @@ footer {
     function showNotifications() {
       alert("You have no new notifications."); 
     }
+      function confirmAction() {
+        return confirm("Are you sure you want to approve or reject this article?");
+    }
        </script>
 <script>
     window.onscroll = function() {
         const backToTopButton = document.querySelector('.back-to-top');
         if (document.body.scrollTop > 100 || document.documentElement.scrollTop > 100) {
-            backToTopButton.style.display = "block"; // Show the button
+            backToTopButton.style.display = "block";
         } else {
-            backToTopButton.style.display = "none"; // Hide the button
+            backToTopButton.style.display = "none"; 
         }
     };
     function scrollToTop() {
