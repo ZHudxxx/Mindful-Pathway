@@ -332,7 +332,8 @@ footer {
     </div>
     <div class="menu">
       <i class="fas fa-bell" style="font-size: 20px; margin-right: 20px;" onclick="showNotifications()"></i>
-      <img src="uploads/<?php echo $_SESSION['img_Profile']; ?>" alt="Profile">
+      <img src="uploads/<?php echo isset($_SESSION['img_Profile']) ? $_SESSION['img_Profile'] : 'default-profile.jpg'; ?>" 
+           alt="Profile" style="width: 20px; height: 20px; border-radius: 50%; margin-right: 70px;">
     </div>
   </div>
 
@@ -376,7 +377,7 @@ footer {
                             <td><?php echo $article['status']; ?></td>
                             <td>
                                 <form method="POST">
-                                    <input type="hidden" name="article_id" value="<?php echo $article['articleID']; ?>">
+                                    <input type="hidden" name="articleID" value="<?php echo $article['articleID']; ?>">
                                     <button type="submit" name="approve" class="btn btn-success">Approve</button>
                                     <button type="submit" name="reject" class="btn btn-danger">Reject</button>
                                 </form>
