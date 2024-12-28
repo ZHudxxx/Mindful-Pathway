@@ -295,7 +295,7 @@ footer {
     <i>"It is not that I'm so smart. But I stay with the questions much longer." — Albert Einstein</i>
     <div class="banner"></div>
 
-    <!-- Recommended Articles Section -->
+      <!-- Recommended Articles Section -->
     <h2>Recommended Articles</h2>
     <div class="recommended-articles" id="recommended-articles">
       <?php if (empty($articles)): ?>
@@ -308,6 +308,8 @@ footer {
             <div class="content">
               <h3><?php echo htmlspecialchars($article['title']); ?></h3>
               <p><?php echo htmlspecialchars(substr($article['content'], 0, 100)); ?>...</p>
+              <!-- Add the link to the article's full page -->
+              <a href="article.php?id=<?php echo $article['article_id']; ?>" class="btn btn-primary">Read More</a>
             </div>
           </div>
         <?php endforeach; ?>
