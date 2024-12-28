@@ -303,7 +303,7 @@ footer {
   <div class="sidebar">
     <div class="title"><?php echo "Welcome, " . htmlspecialchars($username); ?></div>
     <a href="user_home.php" class="active">Home</a>
-    <a href="about.html">About</a>
+    <a href="user_about.php">About</a>
     <a href="profile.php">My Profile</a>
     <a href="article.html">Article</a>
     <a href="feedback.html">Feedback</a>
