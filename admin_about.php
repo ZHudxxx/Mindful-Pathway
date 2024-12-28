@@ -122,12 +122,11 @@ if (isset($_SESSION['username'])) {
         }
     
         .sidebar .title {
-          font-size: 20px;
-          font-weight: bold;
-          padding-left: 20px;
-          margin-bottom: 30px;
-          margin-top: 20px;
-        }
+      font-size: 24px;
+      padding-left: 20px;
+      margin-bottom: 30px;
+      margin-top: 20px;
+    }
     
         .sidebar .active {
           background-color: #5ce1e6;
