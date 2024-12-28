@@ -397,7 +397,7 @@ footer {
         <?php foreach ($articles as $article): ?>
             <tr>
                 <td>
-                    <a href="view_article.php?articleID=<?php echo htmlspecialchars($article['articleID']); ?>" 
+                    <a href="review_article.php?articleID=<?php echo htmlspecialchars($article['articleID']); ?>" 
                        class="article-link">
                         <?php echo htmlspecialchars($article['title']); ?>
                         <i class="fas fa-external-link-alt"></i>
@@ -474,7 +474,7 @@ footer {
     }
 </script>
     <script>
-    // Function to handle article approval
+    
     function approveArticle(articleID) {
       if (confirm("Are you sure you want to approve this article?")) {
         alert("Article " + articleID + " approved!");
