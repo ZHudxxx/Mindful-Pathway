@@ -281,6 +281,7 @@ footer {
 </div>
 
   <!-- Manage Articles Section -->
+    <div class="main-content">
   <div class="admin-section">
     <div class="admin-card">
         <h1><?php echo htmlspecialchars($article['title']); ?></h1>
