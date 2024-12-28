@@ -20,7 +20,7 @@ if (isset($_SESSION['username'])) {
 $articles = [];
 
 // Query to fetch the latest articles
-$query = "SELECT * FROM article ORDER BY timePosted DESC LIMIT 3"; 
+$query = "SELECT * FROM article WHERE status = 'approved' ORDER BY timePosted DESC LIMIT 3"; 
 $result = mysqli_query($dbc, $query);
 
 if (!$result) {
