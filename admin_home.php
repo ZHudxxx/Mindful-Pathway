@@ -1,20 +1,22 @@
 <?php
 session_start();
 
-// Directly establish the database connection here
-$dbc = mysqli_connect("localhost", "root", "", "mindfulpathway");
-if (mysqli_connect_errno()) {
-    echo "Failed to Open Database: " . mysqli_connect_error();
+// Database connection
+$dbc = new mysqli("localhost", "root", "", "mindfulpathway");
+if ($dbc->connect_errno) {
+    echo "Failed to Open Database: " . $dbc->connect_error;
     exit();
 }
 
+// Authentication Check
 if (isset($_SESSION['username'])) {
     $username = $_SESSION['username'];
+    $stmt = $dbc->prepare("SELECT * FROM admin WHERE username = ?");
+    $stmt->bind_param("s", $username);
+    $stmt->execute();
+    $result = $stmt->get_result();
 
-    $query = "SELECT * FROM admin WHERE username = '$username'";
-    $result = mysqli_query($dbc, $query);
-
-    if (mysqli_num_rows($result) == 0) {
+    if ($result->num_rows == 0) {
         header('Location: login.php');
         exit();
     }
@@ -23,31 +25,36 @@ if (isset($_SESSION['username'])) {
     exit();
 }
 
-if (isset($_POST['approve']) || isset($_POST['reject'])) {
-    $article_id = $_POST['articleID'];  
-    $status = isset($_POST['approve']) ? 'approved' : 'rejected';
+// Approve or Reject Articles
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    if (isset($_POST['approve']) || isset($_POST['reject'])) {
+        $article_id = intval($_POST['articleID']);
+        $status = isset($_POST['approve']) ? 'approved' : 'rejected';
 
-    $update_query = "UPDATE article SET status = '$status' WHERE articleID = '$article_id'";
-    mysqli_query($dbc, $update_query);
+        $stmt = $dbc->prepare("UPDATE article SET status = ? WHERE articleID = ?");
+        $stmt->bind_param("si", $status, $article_id);
+        $stmt->execute();
+    }
 }
 
-$query = "SELECT * FROM article WHERE status IS NULL ORDER BY timePosted DESC LIMIT 3";
-$result = mysqli_query($dbc, $query);
+// Fetch Newest Pending Articles
+$stmt = $dbc->prepare("SELECT * FROM article WHERE status IS NULL ORDER BY timePosted DESC LIMIT 3");
+$stmt->execute();
+$result = $stmt->get_result();
 
 $articles = [];
-while ($row = mysqli_fetch_assoc($result)) {
-    // Set default status to 'Pending' if no action has been taken yet
-    if (!$row['status']) {
-        $row['status'] = 'Pending';
-    }
+while ($row = $result->fetch_assoc()) {
+    $row['status'] = $row['status'] ?: 'Pending';
     $articles[] = $row;
 }
 
-$query_users = "SELECT userID, username, bio, email FROM user ORDER BY username ASC LIMIT 5";
-$result_users = mysqli_query($dbc, $query_users);
+// Fetch Users (Preview)
+$stmt_users = $dbc->prepare("SELECT userID, username, bio, email FROM user ORDER BY username ASC LIMIT 5");
+$stmt_users->execute();
+$result_users = $stmt_users->get_result();
 
 $users = [];
-while ($row = mysqli_fetch_assoc($result_users)) {
+while ($row = $result_users->fetch_assoc()) {
     $users[] = $row;
 }
 ?>
@@ -324,102 +331,100 @@ footer {
 </head>
 <body>
 
-  <!-- Header -->
-  <div class="header">
-    <div class="logo">
-      <img src="img/favicon.png" alt="Logo">
-      <span>Mindful Pathway</span>
-    </div>
-    <div class="menu">
-      <i class="fas fa-bell" style="font-size: 20px; margin-right: 20px;" onclick="showNotifications()"></i>
-      <img src="uploads/<?php echo isset($_SESSION['img_Profile']) ? $_SESSION['img_Profile'] : 'default-profile.jpg'; ?>" 
-           alt="Profile" style="width: 20px; height: 20px; border-radius: 50%; margin-right: 70px;">
+<!-- Header -->
+<div class="header">
+  <div class="logo">
+    <img src="img/favicon.png" alt="Logo">
+    <span>Mindful Pathway</span>
+  </div>
+  <div class="menu">
+    <i class="fas fa-bell" style="font-size: 20px; margin-right: 20px;" onclick="showNotifications()"></i>
+    <img src="uploads/<?php echo isset($_SESSION['img_Profile']) ? htmlspecialchars($_SESSION['img_Profile']) : 'default-profile.jpg'; ?>" 
+         alt="Profile" style="width: 20px; height: 20px; border-radius: 50%; margin-right: 70px;">
+  </div>
+</div>
+
+<!-- Sidebar -->
+<div class="sidebar">
+  <div class="title"><?php echo "Welcome, " . htmlspecialchars($username); ?></div>
+  <a href="admin_home.php" class="active">Home</a>
+  <a href="about.html">About</a>
+  <a href="profile.php">My Profile</a>
+  <a href="article_management.html">Manage Articles</a>
+  <a href="user_management.html">Manage Users</a>
+  <a href="feedback.html">Feedback</a>
+  <a href="logout.php" class="logout">Logout</a>
+</div>
+
+<!-- Main Content Area -->
+<div class="main-content">
+  <h1>Admin Dashboard</h1>
+  <i>"The best way to predict the future is to create it." — Peter Drucker</i>
+
+  <!-- Manage Articles Section -->
+  <div class="admin-section">
+    <div class="admin-card">
+      <h2>Manage Articles</h2>
+      <p>Here you can manage articles posted by users. You can approve or reject articles.</p>
+      <table class="table table-bordered">
+        <thead>
+          <tr>
+            <th>Title</th>
+            <th>Author</th>
+            <th>Submitted Date</th>
+            <th>Status</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          <?php foreach ($articles as $article): ?>
+            <tr>
+              <td><?php echo htmlspecialchars($article['title']); ?></td>
+              <td><?php echo htmlspecialchars($article['authorID']); ?></td>
+              <td><?php echo date("d-m-Y H:i", strtotime($article['timePosted'])); ?></td>
+              <td><?php echo htmlspecialchars($article['status']); ?></td>
+              <td>
+                <form method="POST">
+                  <input type="hidden" name="articleID" value="<?php echo htmlspecialchars($article['articleID']); ?>">
+                  <button type="submit" name="approve" class="btn btn-success">Approve</button>
+                  <button type="submit" name="reject" class="btn btn-danger">Reject</button>
+                </form>
+              </td>
+            </tr>
+          <?php endforeach; ?>
+        </tbody>
+      </table>
     </div>
   </div>
 
-  <!-- Sidebar -->
-  <div class="sidebar">
-    <div class="title"><?php echo "Welcome, $username"; ?></div>
-    <a href="admin_home.php" class="active">Home</a>
-    <a href="about.html">About</a>
-    <a href="profile.php">My Profile</a>
-    <a href="article_management.html">Manage Articles</a>
-    <a href="user_management.html">Manage Users</a>
-    <a href="feedback.html">Feedback</a>
-    <a href="logout.php" class="logout">Logout</a>
+  <!-- Manage Users Section -->
+  <div class="admin-section">
+    <div class="admin-card">
+      <h2>Manage Users</h2>
+      <p>Preview Users of Mindful Pathway.</p>
+      <table class="table table-bordered">
+        <thead>
+          <tr>
+            <th>UserID</th>
+            <th>Username</th>
+            <th>Email</th>
+            <th>Bio</th>
+          </tr>
+        </thead>
+        <tbody>
+          <?php foreach ($users as $user): ?>
+            <tr>
+              <td><?php echo htmlspecialchars($user['userID']); ?></td>
+              <td><?php echo htmlspecialchars($user['username']); ?></td>
+              <td><?php echo htmlspecialchars($user['email']); ?></td>
+              <td><?php echo htmlspecialchars($user['bio']); ?></td>
+            </tr>
+          <?php endforeach; ?>
+        </tbody>
+      </table>
+    </div>
   </div>
-
-  <!-- Main Content Area -->
-  <div class="main-content">
-    <h1>Admin Dashboard</h1>
-    <i>"The best way to predict the future is to create it." — Peter Drucker</i>
-
-    <div class="admin-section">
-        <div class="admin-card">
-            <h2>Manage Articles</h2>
-            <p>Here you can manage articles posted by users. You can approve or reject articles.</p>
-            <table class="table table-bordered">
-                <thead>
-                    <tr>
-                        <th>Title</th>
-                        <th>Author</th>
-                        <th>Submitted Date</th>
-                        <th>Status</th>
-                        <th>Action</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <?php foreach ($articles as $article): ?>
-                        <tr>
-                            <td><?php echo htmlspecialchars($article['title']); ?></td>
-                            <td><?php echo htmlspecialchars($article['authorID']); ?></td>
-                            <td><?php echo htmlspecialchars($article['timePosted']); ?></td>
-                            <td><?php echo $article['status']; ?></td>
-                            <td>
-                                <form method="POST">
-                                    <input type="hidden" name="articleID" value="<?php echo $article['articleID']; ?>">
-                                    <button type="submit" name="approve" class="btn btn-success">Approve</button>
-                                    <button type="submit" name="reject" class="btn btn-danger">Reject</button>
-                                </form>
-                            </td>
-                        </tr>
-                    <?php endforeach; ?>
-                </tbody>
-            </table>
-        </div>
-    </div>
-
-    <!-- Manage Users Section (Preview) -->
-    <div class="admin-section">
-        <div class="admin-card">
-            <h2>Manage Users</h2>
-            <p>Preview Users of Mindful Pathway.</p>
-            <table class="table table-bordered">
-                <thead>
-                    <tr>
-                        <th>UserID</th>
-                        <th>Username</th>
-                        <th>Email</th>
-                        <th>Bio</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <?php foreach ($users as $user): ?>
-                        <tr>
-                            <td><?php echo htmlspecialchars($user['userID']); ?></td>
-                            <td><?php echo htmlspecialchars($user['username']); ?></td>
-                            <td><?php echo htmlspecialchars($user['email']); ?></td>
-                            <td><?php echo htmlspecialchars($user['bio']); ?></td>
-                        </tr>
-                    <?php endforeach; ?>
-                </tbody>
-            </table>
-        </div>
-    </div>
 </div>
-
-</div>
-
 
   <!-- Footer -->
   <footer>
