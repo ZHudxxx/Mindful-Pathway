@@ -131,9 +131,8 @@ while ($row = mysqli_fetch_assoc($result)) {
       background-color: #575757;
     }
 
-    .sidebar .title {
-      font-size: 20px;
-      font-weight: bold;
+   .sidebar .title {
+      font-size: 24px;
       padding-left: 20px;
       margin-bottom: 30px;
       margin-top: 20px;
