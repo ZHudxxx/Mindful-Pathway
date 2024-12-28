@@ -63,9 +63,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $stmt->bind_param("si", $status, $articleID);
 
     if ($stmt->execute()) {
-    echo "<script>alert('Article status successfully updated to " . $status . "'); window.location.href = 'admin_home.php';</script>";
+    echo "<script>alert('Article status successfully updated to " . $status . "'); window.location.href = 'review_article.php';</script>";
 } else {
-    echo "<script>alert('Failed to update article status.'); window.location.href = 'admin_home.php';</script>";
+    echo "<script>alert('Failed to update article status.'); window.location.href = 'review_article.php';</script>";
 }
 
     $stmt->close();
