@@ -346,8 +346,8 @@ footer {
 </div>
 
    <div class="main-content">
-        <h1><?php echo htmlspecialchars($article['title']); ?></h1>
         <div class="content">
+        <h1><?php echo htmlspecialchars($article['title']); ?></h1>
             <div class="metadata">
                 <span>By: <?php echo htmlspecialchars($article['username']); ?></span> |
                 <span>Submitted on: <?php echo date("d-m-Y", strtotime($article['timePosted'])); ?></span>
@@ -360,6 +360,8 @@ footer {
                     <button type="submit" name="action" value="reject" class="btn reject">Reject</button>
                 </div>
             </form>
+        </div>
+   </div>
  <!-- Back Button -->
         <a href="admin_home.php" class="back-button">← Back to Admin Home</a>
      <!-- Footer -->
