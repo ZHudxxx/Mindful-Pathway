@@ -50,22 +50,22 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $articleID = intval($_POST['articleID']);
     $action = $_POST['action'];
 
-    if ($action === 'approve') {
-        $status = 'approved';
-    } elseif ($action === 'reject') {
-        $status = 'rejected';
+    if ($action === 'Approve') {
+        $status = 'Approved';
+    } elseif ($action === 'Reject') {
+        $status = 'Rejected';
     } else {
         echo "Invalid action.";
         exit();
     }
 
-    $stmt = $dbc->prepare("UPDATE article SET status = ? WHERE articleID = ?");
+   $stmt = $dbc->prepare("UPDATE article SET status = ? WHERE articleID = ?");
     $stmt->bind_param("si", $status, $articleID);
 
     if ($stmt->execute()) {
-        echo "Article status updated successfully.";
+        echo "<script>alert('Article status successfully updated to " . $status . "');</script>";
     } else {
-        echo "Failed to update article status.";
+        echo "<script>alert('Failed to update article status.');</script>";
     }
 
     $stmt->close();
@@ -366,8 +366,8 @@ footer {
             <form method="POST">
                 <input type="hidden" name="articleID" value="<?php echo $articleID; ?>">
                 <div class="btn-group">
-                    <button type="submit" name="action" value="approve" class="btn approve">Approve</button>
-                    <button type="submit" name="action" value="reject" class="btn reject">Reject</button>
+                    <button type="submit" name="action" value="Approve" class="btn approve">Approve</button>
+                    <button type="submit" name="action" value="Reject" class="btn reject">Reject</button>
                 </div>
             </form>
         </div>
