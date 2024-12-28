@@ -132,7 +132,7 @@ while ($row = mysqli_fetch_assoc($result)) {
     }
 
     .sidebar .title {
-      font-size: 24px;
+      font-size: 20px;
       font-weight: bold;
       padding-left: 20px;
       margin-bottom: 30px;
