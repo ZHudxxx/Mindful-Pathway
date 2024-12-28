@@ -361,9 +361,10 @@ footer {
                 </div>
             </form>
         </div>
-   </div>
+   
  <!-- Back Button -->
         <a href="admin_home.php" class="back-button">← Back to Admin Home</a>
+       </div>
      <!-- Footer -->
   <footer>
     &copy; 2024 Mindful Pathway | All Rights Reserved
