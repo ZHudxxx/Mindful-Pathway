@@ -1,6 +1,5 @@
 <?php
 session_start();
-
 include('DBConnect.php');
 
 if (isset($_SESSION['username'])) {
@@ -10,6 +9,10 @@ if (isset($_SESSION['username'])) {
     exit();
 }
 
+// Initialize articles array to avoid errors if the query returns no results
+$articles = [];
+
+// Query to fetch latest articles
 $query = "SELECT * FROM article ORDER BY timePosted DESC LIMIT 3"; 
 $result = mysqli_query($conn, $query);
 
@@ -17,19 +20,12 @@ if (!$result) {
     die("Query failed: " . mysqli_error($conn));
 }
 
+// Fetch articles into array
 while ($row = mysqli_fetch_assoc($result)) {
     $articles[] = $row;
 }
-
-// Debug output
-if (empty($articles)) {
-    echo "No articles found.";
-} else {
-    echo "<pre>";
-    print_r($articles);
-    echo "</pre>";
-}
 ?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -269,13 +265,15 @@ footer {
     </div>
     <div class="menu">
       <i class="fas fa-bell" style="font-size: 20px; margin-right: 20px;" onclick="showNotifications()"></i>
-      <img src="uploads/<?php echo $_SESSION['img_Profile']; ?>" alt="Profile" style="width: 20px; height: 20px; border-radius: 50%; margin-right: 70px;">
+      <!-- Use a default profile image if none exists -->
+      <img src="uploads/<?php echo isset($_SESSION['img_Profile']) ? $_SESSION['img_Profile'] : 'default-profile.jpg'; ?>" 
+           alt="Profile" style="width: 20px; height: 20px; border-radius: 50%; margin-right: 70px;">
     </div>
   </div>
 
   <!-- Sidebar -->
   <div class="sidebar">
-    <div class="title"><?php echo "Welcome, $username"; ?></div>
+    <div class="title"><?php echo "Welcome, " . htmlspecialchars($username); ?></div>
     <a href="user_home.php" class="active">Home</a>
     <a href="about.html">About</a>
     <a href="profile.php">My Profile</a>
@@ -283,7 +281,6 @@ footer {
     <a href="feedback.html">Feedback</a>
 
     <a href="logout.php" class="logout">Logout</a>
-
   </div>
 
   <!-- Main Content Area -->
@@ -295,16 +292,20 @@ footer {
     <!-- Recommended Articles Section -->
     <h2>Recommended Articles</h2>
     <div class="recommended-articles" id="recommended-articles">
+      <?php if (empty($articles)): ?>
+        <p>No articles found.</p>
+      <?php else: ?>
         <?php foreach ($articles as $article): ?>
-        <div class="article-card">
+          <div class="article-card">
             <img src="img/<?php echo htmlspecialchars($article['coverIMG'] ?: 'default.jpg'); ?>" 
                  alt="<?php echo htmlspecialchars($article['title']); ?>">
             <div class="content">
-                <h3><?php echo htmlspecialchars($article['title']); ?></h3>
-                <p><?php echo htmlspecialchars(substr($article['content'], 0, 100)); ?>...</p>
+              <h3><?php echo htmlspecialchars($article['title']); ?></h3>
+              <p><?php echo htmlspecialchars(substr($article['content'], 0, 100)); ?>...</p>
             </div>
-        </div>
-    <?php endforeach; ?>
+          </div>
+        <?php endforeach; ?>
+      <?php endif; ?>
     </div>
   </div>
 
@@ -327,15 +328,9 @@ footer {
       window.scrollTo({ top: 0, behavior: 'smooth' });
     }
 
-
-    $(document).ready(function() {
-  
-    });
-  </script>
- <script>
     // Bell notification function
     function showNotifications() {
-      alert("You have no new notifications."); 
+      alert("You have no new notifications.");
     }
   </script>
 </body>
