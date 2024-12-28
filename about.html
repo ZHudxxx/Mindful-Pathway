@@ -63,63 +63,6 @@
           border: none;
           cursor: pointer;
         }
-    
-        /* Sidebar */
-        .sidebar {
-          height: 100%;
-          width: 250px;
-          position: fixed;
-          top: 0;
-          left: 0;
-          background-color: #3ea3a4;
-          padding-top: 60px;
-          z-index: 500;
-          color: white;
-          box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
-          transition: 0.3s;
-        }
-    
-        .sidebar a {
-          padding: 10px 15px;
-          text-decoration: none;
-          font-size: 18px;
-          color: white;
-          display: block;
-          transition: background-color 0.3s ease;
-          text-align: center;
-          margin-bottom: 10px;
-        }
-    
-        .sidebar a:hover {
-          background-color: #575757;
-        }
-    
-        .sidebar .title {
-          font-size: 20px;
-          font-weight: bold;
-          padding-left: 20px;
-          margin-bottom: 30px;
-          margin-top: 20px;
-        }
-    
-        .sidebar .active {
-          background-color: #5ce1e6;
-        }
-    
-    .sidebar .logout {
-      background-color: #5ce1e6;
-      color: #333;
-      width: 80%; 
-      text-align: center;
-      padding: 10px 10px;
-      border-radius: 25px; 
-      margin: 20px auto 0; 
-      margin-top: 80px;
-    }
-    
-    .sidebar .logout:hover {
-      background-color: #b1fcff; 
-    }
         /* Main Content Area */
         .main-content {
           margin-left: 250px;
@@ -242,31 +185,25 @@
       </style>
 </head>
 <body>
-    
 <!-- Header -->
-<div class="header">
-  <div class="logo">
-    <img src="img/favicon.png" alt="Logo">
-    <span>Mindful Pathway</span>
+  <div class="header">
+    <div class="logo">
+      <img src="img/favicon.png" alt="Logo"> 
+      <span>Mindful Pathway</span>
+    </div>
+    <ul class="menu">
+      <li><a href="index.html">HOME</a></li>
+      <li><a href="about.html">ABOUT</a></li>
+      <li>
+        <a href="#">MORE</a>
+        <div class="dropdown-content">
+          <a href="#findus" class="scroll-link">Find Us</a>
+          <a href="#contact" class="scroll-link">Contact Us</a>
+        </div>
+      </li>
+      <li><a href="login.html" class="login-btn">LOGIN</a></li>
+    </ul>
   </div>
-  <div class="menu">
-    <i class="fas fa-bell" style="font-size: 20px; margin-right: 20px;" onclick="showNotifications()"></i>
-    <img src="uploads/<?php echo isset($_SESSION['img_Profile']) ? htmlspecialchars($_SESSION['img_Profile']) : 'default-profile.jpg'; ?>" 
-         alt="Profile" style="width: 20px; height: 20px; border-radius: 50%; margin-right: 70px;">
-  </div>
-</div>
-
-<!-- Sidebar -->
-<div class="sidebar">
-  <div class="title"><?php echo "Welcome, " . htmlspecialchars($username); ?></div>
-  <a href="admin_home.php">Home</a>
-  <a href="about.html"  class="active">About</a>
-  <a href="profile.php">My Profile</a>
-  <a href="article_management.html">Manage Articles</a>
-  <a href="user_management.html">Manage Users</a>
-  <a href="feedback.html">Feedback</a>
-  <a href="logout.php" class="logout">Logout</a>
-</div>
 
        <!-- Main Content Area -->
   <div class="main-content">
