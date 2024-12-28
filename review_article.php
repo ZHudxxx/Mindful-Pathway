@@ -363,7 +363,7 @@ footer {
         <?php endif; ?>
 
             <p><?php echo nl2br(htmlspecialchars($article['content'])); ?></p>
-            <form method="POST" onsubmit="return confirmAction(this.action.value)">
+            <form method="POST">
     <input type="hidden" name="articleID" value="<?php echo $articleID; ?>">
     <div class="btn-group">
         <button type="submit" name="action" value="Approve" class="btn approve">Approve</button>
@@ -385,10 +385,18 @@ footer {
     function showNotifications() {
       alert("You have no new notifications."); 
     }
-    function confirmAction(action) {
-        var confirmationMessage = (action === 'Approve') ? "Are you sure you want to approve this article?" : "Are you sure you want to reject this article?";
-        return confirm(confirmationMessage);
-    }
+      
+    document.querySelector('.btn.approve').addEventListener('click', function(event) {
+        if (!confirm("Are you sure you want to approve this article?")) {
+            event.preventDefault(); 
+        }
+    });
+
+    document.querySelector('.btn.reject').addEventListener('click', function(event) {
+        if (!confirm("Are you sure you want to reject this article?")) {
+            event.preventDefault(); 
+        }
+    });
 
     window.onscroll = function() {
         const backToTopButton = document.querySelector('.back-to-top');
