@@ -473,6 +473,7 @@ footer {
         window.scrollTo({ top: 0, behavior: 'smooth' });
     }
 </script>
+    <script>
     // Function to handle article approval
     function approveArticle(articleID) {
       if (confirm("Are you sure you want to approve this article?")) {
