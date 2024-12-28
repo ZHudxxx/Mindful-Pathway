@@ -1,14 +1,12 @@
 <?php
 session_start();
 
-// Database connection
 $dbc = new mysqli("localhost", "root", "", "mindfulpathway");
 if ($dbc->connect_errno) {
     echo "Failed to Open Database: " . $dbc->connect_error;
     exit();
 }
 
-// Authentication Check
 if (isset($_SESSION['username'])) {
     $username = $_SESSION['username'];
     $stmt = $dbc->prepare("SELECT * FROM admin WHERE username = ?");
@@ -25,7 +23,6 @@ if (isset($_SESSION['username'])) {
     exit();
 }
 
-// Approve or Reject Articles
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (isset($_POST['approve']) || isset($_POST['Reject'])) {
         $article_id = intval($_POST['articleID']);
@@ -37,7 +34,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 }
 
-// Fetch Newest Articles with Author Name
 $stmt = $dbc->prepare("
     SELECT article.articleID, article.title, article.timePosted, article.status, user.username 
     FROM article 
@@ -305,7 +301,6 @@ footer {
         color: white;
     }
 
-  /* Approve and Reject Buttons */
 .btn {
   padding: 5px 15px;
   font-size: 14px;
@@ -332,7 +327,7 @@ footer {
 .btn-danger:hover {
   background-color: #da190b;
 }
-/* Style for Article Links */
+
 .article-link {
     text-decoration: none;
     color: #007BFF;
