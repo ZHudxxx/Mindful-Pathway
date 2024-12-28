@@ -6,15 +6,14 @@ $dbc = mysqli_connect("localhost", "root", "", "mindfulpathway");
 if (mysqli_connect_errno()) {
     echo "Failed to Open Database: " . mysqli_connect_error();
     exit();
+}
 
 if (isset($_SESSION['username'])) {
     $username = $_SESSION['username'];
-    
 
     $query = "SELECT * FROM admin WHERE username = '$username'";
-    $result = mysqli_query($conn, $query);
+    $result = mysqli_query($dbc, $query);
 
-  
     if (mysqli_num_rows($result) == 0) {
         header('Location: login.php');
         exit();
@@ -28,20 +27,20 @@ if (isset($_POST['approve']) || isset($_POST['reject'])) {
     $article_id = $_POST['article_id'];
     $status = isset($_POST['approve']) ? 'approved' : 'rejected';
 
-
     $update_query = "UPDATE article SET status = '$status' WHERE id = '$article_id'";
-    mysqli_query($conn, $update_query);
+    mysqli_query($dbc, $update_query);
 }
 
 $query = "SELECT * FROM article WHERE status IS NULL ORDER BY timePosted DESC LIMIT 3";
-$result = mysqli_query($conn, $query);
+$result = mysqli_query($dbc, $query);
 
 $articles = [];
 while ($row = mysqli_fetch_assoc($result)) {
     $articles[] = $row;
 }
+
 $query_users = "SELECT userID, username, bio, email FROM user ORDER BY username ASC LIMIT 5";
-$result_users = mysqli_query($conn, $query_users);
+$result_users = mysqli_query($dbc, $query_users);
 
 $users = [];
 while ($row = mysqli_fetch_assoc($result_users)) {
