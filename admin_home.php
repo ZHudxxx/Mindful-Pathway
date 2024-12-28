@@ -23,17 +23,6 @@ if (isset($_SESSION['username'])) {
     exit();
 }
 
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    if (isset($_POST['approve']) || isset($_POST['Reject'])) {
-        $article_id = intval($_POST['articleID']);
-        $status = isset($_POST['Approve']) ? 'Approved' : 'Rejected';
-
-        $stmt = $dbc->prepare("UPDATE article SET status = ? WHERE articleID = ?");
-        $stmt->bind_param("si", $status, $article_id);
-        $stmt->execute();
-    }
-}
-
 $stmt = $dbc->prepare("
     SELECT article.articleID, article.title, article.timePosted, article.status, user.username 
     FROM article 
@@ -406,13 +395,6 @@ footer {
                 <td><?php echo htmlspecialchars($article['username']); ?></td>
                 <td><?php echo date("d-m-Y", strtotime($article['timePosted'])); ?></td>
                 <td><?php echo htmlspecialchars($article['status']); ?></td>
-                <td>
-                    <form method="POST">
-                        <input type="hidden" name="articleID" value="<?php echo htmlspecialchars($article['articleID']); ?>">
-                        <button type="submit" name="approve" class="btn btn-success">Approve</button>
-                        <button type="submit" name="reject" class="btn btn-danger">Reject</button>
-                    </form>
-                </td>
             </tr>
         <?php endforeach; ?>
     </tbody>
@@ -473,13 +455,5 @@ footer {
         window.scrollTo({ top: 0, behavior: 'smooth' });
     }
 </script>
-    <script>
-    
-    function approveArticle(articleID) {
-      if (confirm("Are you sure you want to approve this article?")) {
-        alert("Article " + articleID + " approved!");
-      }
-    }
-  </script>
 </body>
 </html>
