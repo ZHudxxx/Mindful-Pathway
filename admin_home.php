@@ -449,24 +449,30 @@ footer {
   </div>
 </div>
 
-  <!-- Footer -->
+       <!-- Footer -->
   <footer>
     &copy; 2024 Mindful Pathway | All Rights Reserved
   </footer>
-
-  <!-- Back to Top Button -->
   <button class="back-to-top" onclick="scrollToTop()">↑</button>
 
   <script>
     function showNotifications() {
       alert("You have no new notifications."); 
     }
-
-    // Scroll to top function
+       </script>
+<script>
+    window.onscroll = function() {
+        const backToTopButton = document.querySelector('.back-to-top');
+        if (document.body.scrollTop > 100 || document.documentElement.scrollTop > 100) {
+            backToTopButton.style.display = "block"; // Show the button
+        } else {
+            backToTopButton.style.display = "none"; // Hide the button
+        }
+    };
     function scrollToTop() {
-      window.scrollTo({ top: 0, behavior: 'smooth' });
+        window.scrollTo({ top: 0, behavior: 'smooth' });
     }
-
+</script>
     // Function to handle article approval
     function approveArticle(articleID) {
       if (confirm("Are you sure you want to approve this article?")) {
