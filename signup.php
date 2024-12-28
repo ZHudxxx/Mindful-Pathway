@@ -48,7 +48,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $stmt->bind_param("sss", $username, $passwordHash, $email);
 
     if ($stmt->execute()) {
-        $redirectPage = $isCompanyEmail ? 'admin_dashboard.html' : 'login.html';
+        $redirectPage = $isCompanyEmail ? 'admin_home.html' : 'login.html';
         echo "<script>alert('Account created successfully! Redirecting to login page.'); window.location.href='$redirectPage';</script>";
     } else {
         echo "<script>alert('Error creating account: " . $stmt->error . "'); window.location.href='signup.html';</script>";
