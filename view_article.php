@@ -354,7 +354,7 @@ footer {
                 <span>Submitted on: <?php echo date("d-m-Y", strtotime($article['timePosted'])); ?></span>
             </div>
             <p><?php echo nl2br(htmlspecialchars($article['content'])); ?></p>
-            <form method="POST" action="update_article_status.php">
+            <form method="POST">
                 <input type="hidden" name="articleID" value="<?php echo $articleID; ?>">
                 <div class="btn-group">
                     <button type="submit" name="action" value="approve" class="btn approve">Approve</button>
@@ -376,12 +376,19 @@ footer {
     function showNotifications() {
       alert("You have no new notifications."); 
     }
-
-    // Scroll to top function
+       </script>
+<script>
+    window.onscroll = function() {
+        const backToTopButton = document.querySelector('.back-to-top');
+        if (document.body.scrollTop > 100 || document.documentElement.scrollTop > 100) {
+            backToTopButton.style.display = "block"; // Show the button
+        } else {
+            backToTopButton.style.display = "none"; // Hide the button
+        }
+    };
     function scrollToTop() {
-      window.scrollTo({ top: 0, behavior: 'smooth' });
+        window.scrollTo({ top: 0, behavior: 'smooth' });
     }
-
-  </script>
+</script>
 </body>
 </html>
