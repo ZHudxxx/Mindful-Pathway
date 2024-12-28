@@ -47,6 +47,34 @@ if ($result->num_rows === 0) {
 }
 
 $article = $result->fetch_assoc();
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $articleID = intval($_POST['articleID']);
+    $action = $_POST['action'];
+
+    if ($action === 'approve') {
+        $status = 'approved';
+    } elseif ($action === 'reject') {
+        $status = 'rejected';
+    } else {
+        echo "Invalid action.";
+        exit();
+    }
+
+    $stmt = $dbc->prepare("UPDATE article SET status = ? WHERE articleID = ?");
+    $stmt->bind_param("si", $status, $articleID);
+
+    if ($stmt->execute()) {
+        echo "Article status updated successfully.";
+    } else {
+        echo "Failed to update article status.";
+    }
+
+    $stmt->close();
+    $dbc->close();
+
+    header("Location: admin_home.php");
+    exit();
+}
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -146,21 +174,18 @@ $article = $result->fetch_assoc();
 .sidebar .logout:hover {
   background-color: #b1fcff; 
 }
-    /* Main Content Area */
-    .main-content {
-      margin-left: 250px;
-      padding: 20px;
-      transition: margin-left 0.3s;
-    }
-    .main-content h1 {
-  font-size: 34px;
-  font-weight: bold;
-  text-align: left;
-  color: rgb(0, 0, 0);
-  margin-top: 4px; 
-  margin-bottom:0; 
-  text-shadow: 2px 2px 2px #00000066; 
-}
+ .main-content {
+            margin-left: 250px;
+            padding: 20px;
+        }
+     .main-content h1 {
+            font-size: 34px;
+            font-weight: bold;
+            text-align: center;
+            color: rgb(0, 0, 0);
+            margin: 20px 0;
+            font-family: "Times New Roman", Times, serif;
+        }
 
 .main-content i {
   font-size: 15px;
@@ -170,16 +195,56 @@ $article = $result->fetch_assoc();
   margin-top: 0;
   margin-bottom: 10px;
 }
-    .banner {
-      width: 100%;
-      height: 300px;
-      background-image: url('img/banner1.png'); 
-      background-size: cover;
-      background-position: center;
-      margin-bottom: 30px;
-    }
+        .content {
+            max-width: 800px;
+            margin: 20px auto;
+            padding: 20px;
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            font-family: "Times New Roman", Times, serif;
+        }
 
-  
+        .content .metadata {
+            font-size: 14px;
+            color: #666;
+            margin-bottom: 20px;
+        }
+
+        .btn-group {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .btn {
+            padding: 10px 20px;
+            font-size: 16px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .btn.approve {
+            background-color: #4caf50;
+            color: white;
+        }
+
+        .btn.approve:hover {
+            background-color: #45a049;
+        }
+
+        .btn.reject {
+            background-color: #f44336;
+            color: white;
+        }
+
+        .btn.reject:hover {
+            background-color: #e41f1f;
+        }
+
 footer {
   text-align: center;
   background-color: #3cacae;
@@ -280,21 +345,21 @@ footer {
   <a href="logout.php" class="logout">Logout</a>
 </div>
 
-  <!-- Manage Articles Section -->
-    <div class="main-content">
-  <div class="admin-section">
-    <div class="admin-card">
+   <div class="main-content">
         <h1><?php echo htmlspecialchars($article['title']); ?></h1>
-    </div>
-
-    <div class="content">
-        <div class="metadata">
-            <span>By: <?php echo htmlspecialchars($article['username']); ?></span> |
-            <span>Submitted on: <?php echo date("d-m-Y", strtotime($article['timePosted'])); ?></span>
-        </div>
-
-        <p><?php echo nl2br(htmlspecialchars($article['content'])); ?></p>
-    </div>
+        <div class="content">
+            <div class="metadata">
+                <span>By: <?php echo htmlspecialchars($article['username']); ?></span> |
+                <span>Submitted on: <?php echo date("d-m-Y", strtotime($article['timePosted'])); ?></span>
+            </div>
+            <p><?php echo nl2br(htmlspecialchars($article['content'])); ?></p>
+            <form method="POST" action="update_article_status.php">
+                <input type="hidden" name="articleID" value="<?php echo $articleID; ?>">
+                <div class="btn-group">
+                    <button type="submit" name="action" value="approve" class="btn approve">Approve</button>
+                    <button type="submit" name="action" value="reject" class="btn reject">Reject</button>
+                </div>
+            </form>
  <!-- Back Button -->
         <a href="admin_home.php" class="back-button">← Back to Admin Home</a>
      <!-- Footer -->
