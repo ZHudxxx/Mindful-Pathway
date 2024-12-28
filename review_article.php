@@ -364,12 +364,12 @@ footer {
 
             <p><?php echo nl2br(htmlspecialchars($article['content'])); ?></p>
             <form method="POST" onsubmit="return confirmAction(this.action.value)">
-                <input type="hidden" name="articleID" value="<?php echo $articleID; ?>">
-                <div class="btn-group">
-                    <button type="submit" name="action" value="Approve" class="btn approve">Approve</button>
-                    <button type="submit" name="action" value="Reject" class="btn reject">Reject</button>
-                </div>
-            </form>
+    <input type="hidden" name="articleID" value="<?php echo $articleID; ?>">
+    <div class="btn-group">
+        <button type="submit" name="action" value="Approve" class="btn approve">Approve</button>
+        <button type="submit" name="action" value="Reject" class="btn reject">Reject</button>
+    </div>
+</form>
         </div>
    
         <a href="admin_home.php" class="back-button">← Back to Admin Home</a>
@@ -398,6 +398,7 @@ footer {
             backToTopButton.style.display = "none"; 
         }
     };
+      
     function scrollToTop() {
         window.scrollTo({ top: 0, behavior: 'smooth' });
     }
