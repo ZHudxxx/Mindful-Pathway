@@ -309,7 +309,7 @@ footer {
               <h3><?php echo htmlspecialchars($article['title']); ?></h3>
               <p><?php echo htmlspecialchars(substr($article['content'], 0, 100)); ?>...</p>
               <!-- Add the link to the article's full page -->
-              <a href="article.php?id=<?php echo $article['article_id']; ?>" class="btn btn-primary">Read More</a>
+              <a href="article.php?id=<?php echo $article['articleID']; ?>" class="btn btn-primary">Read More</a>
             </div>
           </div>
         <?php endforeach; ?>
