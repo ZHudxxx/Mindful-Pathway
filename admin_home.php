@@ -332,7 +332,23 @@ footer {
 .btn-danger:hover {
   background-color: #da190b;
 }
+/* Style for Article Links */
+.article-link {
+    text-decoration: none;
+    color: #007BFF;
+    font-weight: bold;
+    transition: color 0.3s, transform 0.2s;
+}
 
+.article-link:hover {
+    color: #0056b3;
+    transform: scale(1.1);
+}
+
+.article-link i {
+    margin-left: 5px;
+    font-size: 12px;
+}
   </style>
 </head>
 <body>
@@ -386,12 +402,14 @@ footer {
         <?php foreach ($articles as $article): ?>
             <tr>
                 <td>
-                    <a href="view_article.php?articleID=<?php echo htmlspecialchars($article['articleID']); ?>">
+                    <a href="view_article.php?articleID=<?php echo htmlspecialchars($article['articleID']); ?>" 
+                       class="article-link">
                         <?php echo htmlspecialchars($article['title']); ?>
+                        <i class="fas fa-external-link-alt"></i>
                     </a>
                 </td>
                 <td><?php echo htmlspecialchars($article['username']); ?></td>
-                <td><?php echo date("d-m-Y H:i", strtotime($article['timePosted'])); ?></td>
+                <td><?php echo date("d-m-Y", strtotime($article['timePosted'])); ?></td>
                 <td><?php echo htmlspecialchars($article['status']); ?></td>
                 <td>
                     <form method="POST">
