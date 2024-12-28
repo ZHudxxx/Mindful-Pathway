@@ -27,7 +27,7 @@ if (isset($_POST['approve']) || isset($_POST['reject'])) {
     $article_id = $_POST['article_id'];
     $status = isset($_POST['approve']) ? 'approved' : 'rejected';
 
-    $update_query = "UPDATE article SET status = '$status' WHERE id = '$article_id'";
+    $update_query = "UPDATE article SET status = '$status' WHERE articleID = '$article_id'";
     mysqli_query($dbc, $update_query);
 }
 
@@ -36,6 +36,10 @@ $result = mysqli_query($dbc, $query);
 
 $articles = [];
 while ($row = mysqli_fetch_assoc($result)) {
+    // Set default status to 'Pending' if no action has been taken yet
+    if (!$row['status']) {
+        $row['status'] = 'Pending';
+    }
     $articles[] = $row;
 }
 
@@ -47,7 +51,6 @@ while ($row = mysqli_fetch_assoc($result_users)) {
     $users[] = $row;
 }
 ?>
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -329,7 +332,7 @@ footer {
     </div>
     <div class="menu">
       <i class="fas fa-bell" style="font-size: 20px; margin-right: 20px;" onclick="showNotifications()"></i>
-      <img src="uploads/<?php echo $_SESSION['img_Profile']; ?>" alt="Profile" style="width: 20px; height: 20px; border-radius: 50%; margin-right: 70px;">
+      <img src="uploads/<?php echo $_SESSION['img_Profile']; ?>" alt="Profile">
     </div>
   </div>
 
@@ -342,12 +345,11 @@ footer {
     <a href="article_management.html">Manage Articles</a>
     <a href="user_management.html">Manage Users</a>
     <a href="feedback.html">Feedback</a>
-
     <a href="logout.php" class="logout">Logout</a>
   </div>
 
- <!-- Main Content Area -->
- <div class="main-content">
+  <!-- Main Content Area -->
+  <div class="main-content">
     <h1>Admin Dashboard</h1>
     <i>"The best way to predict the future is to create it." — Peter Drucker</i>
 
@@ -371,15 +373,12 @@ footer {
                             <td><?php echo htmlspecialchars($article['title']); ?></td>
                             <td><?php echo htmlspecialchars($article['authorID']); ?></td>
                             <td><?php echo htmlspecialchars($article['timePosted']); ?></td>
-                            <td><?php echo $article['status'] ? $article['status'] : 'Pending'; ?></td>
+                            <td><?php echo $article['status']; ?></td>
                             <td>
                                 <form method="POST">
-                                            <input type="hidden" name="article_id" value="<?php echo $article['articleID']; ?>">
-                                            <button type="submit" name="approve" class="btn btn-success">Approve</button>
-                                            <button type="submit" name="reject" class="btn btn-danger">Reject</button>
-                                        </form>
-                                    </td>
-                                    
+                                    <input type="hidden" name="article_id" value="<?php echo $article['articleID']; ?>">
+                                    <button type="submit" name="approve" class="btn btn-success">Approve</button>
+                                    <button type="submit" name="reject" class="btn btn-danger">Reject</button>
                                 </form>
                             </td>
                         </tr>
@@ -388,8 +387,9 @@ footer {
             </table>
         </div>
     </div>
-     <!-- Manage Users Section (Preview) -->
-     <div class="admin-section">
+
+    <!-- Manage Users Section (Preview) -->
+    <div class="admin-section">
         <div class="admin-card">
             <h2>Manage Users</h2>
             <p>Preview Users of Mindful Pathway.</p>
@@ -400,7 +400,6 @@ footer {
                         <th>Username</th>
                         <th>Email</th>
                         <th>Bio</th>
-
                     </tr>
                 </thead>
                 <tbody>
