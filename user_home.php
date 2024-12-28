@@ -197,7 +197,7 @@ while ($row = mysqli_fetch_assoc($result)) {
     }
 
     .article-card {
-      width: 300px;
+      width: 400px;
       background-color: white;
       border-radius: 8px;
       box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
@@ -205,8 +205,8 @@ while ($row = mysqli_fetch_assoc($result)) {
     }
 
     .article-card img {
-      width: 100%;
-      height: 150px;
+      width: 50px;
+      height: 50px;
       object-fit: cover;
     }
 
