@@ -35,7 +35,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             // Verify pass
             if (password_verify($password, $admin['password_hash'])) {
                 $_SESSION['adminID'] = $admin['adminID'];
-                echo "<script>alert('Welcome, Admin! Redirecting to admin dashboard.'); window.location.href='admin_home.html';</script>";
+                echo "<script>alert('Welcome, Admin! Redirecting to admin dashboard.'); window.location.href='admin_home.php';</script>";
                 exit();
             }
         }
@@ -53,7 +53,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             // Verify pass
             if (password_verify($password, $user['password_hash'])) {
                 $_SESSION['userID'] = $user['userID'];
-                echo "<script>alert('Login successful! Redirecting to user dashboard.'); window.location.href='user_home.html';</script>";
+                echo "<script>alert('Login successful! Redirecting to user dashboard.'); window.location.href='user_home.php';</script>";
                 exit();
             }
         }
