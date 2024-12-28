@@ -24,7 +24,7 @@ if (isset($_SESSION['username'])) {
 }
 
 if (isset($_POST['approve']) || isset($_POST['reject'])) {
-    $article_id = $_POST['articleID'];
+    $articleID = $_POST['articleID'];
     $status = isset($_POST['approve']) ? 'approved' : 'rejected';
 
     $update_query = "UPDATE article SET status = '$status' WHERE articleID = '$articleID'";
@@ -152,9 +152,9 @@ while ($row = mysqli_fetch_assoc($result_users)) {
 
     .sidebar .title {
       font-size: 24px;
-      font-weight: bold;
       padding-left: 20px;
       margin-bottom: 30px;
+      margin-top: 20px;
     }
 
     .sidebar .active {
