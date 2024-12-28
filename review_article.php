@@ -385,6 +385,7 @@ footer {
     function showNotifications() {
       alert("You have no new notifications."); 
     }
+      <script>
         <script>
     function confirmAction(action) {
         var confirmationMessage = (action === 'Approve') ? "Are you sure you want to approve this article?" : "Are you sure you want to reject this article?";
