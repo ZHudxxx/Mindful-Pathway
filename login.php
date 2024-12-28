@@ -22,7 +22,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $isAdmin = strpos($username, 'admin') !== false || strpos($username, '@mindfulpathway.com') !== false;
 
     if ($isAdmin) {
-        // Check in admins table
+       
         $sql = "SELECT adminID, password_hash FROM admin WHERE username = ?";
         $stmt = $conn->prepare($sql);
         $stmt->bind_param("s", $username);
@@ -35,14 +35,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             // Verify password
             if (password_verify($password, $admin['password_hash'])) {
                 $_SESSION['adminID'] = $admin['adminID'];
-                $_SESSION['username'] = ['username'];
-                // Redirect with a JavaScript alert
+                $_SESSION['username'] = $username;
                 echo "<script>alert('Welcome, Admin! Redirecting to admin dashboard.'); window.location.href='admin_home.php';</script>";
                 exit();
             }
         }
     } else {
-        // Check in users table
+        // Check in user table
         $sql = "SELECT userID, password_hash FROM user WHERE username = ?";
         $stmt = $conn->prepare($sql);
         $stmt->bind_param("s", $username);
@@ -55,10 +54,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             // Verify password
             if (password_verify($password, $user['password_hash'])) {
                 $_SESSION['userID'] = $user['userID'];
-                $_SESSION['username'] = $username;  // Store the username in session
-                // Redirect with a JavaScript alert
+                $_SESSION['username'] = $username;
                 echo "<script>alert('Login successful! Redirecting to user dashboard.'); window.location.href='user_home.php';</script>";
-                exit();  // Ensure no further code is executed
+                exit(); 
             }
         }
     }
