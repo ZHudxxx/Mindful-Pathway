@@ -24,10 +24,10 @@ if (isset($_SESSION['username'])) {
 }
 
 if (isset($_POST['approve']) || isset($_POST['reject'])) {
-    $article_id = $_POST['article_id'];
+    $article_id = $_POST['articleID'];
     $status = isset($_POST['approve']) ? 'approved' : 'rejected';
 
-    $update_query = "UPDATE article SET status = '$status' WHERE articleID = '$article_id'";
+    $update_query = "UPDATE article SET status = '$status' WHERE articleID = '$articleID'";
     mysqli_query($dbc, $update_query);
 }
 
