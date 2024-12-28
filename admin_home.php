@@ -379,7 +379,6 @@ footer {
             <th>Author</th>
             <th>Submitted Date</th>
             <th>Status</th>
-            <th>Action</th>
         </tr>
     </thead>
     <tbody>
