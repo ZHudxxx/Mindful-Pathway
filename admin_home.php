@@ -27,9 +27,9 @@ if (isset($_SESSION['username'])) {
 
 // Approve or Reject Articles
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    if (isset($_POST['approve']) || isset($_POST['reject'])) {
+    if (isset($_POST['approve']) || isset($_POST['Reject'])) {
         $article_id = intval($_POST['articleID']);
-        $status = isset($_POST['approve']) ? 'approved' : 'rejected';
+        $status = isset($_POST['Approve']) ? 'Approved' : 'Rejected';
 
         $stmt = $dbc->prepare("UPDATE article SET status = ? WHERE articleID = ?");
         $stmt->bind_param("si", $status, $article_id);
@@ -37,8 +37,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 }
 
-// Fetch Newest Articles
-$stmt = $dbc->prepare("SELECT * FROM article ORDER BY timePosted DESC LIMIT 5");
+// Fetch Newest Articles with Author Name
+$stmt = $dbc->prepare("
+    SELECT article.articleID, article.title, article.timePosted, article.status, user.username 
+    FROM article 
+    JOIN user ON article.authorID = user.userID 
+    ORDER BY timePosted DESC LIMIT 5
+");
 $stmt->execute();
 $result = $stmt->get_result();
 
@@ -368,32 +373,36 @@ footer {
       <h2>Manage Articles</h2>
       <p>Here you can manage articles posted by users. You can approve or reject articles.</p>
       <table class="table table-bordered">
-  <thead>
-    <tr>
-      <th>Title</th>
-      <th>Author</th>
-      <th>Submitted Date</th>
-      <th>Status</th>
-      <th>Action</th>
-    </tr>
-  </thead>
-  <tbody>
-    <?php foreach ($articles as $article): ?>
-      <tr>
-        <td><?php echo htmlspecialchars($article['title']); ?></td>
-        <td><?php echo htmlspecialchars($article['authorID']); ?></td>
-        <td><?php echo date("d-m-Y H:i", strtotime($article['timePosted'])); ?></td>
-        <td><?php echo htmlspecialchars($article['status']); ?></td>
-        <td>
-          <form method="POST">
-            <input type="hidden" name="articleID" value="<?php echo htmlspecialchars($article['articleID']); ?>">
-            <button type="submit" name="approve" class="btn btn-success">Approve</button>
-            <button type="submit" name="reject" class="btn btn-danger">Reject</button>
-          </form>
-        </td>
-      </tr>
-    <?php endforeach; ?>
-  </tbody>
+    <thead>
+        <tr>
+            <th>Title</th>
+            <th>Author</th>
+            <th>Submitted Date</th>
+            <th>Status</th>
+            <th>Action</th>
+        </tr>
+    </thead>
+    <tbody>
+        <?php foreach ($articles as $article): ?>
+            <tr>
+                <td>
+                    <a href="view_article.php?articleID=<?php echo htmlspecialchars($article['articleID']); ?>">
+                        <?php echo htmlspecialchars($article['title']); ?>
+                    </a>
+                </td>
+                <td><?php echo htmlspecialchars($article['username']); ?></td>
+                <td><?php echo date("d-m-Y H:i", strtotime($article['timePosted'])); ?></td>
+                <td><?php echo htmlspecialchars($article['status']); ?></td>
+                <td>
+                    <form method="POST">
+                        <input type="hidden" name="articleID" value="<?php echo htmlspecialchars($article['articleID']); ?>">
+                        <button type="submit" name="approve" class="btn btn-success">Approve</button>
+                        <button type="submit" name="reject" class="btn btn-danger">Reject</button>
+                    </form>
+                </td>
+            </tr>
+        <?php endforeach; ?>
+    </tbody>
 </table>
     </div>
   </div>
