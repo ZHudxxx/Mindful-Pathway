@@ -24,10 +24,10 @@ if (isset($_SESSION['username'])) {
 }
 
 if (isset($_POST['approve']) || isset($_POST['reject'])) {
-    $article_id = $_POST['articleID'];
+    $article_id = $_POST['articleID'];  
     $status = isset($_POST['approve']) ? 'approved' : 'rejected';
 
-    $update_query = "UPDATE article SET status = '$status' WHERE articleID = '$articleID'";
+    $update_query = "UPDATE article SET status = '$status' WHERE articleID = '$article_id'";
     mysqli_query($dbc, $update_query);
 }
 
@@ -377,7 +377,7 @@ footer {
                             <td><?php echo $article['status']; ?></td>
                             <td>
                                 <form method="POST">
-                                    <input type="hidden" name="article_id" value="<?php echo $article['articleID']; ?>">
+                                    <input type="hidden" name="articleID" value="<?php echo $article['articleID']; ?>">
                                     <button type="submit" name="approve" class="btn btn-success">Approve</button>
                                     <button type="submit" name="reject" class="btn btn-danger">Reject</button>
                                 </form>
