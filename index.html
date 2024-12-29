@@ -338,58 +338,123 @@
     }
 
     /* Media Queries for Responsiveness */
-    @media (max-width: 768px) {
-      .header .logo {
-        font-size: 20px;
-      }
-
-      .header .menu {
-        flex-direction: column;
-        align-items: flex-start;
-      }
-
-      .header .menu li {
-        margin: 10px 0;
-      }
-
-      .main-banner h2 {
-        font-size: 24px;
-      }
-
-      .main-banner p {
-        font-size: 16px;
-      }
-
-      .facts .fact-box {
-        flex-direction: column;
-        align-items: center;
-      }
-
-      .facts .fact {
-        min-width: 200px;
-        margin-bottom: 10px;
-      }
-
-      .nav-arrows {
-        flex-direction: column;
-        align-items: center;
-        gap: 10px;
-      }
+  @media (max-width: 1024px) {
+    .header .menu {
+      flex-direction: column;
+      align-items: flex-start;
+      padding: 10px;
     }
 
-    @media (max-width: 480px) {
-      .main-banner h2 {
-        font-size: 20px;
-      }
-
-      .main-banner button {
-        width: 80%;
-      }
-
-      .facts .fact {
-        font-size: 14px;
-      }
+    .header .menu li {
+      margin: 5px 0;
     }
+
+    .main-banner {
+      padding: 15px;
+    }
+
+    .fact-box {
+      width: 90%;
+    }
+
+    .styled-section h2, .styled-section h3 {
+      font-size: 18px;
+    }
+
+    .styled-section p {
+      font-size: 14px;
+    }
+
+    .social-media-links a {
+      font-size: 14px;
+      padding: 8px 16px;
+    }
+
+    footer {
+      font-size: 14px;
+    }
+  }
+
+  @media (max-width: 768px) {
+    .header .logo img {
+      width: 30px;
+      height: 30px;
+    }
+
+    .header .logo span {
+      font-size: 18px;
+    }
+
+    .main-banner img {
+      width: 100%;
+      height: auto;
+    }
+
+    .fact-box {
+      width: 100%;
+      padding: 10px;
+    }
+
+    .styled-section {
+      margin: 10px auto;
+      padding: 15px;
+    }
+
+    .back-to-top {
+      width: 35px;
+      height: 35px;
+      font-size: 16px;
+    }
+  }
+
+  @media (max-width: 480px) {
+    .header {
+      flex-direction: column;
+      padding: 10px;
+    }
+
+    .header .menu {
+      align-items: center;
+    }
+
+    .header .menu li a {
+      font-size: 14px;
+    }
+
+    .main-banner {
+      padding: 10px;
+    }
+
+    .main-banner button {
+      width: 90%;
+      font-size: 14px;
+    }
+
+    .fact-box {
+      width: 100%;
+    }
+
+    .styled-section {
+      margin: 10px;
+    }
+
+    .styled-section h2, .styled-section h3 {
+      font-size: 16px;
+    }
+
+    .styled-section p {
+      font-size: 12px;
+    }
+
+    .social-media-links a {
+      font-size: 12px;
+      padding: 6px 12px;
+    }
+
+    footer {
+      font-size: 12px;
+    }
+  }
   </style>
 </head>
 <body>
