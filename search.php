@@ -1,0 +1,318 @@
+<?php
+session_start();
+$dbc = mysqli_connect("localhost", "root", "", "mindfulpathway");
+
+if (!$dbc) {
+    die("Database connection failed: " . mysqli_connect_error());
+}
+
+$query = isset($_GET['query']) ? mysqli_real_escape_string($dbc, $_GET['query']) : '';
+
+$searchResults = [];
+if ($query) {
+    $sql = "SELECT * FROM article WHERE 
+            (title LIKE '%$query%' OR content LIKE '%$query%') 
+            AND status = 'approved'";
+    $result = mysqli_query($dbc, $sql);
+
+    while ($row = mysqli_fetch_assoc($result)) {
+        $searchResults[] = $row;
+    }
+}
+?>
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mindful Pathway | User Dashboard</title>
+  <link rel="shortcut icon" href="img/favicon.png" type="image/x-icon">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background-color: #f5f5f5;
+      padding-top: 60px;
+    }
+
+    /* Header */
+    .header {
+      background-color: #3cacae;
+      color: white;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 10px;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      z-index: 1000;
+    }
+
+    .header .logo {
+      font-size: 24px;
+      font-weight: bold;
+      display: flex;
+      align-items: center;
+    }
+
+    .header .logo img {
+      width: 40px;
+      height: 40px;
+      margin-right: 10px;
+    }
+
+    /* Search Bar */
+    .search-bar {
+      display: flex;
+      align-items: center;
+      position: relative;
+    }
+
+    .search-bar input {
+      width: 300px;
+      padding: 8px;
+      border-radius: 20px;
+      border: 1px solid #ccc;
+    }
+
+    .search-bar button {
+      position: absolute;
+      right: 10px;
+      background: transparent;
+      border: none;
+      cursor: pointer;
+    }
+
+    /* Sidebar */
+    .sidebar {
+      height: 100%;
+      width: 250px;
+      position: fixed;
+      top: 0;
+      left: 0;
+      background-color: #3ea3a4;
+      padding-top: 60px;
+      z-index: 500;
+      color: white;
+      box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+      transition: 0.3s;
+    }
+
+    .sidebar a {
+      padding: 10px 15px;
+      text-decoration: none;
+      font-size: 18px;
+      color: white;
+      display: block;
+      transition: background-color 0.3s ease;
+      text-align: center;
+      margin-bottom: 10px;
+    }
+
+    .sidebar a:hover {
+      background-color: #575757;
+    }
+
+   .sidebar .title {
+      font-size: 24px;
+      padding-left: 20px;
+      margin-bottom: 30px;
+      margin-top: 20px;
+    }
+
+    .sidebar .active {
+      background-color: #5ce1e6;
+    }
+
+.sidebar .logout {
+  background-color: #5ce1e6;
+  color: #333;
+  width: 80%; 
+  text-align: center;
+  padding: 10px 10px;
+  border-radius: 25px; 
+  margin: 20px auto 0; 
+  margin-top: 80px;
+}
+
+.sidebar .logout:hover {
+  background-color: #b1fcff; 
+}
+    /* Main Content Area */
+    .main-content {
+      margin-left: 250px;
+      padding: 20px;
+      transition: margin-left 0.3s;
+    }
+    .main-content h1 {
+  font-size: 34px;
+  font-weight: bold;
+  text-align: left;
+  color: rgb(0, 0, 0);
+  margin-top: 4px; 
+  margin-bottom:0; 
+  text-shadow: 2px 2px 2px #00000066; 
+}
+
+.main-content i {
+  font-size: 15px;
+  text-align: left;
+  color: rgb(0, 0, 0);
+  display: block; 
+  margin-top: 0;
+  margin-bottom: 10px;
+}
+    .banner {
+      width: 100%;
+      height: 300px;
+      background-image: url('img/banner1.png'); 
+      background-size: cover;
+      background-position: center;
+      margin-bottom: 30px;
+    }
+
+    .recommended-articles {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 20px;
+    }
+
+    .article-card {
+      width: 500px;
+      background-color: white;
+      border-radius: 8px;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      overflow: hidden;
+      margin-bottom: 50px;
+    }
+
+    .article-card img {
+      width: 50px;
+      height: 50px;
+      object-fit: cover;
+    }
+
+    .article-card .content {
+      padding: 10px;
+    }
+
+    .article-card .content h3 {
+      margin: 0;
+      font-size: 18px;
+      color: #333;
+    }
+
+    .article-card .content p {
+      color: #555;
+      font-size: 14px;
+    }
+.article-button {
+  display: inline-block;
+  padding: 10px 20px;
+  background-color: #3cacae;
+  color: white;
+  text-decoration: none;
+  border-radius: 25px;
+  font-weight: bold;
+  text-align: center;
+  transition: background-color 0.3s, transform 0.3s;
+  margin-top: 10px;
+}
+
+.article-button:hover {
+  background-color: #2b8c8b;
+  transform: translateY(-3px);
+}
+
+.article-button:active {
+  background-color: #1f6363;
+  transform: translateY(1px);
+}
+  
+footer {
+  text-align: center;
+  background-color: #3cacae;
+  color: white;
+  padding: 15px;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 2; 
+}
+
+    .back-to-top {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      background-color: #359799;
+      color: white;
+      border: none;
+      border-radius: 50%;
+      width: 40px;
+      height: 40px;
+      font-size: 20px;
+      cursor: pointer;
+      display: none;
+      z-index: 1000;
+    }
+
+    .back-to-top:hover {
+      background-color: #5ce1e6;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Header -->
+  <div class="header">
+    <div class="logo">
+      <img src="img/favicon.png" alt="Logo">
+      <span>Mindful Pathway</span>
+    </div>
+    <div class="search-bar">
+   <form method="GET" action="search.php" id="search-form">
+      <input type="text" name="query" placeholder="Search..." id="search-input">
+      <button type="submit" class="fa fa-search"></button>
+   </form>
+</div>
+     <div class="main-content">
+    <h1>Search Results</h1>
+    <?php if (empty($searchResults)): ?>
+        <p>No results found for "<?php echo htmlspecialchars($query); ?>"</p>
+    <?php else: ?>
+        <?php foreach ($searchResults as $result): ?>
+            <div class="article-card">
+                <h3><?php echo htmlspecialchars($result['title']); ?></h3>
+                <p><?php echo htmlspecialchars(substr($result['content'], 0, 150)); ?>...</p>
+                <a href="article.php?id=<?php echo $result['articleID']; ?>">Read More</a>
+            </div>
+        <?php endforeach; ?>
+    <?php endif; ?>
+
+      <!-- Footer -->
+  <footer>
+    &copy; 2024 Mindful Pathway | All Rights Reserved
+  </footer>
+
+  <!-- Back to Top Button -->
+  <button class="back-to-top" onclick="scrollToTop()">↑</button>
+
+  <script>
+    // Close the search bar
+    function closeSearch() {
+      document.getElementById('search-input').value = '';
+    }
+
+    // Scroll to top function
+    function scrollToTop() {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+  </script>
+</body>
+</html>
