@@ -311,13 +311,13 @@ $user = $result->fetch_assoc();
 
                     <div class="info">
                         <label>Username:</label>
-                        <input type="text" name="username" value="<?php echo htmlspecialchars($user['username']); ?>" readonly>
+                        <input type="text" name="username" value="<?php echo htmlspecialchars($user['username'] ?? ''); ?>" readonly>
 
                         <label>Email:</label>
-                        <input type="email" name="email" value="<?php echo htmlspecialchars($user['email']); ?>" required>
+                        <input type="email" name="email" value="<?php echo htmlspecialchars($user['email'] ?? ''); ?>" required>
 
                         <label>Bio:</label>
-                        <textarea name="bio"><?php echo htmlspecialchars($user['bio']); ?></textarea>
+                        <textarea name="bio"><?php echo htmlspecialchars($user['bio'] ?? ''); ?></textarea>
                     </div>
 
                     <div class="save-btn">

@@ -1,14 +1,21 @@
 <?php
+// Start session
 session_start();
-include 'db_connection.php';
 
-// Redirect if not logged in
-if (!isset($_SESSION['adminID'])) {
-    header("Location: login.php");
+// Database connection
+$dbc = new mysqli("localhost", "root", "", "mindfulpathway");
+if ($dbc->connect_errno) {
+    echo "Failed to Open Database: " . $dbc->connect_error;
     exit();
 }
 
-$adminID = $_SESSION['adminID']; // Changed from userID to adminID
+// Authentication Check
+if (!isset($_SESSION['adminID'])) {
+    header('Location: login.php');
+    exit();
+}
+
+$adminID = $_SESSION['adminID']; // Get adminID from session
 
 // Handle profile updates
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -31,21 +38,24 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     // Update admin profile
     $query = "UPDATE admin SET email = ?, bio = ?, imgProfile = ? WHERE adminID = ?";
-    $stmt = $conn->prepare($query);
+    $stmt = $dbc->prepare($query);
     $stmt->bind_param("sssi", $email, $bio, $uploadedImage, $adminID);
-    $stmt->execute();
-
-    echo "<script>alert('Profile updated successfully!');</script>";
+    if ($stmt->execute()) {
+        echo "<script>alert('Profile updated successfully!');</script>";
+    } else {
+        echo "<script>alert('Failed to update profile.');</script>";
+    }
 }
 
 // Fetch admin data
 $query = "SELECT * FROM admin WHERE adminID = ?";
-$stmt = $conn->prepare($query);
+$stmt = $dbc->prepare($query);
 $stmt->bind_param("i", $adminID);
 $stmt->execute();
 $result = $stmt->get_result();
 $admin = $result->fetch_assoc();
 ?>
+
 
 <!DOCTYPE html>
 <html lang="en">
