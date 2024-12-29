@@ -18,20 +18,24 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $username = trim($_POST['username']);
     $password = trim($_POST['password']);
 
-    // Check in admins table
-    $sql = "SELECT adminID, password_hash FROM admin WHERE username = ?";
-    $stmt = $conn->prepare($sql);
-    $stmt->bind_param("s", $username);
-    $stmt->execute();
-    $result = $stmt->get_result();
+    // Determine if the login is for admin
+    $isAdmin = strpos($username, 'admin') !== false || strpos($username, '@mindfulpathway.com') !== false;
 
-    if ($result->num_rows === 1) {
-        $admin = $result->fetch_assoc();
+    if ($isAdmin) {
+       
+        $sql = "SELECT adminID, password_hash FROM admin WHERE username = ?";
+        $stmt = $conn->prepare($sql);
+        $stmt->bind_param("s", $username);
+        $stmt->execute();
+        $result = $stmt->get_result();
+
+        if ($result->num_rows === 1) {
+            $admin = $result->fetch_assoc();
 
         // Verify password
         if (password_verify($password, $admin['password_hash'])) {
             $_SESSION['adminID'] = $admin['adminID'];
-            echo "<script>alert('Welcome, Admin! Redirecting to admin homepage.'); window.location.href='admin/admin_home.html';</script>";
+            echo "<script>alert('Welcome, Admin! Redirecting to admin homepage.'); window.location.href='admin_home.html';</script>";
             exit();
         }
     }
@@ -43,18 +47,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $stmt->execute();
     $result = $stmt->get_result();
 
-    if ($result->num_rows === 1) {
-        $user = $result->fetch_assoc();
+        if ($result->num_rows === 1) {
+            $user = $result->fetch_assoc();
 
         // Verify password
         if (password_verify($password, $user['password_hash'])) {
             $_SESSION['userID'] = $user['userID'];
-            echo "<script>alert('Login successful! Redirecting to user homepage.'); window.location.href='user/user_home.html';</script>";
+            echo "<script>alert('Login successful! Redirecting to user homepage.'); window.location.href='user_home.html';</script>";
             exit();
         }
     }
 
-    echo "<script>alert('Invalid username or password!'); window.location.href='login.html';</script>";
+    echo "<script>alert('Invalid username or password!'); window.location.href='login.php';</script>";
 }
 
 $conn->close();

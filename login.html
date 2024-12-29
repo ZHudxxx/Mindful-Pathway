@@ -122,16 +122,18 @@
   </div>
 
   <script>
-    //function logIn() {
-            //const username = document.getElementById('username').value;
-           // const password = document.getElementById('password').value;
-          //  if (!username || !password ) {
-           //     alert("Please fill out all fields.");
+    function logIn() {
+           const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+          if (!username || !password ) {
+                alert("Please fill out all fields.");
                 return;
-          //  }
+           }
 
-          //  alert(`Account logged In for ${username}`);
-      //  }
+         alert(`Account logged In for ${username}`);
+      }
+    </script>
+     <script>
     document.addEventListener("DOMContentLoaded", () => {
       const passwordInput = document.querySelector(".input-group input[type='password']");
       const togglePassword = document.querySelector(".toggle-password");

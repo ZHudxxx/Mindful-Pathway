@@ -1,35 +1,36 @@
 <?php
 session_start();
 
-include('DBConnect.php');
+// Directly establish the database connection here
+$dbc = mysqli_connect("localhost", "root", "", "mindfulpathway");
+if (mysqli_connect_errno()) {
+    echo "Failed to Open Database: " . mysqli_connect_error();
+    exit();
+}
 
+// Check if the user is logged in
 if (isset($_SESSION['username'])) {
     $username = $_SESSION['username']; // Assuming 'username' is stored in session
 } else {
     header('Location: login.php');
     exit();
 }
+$articles = [];
 
-$query = "SELECT * FROM article ORDER BY timePosted DESC LIMIT 3"; 
-$result = mysqli_query($conn, $query);
+// Query to fetch the latest articles
+$query = "SELECT * FROM article WHERE status = 'approved' ORDER BY timePosted DESC LIMIT 3"; 
+$result = mysqli_query($dbc, $query);
 
 if (!$result) {
-    die("Query failed: " . mysqli_error($conn));
+    die("Query failed: " . mysqli_error($dbc));
 }
 
+// Fetch articles into array
 while ($row = mysqli_fetch_assoc($result)) {
     $articles[] = $row;
 }
-
-// Debug output
-if (empty($articles)) {
-    echo "No articles found.";
-} else {
-    echo "<pre>";
-    print_r($articles);
-    echo "</pre>";
-}
 ?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -76,28 +77,6 @@ if (empty($articles)) {
       margin-right: 10px;
     }
 
-    /* Search Bar */
-    .search-bar {
-      display: flex;
-      align-items: center;
-      position: relative;
-    }
-
-    .search-bar input {
-      width: 300px;
-      padding: 8px;
-      border-radius: 20px;
-      border: 1px solid #ccc;
-    }
-
-    .search-bar button {
-      position: absolute;
-      right: 10px;
-      background: transparent;
-      border: none;
-      cursor: pointer;
-    }
-
     /* Sidebar */
     .sidebar {
       height: 100%;
@@ -128,11 +107,11 @@ if (empty($articles)) {
       background-color: #575757;
     }
 
-    .sidebar .title {
+   .sidebar .title {
       font-size: 24px;
-      font-weight: bold;
       padding-left: 20px;
       margin-bottom: 30px;
+      margin-top: 20px;
     }
 
     .sidebar .active {
@@ -193,16 +172,17 @@ if (empty($articles)) {
     }
 
     .article-card {
-      width: 300px;
+      width: 500px;
       background-color: white;
       border-radius: 8px;
       box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
       overflow: hidden;
+      margin-bottom: 50px;
     }
 
     .article-card img {
-      width: 100%;
-      height: 150px;
+      width: 50px;
+      height: 50px;
       object-fit: cover;
     }
 
@@ -220,14 +200,34 @@ if (empty($articles)) {
       color: #555;
       font-size: 14px;
     }
+.article-button {
+  display: inline-block;
+  padding: 10px 20px;
+  background-color: #3cacae;
+  color: white;
+  text-decoration: none;
+  border-radius: 25px;
+  font-weight: bold;
+  text-align: center;
+  transition: background-color 0.3s, transform 0.3s;
+  margin-top: 10px;
+}
 
+.article-button:hover {
+  background-color: #2b8c8b;
+  transform: translateY(-3px);
+}
+
+.article-button:active {
+  background-color: #1f6363;
+  transform: translateY(1px);
+}
   
 footer {
   text-align: center;
   background-color: #3cacae;
   color: white;
   padding: 15px;
-  position: fixed;
   bottom: 0;
   left: 0;
   right: 0;
@@ -263,27 +263,22 @@ footer {
       <img src="img/favicon.png" alt="Logo">
       <span>Mindful Pathway</span>
     </div>
-    <div class="search-bar">
-      <input type="text" placeholder="Search..." id="search-input">
-      <button onclick="closeSearch()">×</button>
-    </div>
     <div class="menu">
       <i class="fas fa-bell" style="font-size: 20px; margin-right: 20px;" onclick="showNotifications()"></i>
-      <img src="uploads/<?php echo $_SESSION['img_Profile']; ?>" alt="Profile" style="width: 20px; height: 20px; border-radius: 50%; margin-right: 70px;">
+      <img src="uploads/<?php echo isset($_SESSION['img_Profile']) ? $_SESSION['img_Profile'] : 'default_profile.jpg'; ?>" 
+           alt="Profile" style="width: 20px; height: 20px; border-radius: 50%; margin-right: 70px;">
     </div>
   </div>
 
   <!-- Sidebar -->
   <div class="sidebar">
-    <div class="title"><?php echo "Welcome, $username"; ?></div>
-    <a href="user_home.html" class="active">Home</a>
-    <a href="about.html">About</a>
+    <div class="title"><?php echo "Welcome, " . htmlspecialchars($username); ?></div>
+    <a href="user_home.php" class="active">Home</a>
+    <a href="user_about.php">About</a>
     <a href="profile.php">My Profile</a>
-    <a href="article.html">Article</a>
+    <a href="articles.php">Article</a>
     <a href="feedback.html">Feedback</a>
-
     <a href="logout.php" class="logout">Logout</a>
-
   </div>
 
   <!-- Main Content Area -->
@@ -292,19 +287,24 @@ footer {
     <i>"It is not that I'm so smart. But I stay with the questions much longer." — Albert Einstein</i>
     <div class="banner"></div>
 
-    <!-- Recommended Articles Section -->
+      <!-- Recommended Articles Section -->
     <h2>Recommended Articles</h2>
     <div class="recommended-articles" id="recommended-articles">
+      <?php if (empty($articles)): ?>
+        <p>No articles found.</p>
+      <?php else: ?>
         <?php foreach ($articles as $article): ?>
-        <div class="article-card">
-            <img src="img/<?php echo htmlspecialchars($article['coverIMG'] ?: 'default.jpg'); ?>" 
+          <div class="article-card">
+            <img src="img/<?php echo htmlspecialchars($article['coverIMG'] ?: 'default.png'); ?>" 
                  alt="<?php echo htmlspecialchars($article['title']); ?>">
             <div class="content">
-                <h3><?php echo htmlspecialchars($article['title']); ?></h3>
-                <p><?php echo htmlspecialchars(substr($article['content'], 0, 100)); ?>...</p>
+              <h3><?php echo htmlspecialchars($article['title']); ?></h3>
+              <p><?php echo htmlspecialchars(substr($article['content'], 0, 100)); ?>...</p>
+              <a href="article.php?id=<?php echo $article['articleID']; ?>" class="article-button">Read More</a>
             </div>
-        </div>
-    <?php endforeach; ?>
+          </div>
+        <?php endforeach; ?>
+      <?php endif; ?>
     </div>
   </div>
 
@@ -327,15 +327,9 @@ footer {
       window.scrollTo({ top: 0, behavior: 'smooth' });
     }
 
-
-    $(document).ready(function() {
-  
-    });
-  </script>
- <script>
     // Bell notification function
     function showNotifications() {
-      alert("You have no new notifications."); 
+      alert("You have no new notifications.");
     }
   </script>
 </body>
