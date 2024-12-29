@@ -47,7 +47,7 @@ while ($row = mysqli_fetch_assoc($result)) {
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Mindful Pathway | Admin Dashboard</title>
+  <title>Article Management | Mindful Pathway </title>
   <link rel="shortcut icon" href="img/favicon.png" type="image/x-icon">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
@@ -315,6 +315,22 @@ footer {
             margin-bottom: 20px;
             align-items: center;
         }
+        .article-link {
+    text-decoration: none;
+    color: #007BFF;
+    font-weight: bold;
+    transition: color 0.3s, transform 0.2s;
+}
+
+.article-link:hover {
+    color: #0056b3;
+    transform: scale(1.1);
+}
+
+.article-link i {
+    margin-left: 5px;
+    font-size: 12px;
+}
         .hamburger {
   display: none;
   background: none;
@@ -420,7 +436,13 @@ footer {
             <tbody id="articleTable">
                 <?php foreach ($article as $article): ?>
                     <tr>
-                        <td><?php echo htmlspecialchars($article['title']); ?></td>
+                      <td>
+                        <a href="review_article.php?articleID=<?php echo htmlspecialchars($article['articleID']); ?>" 
+                           class="article-link">
+                            <?php echo htmlspecialchars($article['title']); ?>
+                            <i class="fas fa-external-link-alt"></i>
+                        </a>
+                    </td>
                         <td><?php echo htmlspecialchars($article['authorID']); ?></td>
                         <td><?php echo htmlspecialchars($article['timePosted']); ?></td>
                         <td><?php echo $article['status'] ? $article['status'] : 'Pending'; ?></td>
