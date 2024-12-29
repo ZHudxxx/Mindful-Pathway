@@ -351,8 +351,8 @@ if ($resultN) {
             </li>
           <?php endforeach; ?>
         </ul>
-
       <?php endif; ?>
+
     </div>
 
     <div class="hamburger" onclick="toggleSidebar()">
