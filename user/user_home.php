@@ -275,7 +275,7 @@ footer {
     <div class="title"><?php echo "Welcome, " . htmlspecialchars($username); ?></div>
     <a href="user_home.php" class="active">Home</a>
     <a href="user_about.php">About</a>
-    <a href="user_profileprofile.php">My Profile</a>
+    <a href="user_profile.php">My Profile</a>
     <a href="articles.php">Article</a>
     <a href="feedback.html">Feedback</a>
     <a href="../logout.php" class="logout">Logout</a>
