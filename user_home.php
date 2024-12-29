@@ -34,11 +34,12 @@ while ($row = mysqli_fetch_assoc($result)) {
 // Fetch unread notifications for the logged-in user
 $userID = $_SESSION['userID']; // Assuming userID is stored in the session
 $notifications = [];
-$query = "SELECT * FROM notifications WHERE userID = '$userID' AND is_read = 0 ORDER BY timePosted DESC";
-$result = mysqli_query($dbc, $query);
+$queryN = "SELECT * FROM notifications WHERE userID = '$userID' AND is_read = 0 ORDER BY timePosted DESC";
+$resultN = mysqli_query($dbc, $queryN);
 
-if ($result) {
-  $notifications = mysqli_fetch_all($result, MYSQLI_ASSOC);
+if ($resultN) {
+  $notifications = mysqli_fetch_all($resultN, MYSQLI_ASSOC);
+  echo '<pre>' . print_r($notifications, true) . '</pre>'; // Debug output
 } else {
   echo "Error fetching notifications: " . mysqli_error($dbc);
 }
@@ -344,12 +345,13 @@ if ($result) {
       <?php else: ?>
         <ul style="list-style: none; padding: 0; margin: 0;">
           <?php foreach ($notifications as $notification): ?>
-            <li style="padding: 10px; border-bottom: 1px solid #ddd;">
+            <li style="padding: 10px; border-bottom: 1px solid #ddd;" onclick="markAsRead(<?php echo $notification['notificationID']; ?>)">
               <p style="margin: 0;"><?php echo htmlspecialchars($notification['message']); ?></p>
               <small style="color: grey;"><?php echo $notification['timePosted']; ?></small>
             </li>
           <?php endforeach; ?>
         </ul>
+
       <?php endif; ?>
     </div>
 
@@ -365,7 +367,7 @@ if ($result) {
     <div class="title"><?php echo "Welcome, " . htmlspecialchars($username); ?></div>
     <a href="user_home.php" class="active">Home</a>
     <a href="user_about.php">About</a>
-    <a href="profile.php">My Profile</a>
+    <a href="user/user_profile.php">My Profile</a>
     <a href="articles.php">Article</a>
     <a href="feedback.html">Feedback</a>
     <a href="logout.php" class="logout">Logout</a>

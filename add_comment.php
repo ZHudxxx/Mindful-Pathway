@@ -40,12 +40,12 @@ if (mysqli_query($dbc, $query)) {
         $originalUserID = $originalComment['userID'];
 
         // Insert a notification for the user who posted the original comment
-        $message = "You have a new reply to your comment.";
-        $notificationQuery = "INSERT INTO notifications (userID, commentID, message) 
-                               VALUES ('$originalUserID', '$parentID', '$message')";
+        $message = $originalUserID." have reply to your comment.";
+        $notificationQuery = "INSERT INTO notifications (userID, commentID, articleID, messages) 
+                               VALUES ('$originalUserID', '$parentID','$articleID', '$message')";
         mysqli_query($dbc, $notificationQuery);
     }
-    
+
     header("Location: readarticle.php?id=$articleID"); // Redirect back to the article page
     exit;
 } else {
