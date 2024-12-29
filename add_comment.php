@@ -26,7 +26,7 @@ if (empty($commentContent)) {
 
 // Prepare and execute the query to insert the comment
 $commentContent = mysqli_real_escape_string($dbc, $commentContent);
-$query = "INSERT INTO comment (content, date, userID, articleID) 
+$query = "INSERT INTO comment (content, timePosted, userID, articleID) 
           VALUES ('$commentContent', NOW(),'$userID','$articleID')";
 
 if (mysqli_query($dbc, $query)) {

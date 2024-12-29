@@ -217,6 +217,14 @@ if ($row) {
             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
         }
 
+        .comment small {
+            font-size: 0.8em;
+            /* Makes the text smaller */
+            color: grey;
+            /* Changes the text color to grey */
+        }
+
+
         /* Media query for smaller screens */
         @media (max-width: 768px) {
             .article-container {
@@ -281,15 +289,16 @@ if ($row) {
                     <?php if (mysqli_num_rows($commentsResult) > 0): ?>
                         <?php while ($comment = mysqli_fetch_assoc($commentsResult)): ?>
                             <div class="comment">
-                                <p><strong><?= htmlspecialchars($comment['username']) ?></strong>: <?= htmlspecialchars($comment['content']) ?></p>
-                                <small>Posted on <?= htmlspecialchars($comment['timePosted']) ?></small>
+                                <p><strong><?= htmlspecialchars($comment['username']) ?></strong>: <?= htmlspecialchars($comment['content']) ?>
+                                    <small>Posted on <?= htmlspecialchars($comment['timePosted']) ?></small>
+                                </p>
                             </div>
                         <?php endwhile; ?>
                     <?php else: ?>
                         <p>No comments yet. Be the first to share your thoughts!</p>
                     <?php endif; ?>
                     <form action="add_comment.php" method="post">
-                        <textarea placeholder="Write a comment..." rows="3"
+                        <textarea name="comment_content" placeholder="Write a comment..." rows="3"
                             style="width: 100%; padding: 10px; border-radius: 5px; border: 1px solid #ccc;"></textarea>
                         <input type="hidden" name="article_id" value="<?= htmlspecialchars($xId) ?>">
                         <button type="submit"
