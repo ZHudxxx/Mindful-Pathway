@@ -288,9 +288,11 @@ footer {
       <span>Mindful Pathway</span>
     </div>
     <div class="search-bar">
-      <input type="text" placeholder="Search..." id="search-input">
-      <button onclick="closeSearch()">×</button>
-    </div>
+   <form method="GET" action="search.php" id="search-form">
+      <input type="text" name="query" placeholder="Search..." id="search-input">
+      <button type="submit" class="fa fa-search"></button>
+   </form>
+</div>
     <div class="menu">
       <i class="fas fa-bell" style="font-size: 20px; margin-right: 20px;" onclick="showNotifications()"></i>
       <img src="uploads/<?php echo isset($_SESSION['img_Profile']) ? $_SESSION['img_Profile'] : 'default-profile.jpg'; ?>" 
@@ -359,6 +361,40 @@ footer {
     function showNotifications() {
       alert("You have no new notifications.");
     }
+      document.getElementById('search-form').addEventListener('submit', function (e) {
+   const query = document.getElementById('search-input').value.toLowerCase().trim();
+   const articles = document.querySelectorAll('.article-card');
+
+   // Check if query is empty
+   if (!query) {
+       alert('Please enter a search term.');
+       e.preventDefault(); // Prevent form submission
+       return;
+   }
+
+   let found = false;
+
+   // Perform filtering
+   articles.forEach(article => {
+       const title = article.querySelector('h3').textContent.toLowerCase();
+       const content = article.querySelector('p').textContent.toLowerCase();
+
+       if (title.includes(query) || content.includes(query)) {
+           article.style.display = 'block';
+           found = true;
+       } else {
+           article.style.display = 'none';
+       }
+   });
+
+   // If no articles are found
+   if (!found) {
+       alert('No matching articles found.');
+   }
+
+   // Prevent form submission to the server if searching locally
+   e.preventDefault();
+});
   </script>
 </body>
 </html>
