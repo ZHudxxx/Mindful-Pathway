@@ -15,8 +15,6 @@ if (isset($_SESSION['username'])) {
     header('Location: login.php');
     exit();
 }
-
-// Initialize articles array to avoid errors if the query returns no results
 $articles = [];
 
 // Query to fetch the latest articles
@@ -77,28 +75,6 @@ while ($row = mysqli_fetch_assoc($result)) {
       width: 40px;
       height: 40px;
       margin-right: 10px;
-    }
-
-    /* Search Bar */
-    .search-bar {
-      display: flex;
-      align-items: center;
-      position: relative;
-    }
-
-    .search-bar input {
-      width: 300px;
-      padding: 8px;
-      border-radius: 20px;
-      border: 1px solid #ccc;
-    }
-
-    .search-bar button {
-      position: absolute;
-      right: 10px;
-      background: transparent;
-      border: none;
-      cursor: pointer;
     }
 
     /* Sidebar */
@@ -287,12 +263,6 @@ footer {
       <img src="img/favicon.png" alt="Logo">
       <span>Mindful Pathway</span>
     </div>
-    <div class="search-bar">
-   <form method="GET" action="search.php" id="search-form">
-      <input type="text" name="query" placeholder="Search..." id="search-input">
-      <button type="submit" class="fa fa-search"></button>
-   </form>
-</div>
     <div class="menu">
       <i class="fas fa-bell" style="font-size: 20px; margin-right: 20px;" onclick="showNotifications()"></i>
       <img src="uploads/<?php echo isset($_SESSION['img_Profile']) ? $_SESSION['img_Profile'] : 'default-profile.jpg'; ?>" 
@@ -361,40 +331,6 @@ footer {
     function showNotifications() {
       alert("You have no new notifications.");
     }
-      document.getElementById('search-form').addEventListener('submit', function (e) {
-   const query = document.getElementById('search-input').value.toLowerCase().trim();
-   const articles = document.querySelectorAll('.article-card');
-
-   // Check if query is empty
-   if (!query) {
-       alert('Please enter a search term.');
-       e.preventDefault(); // Prevent form submission
-       return;
-   }
-
-   let found = false;
-
-   // Perform filtering
-   articles.forEach(article => {
-       const title = article.querySelector('h3').textContent.toLowerCase();
-       const content = article.querySelector('p').textContent.toLowerCase();
-
-       if (title.includes(query) || content.includes(query)) {
-           article.style.display = 'block';
-           found = true;
-       } else {
-           article.style.display = 'none';
-       }
-   });
-
-   // If no articles are found
-   if (!found) {
-       alert('No matching articles found.');
-   }
-
-   // Prevent form submission to the server if searching locally
-   e.preventDefault();
-});
   </script>
 </body>
 </html>
