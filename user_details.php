@@ -23,24 +23,24 @@ if (isset($_SESSION['username'])) {
     header('Location: login.php');
     exit();
 }
+// Get user ID from URL
+if (isset($_GET['userID'])) {
+    $userID = $_GET['userID'];
+    
+    // Fetch user details
+    $query = "SELECT * FROM user WHERE userID = '$userID'";
+    $result = mysqli_query($dbc, $query);
 
-if (isset($_POST['approve']) || isset($_POST['Reject'])) {
-    $article_id = $_POST['articleID'];
-    $status = isset($_POST['Approve']) ? 'Approved' : 'Rejected';
+    if (!$result) {
+        die('Query Failed: ' . mysqli_error($dbc));
+    }
 
-
-    $update_query = "UPDATE article SET status = '$status' WHERE id = '$articleID'";
-    mysqli_query($conn, $update_query);
-}
-
-$query = "SELECT article.*, user.username FROM article 
-          LEFT JOIN user ON article.authorID = user.userID
-          WHERE article.status IS NULL ORDER BY article.timePosted DESC";
-$result = mysqli_query($conn, $query);
-
-$articles = [];
-while ($row = mysqli_fetch_assoc($result)) {
-    $articles[] = $row;
+    $user = mysqli_fetch_assoc($result);
+    if (!$user) {
+        die('User not found.');
+    }
+} else {
+    die('User ID not provided.');
 }
 
 ?>
@@ -50,7 +50,7 @@ while ($row = mysqli_fetch_assoc($result)) {
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Article Management | Mindful Pathway </title>
+  <title>User Management | Mindful Pathway </title>
   <link rel="shortcut icon" href="img/favicon.png" type="image/x-icon">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
@@ -235,7 +235,7 @@ footer {
       background-color: #5ce1e6;
     }
     .admin-section {
-        margin-top: 30px;
+        margin-top: 10px;
     }
 
     .admin-card {
@@ -259,14 +259,13 @@ footer {
         background-color: #3ea3a4;
         color: white;
         border: none;
-        border-radius: 5px;
+        border-radius: 25px;
         cursor: pointer;
     }
 
     .admin-btn:hover {
         background-color: #359799;
     }
-
     table {
         width: 100%;
         border-collapse: collapse;
@@ -333,6 +332,26 @@ footer {
 .article-link i {
     margin-left: 5px;
     font-size: 12px;
+}
+button {
+  padding: 12px 20px;
+  background-color: #3ea3a4; 
+  color: white;
+  border: none;
+  border-radius: 25px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+  margin-top: 20px;
+}
+
+button:hover {
+  background-color: #359799; 
+  transform: scale(1.05);
+}
+
+button:active {
+  background-color: #298c88; 
 }
         .hamburger {
   display: none;
@@ -408,8 +427,8 @@ footer {
     <a href="admin_home.php" >Home</a>
     <a href="admin_about.php">About</a>
     <a href="profile.php">My Profile</a>
-    <a href="article_manage.php" class="active">Manage Articles</a>
-    <a href="user_manage.php">Manage Users</a>
+    <a href="article_manage.php">Manage Articles</a>
+    <a href="user_manage.php"  class="active">Manage Users</a>
     <a href="feedback.html">Feedback</a>
 
     <a href="logout.php" class="logout">Logout</a>
@@ -417,52 +436,28 @@ footer {
 
  <!-- Main Content Area -->
  <div class="main-content">
-    <h1>Manage Article</h1>
-    <i>Here you can manage articles posted by users. You can approve or reject articles.</i>
+    <h1>User Details</h1>
 
     <div class="container">
+       
+<!-- Manage Users Section -->
+  <div class="admin-section">
+    <div class="admin-card">
+        <?php  $profile_picture = !empty($user['imgProfile']) ? $user['imgProfile'] : 'default.jpg';
+        ?>
+        <img src="uploads/<?php echo htmlspecialchars($profile_picture); ?>" alt="Profile Picture" style="width: 150px; height: 150px;">
+        <?php else: ?>
+            <p>No profile picture available.</p>
+        <?php endif; ?
+   
+        <p><strong>Username:</strong> <?php echo htmlspecialchars($user['username']); ?></p>
+        <p><strong>Email:</strong> <?php echo htmlspecialchars($user['email']); ?></p>
+        <p><strong>Bio:</strong> <?php echo htmlspecialchars($user['bio']); ?></p>
         
-        <div class="search-bar">
-            <input type="text" id="searchInput" class="form-control" placeholder="Search articles...">
-        </div>
 
-        <table class="table table-bordered">
-            <thead>
-                <tr>
-                    <th>Title</th>
-                    <th>Author</th>
-                    <th>Submitted Date</th>
-                    <th>Status</th>
-                    <th>Action</th>
-                </tr>
-            </thead>
-            <tbody id="articleTable">
-                <?php foreach ($article as $article): ?>
-                    <tr>
-                      <td>
-                        <a href="review_article.php?articleID=<?php echo htmlspecialchars($article['articleID']); ?>" 
-                           class="article-link">
-                            <?php echo htmlspecialchars($article['title']); ?>
-                            <i class="fas fa-external-link-alt"></i>
-                        </a>
-                    </td>
-                        <td><?php echo htmlspecialchars($article['authorID']); ?></td>
-                        <td><?php echo htmlspecialchars($article['timePosted']); ?></td>
-                        <td><?php echo $article['status'] ? $article['status'] : 'Pending'; ?></td>
-                        <td>
-                            <form method="POST" style="display: inline;">
-                                <input type="hidden" name="article_id" value="<?php echo $article['articleID']; ?>">
-                                <button type="submit" name="approve" class="btn btn-success">Approve</button>
-                            </form>
-                            <form method="POST" style="display: inline;">
-                                <input type="hidden" name="article_id" value="<?php echo $article['articleID']; ?>">
-                                <button type="submit" name="reject" class="btn btn-danger">Reject</button>
-                            </form>
-                        </td>
-                    </tr>
-                <?php endforeach; ?>
-            </tbody>
-        </table>
+        <!-- Update and Delete Buttons -->
+        <button href="update_user.php?userID=<?php echo $user['userID']; ?>" class="btn-success">Update User</button>
+        <button href="delete_user.php?userID=<?php echo $user['userID']; ?>" class="btn-danger" onclick="return confirm('Are you sure you want to delete this user?')">Delete User</button>
     </div>
 
      
@@ -476,53 +471,49 @@ footer {
 
   <!-- Back to Top Button -->
   <button class="back-to-top" onclick="scrollToTop()">↑</button>
+  <button href="user_manage.php">Back to User Management</button>
 
   <script>
     function showNotifications() {
       alert("You have no new notifications."); 
     }
 
-    // Scroll to top function
     function scrollToTop() {
       window.scrollTo({ top: 0, behavior: 'smooth' });
     }
 
-    // Function to handle article approval
-    function approveArticle(articleID) {
-      if (confirm("Are you sure you want to approve this article?")) {
-        alert("Article " + articleID + " approved!");
-      }
-    }
     const searchInput = document.getElementById('searchInput');
-    const articleTable = document.getElementById('articleTable');
+    const userTable = document.getElementById('userTable');
 
     searchInput.addEventListener('keyup', function () {
         const filter = searchInput.value.toLowerCase();
-        const rows = articleTable.getElementsByTagName('tr');
+        const rows = userTable.getElementsByTagName('tr');
         Array.from(rows).forEach(row => {
-            const titleCell = row.getElementsByTagName('td')[0];
-            if (titleCell) {
-                const titleText = titleCell.textContent || titleCell.innerText;
-                row.style.display = titleText.toLowerCase().includes(filter) ? '' : 'none';
+            const usernameCell = row.getElementsByTagName('td')[1]; // Assuming username is in the second column
+            if (usernameCell) {
+                const usernameText = usernameCell.textContent || usernameCell.innerText;
+                row.style.display = usernameText.toLowerCase().includes(filter) ? '' : 'none';
             }
         });
     });
+
     function toggleSidebar() {
-  var sidebar = document.querySelector('.sidebar');
-  if (sidebar.style.display === 'none' || sidebar.style.display === '') {
-    sidebar.style.display = 'block'; 
-  } else {
-    sidebar.style.display = 'none'; 
-  }
-}
-window.addEventListener('resize', function() {
-  var sidebar = document.querySelector('.sidebar');
-  if (window.innerWidth > 768) {
-    sidebar.style.display = 'block';
-  } else {
-    sidebar.style.display = 'none'; 
-  }
-});
-</script>
+        var sidebar = document.querySelector('.sidebar');
+        if (sidebar.style.display === 'none' || sidebar.style.display === '') {
+            sidebar.style.display = 'block'; 
+        } else {
+            sidebar.style.display = 'none'; 
+        }
+    }
+
+    window.addEventListener('resize', function() {
+        var sidebar = document.querySelector('.sidebar');
+        if (window.innerWidth > 768) {
+            sidebar.style.display = 'block';
+        } else {
+            sidebar.style.display = 'none'; 
+        }
+    });
+  </script>
 </body>
 </html>
