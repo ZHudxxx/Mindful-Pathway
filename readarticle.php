@@ -205,25 +205,27 @@ if ($row) {
             color: #5ce1e6;
         }
 
-        /* Comments section */
         .comments {
             flex: 1;
-            /* Take up less space compared to article */
             min-width: 300px;
-            /* Ensure it doesn't shrink too small */
             background-color: #f9f9f9;
             padding: 20px;
             border-radius: 10px;
             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
         }
 
-        .comment small {
-            font-size: 0.8em;
-            /* Makes the text smaller */
-            color: grey;
-            /* Changes the text color to grey */
+        .comments a {
+            color: #3cacae;
+            text-decoration: none;
         }
 
+        .comments a:hover {
+            text-decoration: underline;
+        }
+
+        .comments form {
+            margin-top: 10px;
+        }
 
         /* Media query for smaller screens */
         @media (max-width: 768px) {
@@ -276,27 +278,63 @@ if ($row) {
                     <?= $rowList['content'] ?>
                 </div>
                 <?php
-                $commentsQuery = "SELECT comment.content, comment.timePosted, user.username 
-                  FROM comment
-                  JOIN user ON comment.userID = user.userID 
-                  WHERE comment.articleID = '$xId'
-                  ORDER BY comment.timePosted DESC";
+                $commentsQuery = "
+                        SELECT 
+                            comment.commentID, 
+                            comment.content, 
+                            comment.timePosted, 
+                            comment.parentID, 
+                            user.username 
+                        FROM 
+                            comment 
+                        JOIN 
+                            user ON comment.userID = user.userID 
+                        WHERE 
+                            comment.articleID = '$xId' 
+                        ORDER BY 
+                            comment.parentID ASC, comment.timePosted DESC";
                 $commentsResult = mysqli_query($dbc, $commentsQuery);
+
+                $comments = [];
+                while ($row = mysqli_fetch_assoc($commentsResult)) {
+                    $comments[] = $row;
+                }
+
+                function displayComments($comments, $parentID = NULL, $level = 0)
+                {
+                    foreach ($comments as $comment) {
+                        if ($comment['parentID'] == $parentID) {
+                            // Indent replies based on nesting level
+                            echo '<div style="margin-left: ' . (20 * $level) . 'px; padding: 10px; border-left: 2px solid #ccc;">';
+                            echo '<strong>' . htmlspecialchars($comment['username']) . '</strong>: ' . htmlspecialchars($comment['content']);
+                            echo '<br><small style="color: grey; font-size: 0.8em;">Posted on ' . htmlspecialchars($comment['timePosted']) . '</small>';
+
+                            // Reply link and hidden form
+                            echo '<a href="javascript:void(0);" onclick="toggleReplyForm(' . $comment['commentID'] . ')" style="color: #3cacae; text-decoration: none; margin-left: 10px;">Reply</a>';
+                            echo '<form id="reply-form-' . $comment['commentID'] . '" action="add_comment.php" method="post" style="display: none; margin-top: 5px;">';
+                            echo '<input type="hidden" name="article_id" value="' . htmlspecialchars($_GET['id']) . '">';
+                            echo '<input type="hidden" name="parent_id" value="' . htmlspecialchars($comment['commentID']) . '">';
+                            echo '<textarea name="comment_content" rows="2" placeholder="Reply to this comment..." 
+                            style="width: 100%; padding: 10px; border-radius: 5px; border: 1px solid #ccc;"></textarea>';
+                            echo '<button type="submit" style="margin-top: 10px; background-color: #3cacae; color: white; border: none; border-radius: 5px; cursor: pointer;">Reply</button>';
+                            echo '</form>';
+                            echo '</div>';
+                            // Recursive call for child comments
+                            displayComments($comments, $comment['commentID'], $level + 1);
+                        }
+                    }
+                }
                 ?>
                 <!-- Comments Section -->
                 <div class="comments">
                     <h3>Comments</h3>
-                    <?php if (mysqli_num_rows($commentsResult) > 0): ?>
-                        <?php while ($comment = mysqli_fetch_assoc($commentsResult)): ?>
-                            <div class="comment">
-                                <p><strong><?= htmlspecialchars($comment['username']) ?></strong>: <?= htmlspecialchars($comment['content']) ?>
-                                    <small>Posted on <?= htmlspecialchars($comment['timePosted']) ?></small>
-                                </p>
-                            </div>
-                        <?php endwhile; ?>
-                    <?php else: ?>
-                        <p>No comments yet. Be the first to share your thoughts!</p>
-                    <?php endif; ?>
+                    <?php
+                    if (!empty($comments)) {
+                        displayComments($comments);
+                    } else {
+                        echo '<p>No comments yet. Be the first to share your thoughts!</p>';
+                    }
+                    ?>
                     <form action="add_comment.php" method="post">
                         <textarea name="comment_content" placeholder="Write a comment..." rows="3"
                             style="width: 100%; padding: 10px; border-radius: 5px; border: 1px solid #ccc;"></textarea>
@@ -310,6 +348,18 @@ if ($row) {
             </div>
         </div>
     </div>
+
+    <script>
+        function toggleReplyForm(commentID) {
+            const form = document.getElementById(`reply-form-${commentID}`);
+            if (form.style.display === 'none' || form.style.display === '') {
+                form.style.display = 'block';
+            } else {
+                form.style.display = 'none';
+            }
+        }
+    </script>
+
     <!-- Footer -->
     <footer>
         &copy; 2024 Mindful Pathway | All Rights Reserved

@@ -11,13 +11,13 @@ if (!isset($_SESSION['userID'])) {
     exit; // Ensure the script stops executing after the redirect
 }
 
-
 // Get the user ID from the session
 $userID = $_SESSION['userID'];
 
 // Get the form data
 $articleID = $_POST['article_id'];
 $commentContent = trim($_POST['comment_content']);
+$parentID = isset($_POST['parent_id']) && is_numeric($_POST['parent_id']) ? $_POST['parent_id'] : NULL; // Parent ID for replies
 
 // Validate the input
 if (empty($commentContent)) {
@@ -26,8 +26,8 @@ if (empty($commentContent)) {
 
 // Prepare and execute the query to insert the comment
 $commentContent = mysqli_real_escape_string($dbc, $commentContent);
-$query = "INSERT INTO comment (content, timePosted, userID, articleID) 
-          VALUES ('$commentContent', NOW(),'$userID','$articleID')";
+$query = "INSERT INTO comment (content, timePosted, userID, articleID, parentID) 
+          VALUES ('$commentContent', NOW(), '$userID', '$articleID', " . ($parentID ? "'$parentID'" : "NULL") . ")";
 
 if (mysqli_query($dbc, $query)) {
     header("Location: readarticle.php?id=$articleID"); // Redirect back to the article page

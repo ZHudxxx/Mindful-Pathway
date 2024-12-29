@@ -1,20 +1,21 @@
 <?php
 session_start();
 
+// Database connection
 $dbc = new mysqli("localhost", "root", "", "mindfulpathway");
 if ($dbc->connect_errno) {
     echo "Failed to Open Database: " . $dbc->connect_error;
     exit();
 }
-
 if (isset($_SESSION['username'])) {
     $username = $_SESSION['username'];
-    $stmt = $dbc->prepare("SELECT * FROM admin WHERE username = ?");
-    $stmt->bind_param("s", $username);
-    $stmt->execute();
-    $result = $stmt->get_result();
+    
 
-    if ($result->num_rows == 0) {
+    $query = "SELECT * FROM admin WHERE username = '$username'";
+    $result = mysqli_query($conn, $query);
+
+  
+    if (mysqli_num_rows($result) == 0) {
         header('Location: login.php');
         exit();
     }
@@ -23,38 +24,33 @@ if (isset($_SESSION['username'])) {
     exit();
 }
 
-$stmt = $dbc->prepare("
-    SELECT article.articleID, article.title, article.timePosted, article.status, user.username 
-    FROM article 
-    JOIN user ON article.authorID = user.userID 
-    ORDER BY timePosted DESC LIMIT 5
-");
-$stmt->execute();
-$result = $stmt->get_result();
+if (isset($_POST['approve']) || isset($_POST['Reject'])) {
+    $article_id = $_POST['articleID'];
+    $status = isset($_POST['Approve']) ? 'Approved' : 'Rejected';
+
+
+    $update_query = "UPDATE article SET status = '$status' WHERE id = '$articleID'";
+    mysqli_query($conn, $update_query);
+}
+
+$query = "SELECT article.*, user.username FROM article 
+          LEFT JOIN user ON article.authorID = user.userID
+          WHERE article.status IS NULL ORDER BY article.timePosted DESC";
+$result = mysqli_query($conn, $query);
 
 $articles = [];
-while ($row = $result->fetch_assoc()) {
-    $row['status'] = $row['status'] ?: 'Pending';
+while ($row = mysqli_fetch_assoc($result)) {
     $articles[] = $row;
 }
 
-
-// Fetch Users (Preview)
-$stmt_users = $dbc->prepare("SELECT userID, username, bio, email FROM user ORDER BY username ASC LIMIT 5");
-$stmt_users->execute();
-$result_users = $stmt_users->get_result();
-
-$users = [];
-while ($row = $result_users->fetch_assoc()) {
-    $users[] = $row;
-}
 ?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Mindful Pathway | Admin Dashboard</title>
+  <title>Article Management | Mindful Pathway </title>
   <link rel="shortcut icon" href="img/favicon.png" type="image/x-icon">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
@@ -95,6 +91,29 @@ while ($row = $result_users->fetch_assoc()) {
       height: 40px;
       margin-right: 10px;
     }
+
+    /* Search Bar */
+    .search-bar {
+      display: flex;
+      align-items: center;
+      position: relative;
+    }
+
+    .search-bar input {
+      width: 300px;
+      padding: 8px;
+      border-radius: 20px;
+      border: 1px solid #ccc;
+    }
+
+    .search-bar button {
+      position: absolute;
+      right: 10px;
+      background: transparent;
+      border: none;
+      cursor: pointer;
+    }
+
     /* Sidebar */
     .sidebar {
       height: 100%;
@@ -127,9 +146,9 @@ while ($row = $result_users->fetch_assoc()) {
 
     .sidebar .title {
       font-size: 24px;
+      font-weight: bold;
       padding-left: 20px;
       margin-bottom: 30px;
-      margin-top: 20px;
     }
 
     .sidebar .active {
@@ -189,6 +208,7 @@ footer {
   background-color: #3cacae;
   color: white;
   padding: 15px;
+  position: fixed;
   bottom: 0;
   left: 0;
   right: 0;
@@ -267,6 +287,7 @@ footer {
         color: white;
     }
 
+  /* Approve and Reject Buttons */
 .btn {
   padding: 5px 15px;
   font-size: 14px;
@@ -293,8 +314,11 @@ footer {
 .btn-danger:hover {
   background-color: #da190b;
 }
-
-.article-link {
+.search-bar {
+            margin-bottom: 20px;
+            align-items: center;
+        }
+        .article-link {
     text-decoration: none;
     color: #007BFF;
     font-weight: bold;
@@ -310,7 +334,7 @@ footer {
     margin-left: 5px;
     font-size: 12px;
 }
-.hamburger {
+        .hamburger {
   display: none;
   background: none;
   border: none;
@@ -361,128 +385,130 @@ footer {
 </head>
 <body>
 
-<!-- Header -->
-<div class="header">
-  <div class="logo">
-    <img src="img/favicon.png" alt="Logo">
-    <span>Mindful Pathway</span>
-  </div>
-  <div class="menu">
-    <i class="fas fa-bell" style="font-size: 20px; margin-right: 20px;" onclick="showNotifications()"></i>
-    <img src="uploads/<?php echo isset($_SESSION['img_Profile']) ? htmlspecialchars($_SESSION['img_Profile']) : 'default_profile.jpg'; ?>" 
-         alt="Profile" style="width: 20px; height: 20px; border-radius: 50%; margin-right: 70px;">
-  </div>
-  <div class="hamburger" onclick="toggleSidebar()">
-    <span></span>
-    <span></span>
-    <span></span>
-  </div>
-</div>
-
-<!-- Sidebar -->
-<div class="sidebar">
-  <div class="title"><?php echo "Welcome, " . htmlspecialchars($username); ?></div>
-  <a href="admin_home.php" class="active">Home</a>
-  <a href="admin_about.php">About</a>
-  <a href="profile.php">My Profile</a>
-  <a href="article_manage.php">Manage Articles</a>
-  <a href="user_manage.php">Manage Users</a>
-  <a href="feedback.html">Feedback</a>
-  <a href="logout.php" class="logout">Logout</a>
-</div>
-
-<!-- Main Content Area -->
-<div class="main-content">
-  <h1>Admin Dashboard</h1>
-  <i>"The best way to predict the future is to create it." — Peter Drucker</i>
-
-  <!-- Manage Articles Section -->
-  <div class="admin-section">
-    <div class="admin-card">
-      <h2>Manage Articles</h2>
-      <p>Here you can manage articles posted by users. You can approve or reject articles.</p>
-      <table class="table table-bordered">
-    <thead>
-        <tr>
-            <th>Title</th>
-            <th>Author</th>
-            <th>Submitted Date</th>
-            <th>Status</th>
-        </tr>
-    </thead>
-    <tbody>
-        <?php foreach ($articles as $article): ?>
-            <tr>
-                <td>
-                    <a href="review_article.php?articleID=<?php echo htmlspecialchars($article['articleID']); ?>" 
-                       class="article-link">
-                        <?php echo htmlspecialchars($article['title']); ?>
-                        <i class="fas fa-external-link-alt"></i>
-                    </a>
-                </td>
-                <td><?php echo htmlspecialchars($article['username']); ?></td>
-                <td><?php echo date("d-m-Y", strtotime($article['timePosted'])); ?></td>
-                <td><?php echo htmlspecialchars($article['status']); ?></td>
-            </tr>
-        <?php endforeach; ?>
-    </tbody>
-</table>
+  <!-- Header -->
+  <div class="header">
+    <div class="logo">
+      <img src="img/favicon.png" alt="Logo">
+      <span>Mindful Pathway</span>
+    </div>
+    <div class="menu">
+      <i class="fas fa-bell" style="font-size: 20px; margin-right: 20px;" onclick="showNotifications()"></i>
+      <img src="uploads/<?php echo $_SESSION['img_Profile']; ?>" alt="Profile" style="width: 20px; height: 20px; border-radius: 50%; margin-right: 70px;">
+    </div>
+    <div class="hamburger" onclick="toggleSidebar()">
+      <span></span>
+      <span></span>
+      <span></span>
     </div>
   </div>
 
-  <!-- Manage Users Section -->
-  <div class="admin-section">
-    <div class="admin-card">
-      <h2>Manage Users</h2>
-      <p>Preview Users of Mindful Pathway.</p>
-      <table class="table table-bordered">
-        <thead>
-          <tr>
-            <th>UserID</th>
-            <th>Username</th>
-            <th>Email</th>
-            <th>Bio</th>
-          </tr>
-        </thead>
-        <tbody>
-          <?php foreach ($users as $user): ?>
-            <tr>
-              <td><?php echo htmlspecialchars($user['userID']); ?></td>
-              <td><?php echo htmlspecialchars($user['username']); ?></td>
-              <td><?php echo htmlspecialchars($user['email']); ?></td>
-              <td><?php echo htmlspecialchars($user['bio']); ?></td>
-            </tr>
-          <?php endforeach; ?>
-        </tbody>
-      </table>
-    </div>
+  <!-- Sidebar -->
+  <div class="sidebar">
+    <div class="title"><?php echo "Welcome, $username"; ?></div>
+    <a href="admin_home.php" >Home</a>
+    <a href="admin_about.php">About</a>
+    <a href="profile.php">My Profile</a>
+    <a href="article_manage.php" class="active">Manage Articles</a>
+    <a href="user_manage.php">Manage Users</a>
+    <a href="feedback.html">Feedback</a>
+
+    <a href="logout.php" class="logout">Logout</a>
   </div>
+
+ <!-- Main Content Area -->
+ <div class="main-content">
+    <h1>Manage Article</h1>
+    <i>Here you can manage articles posted by users. You can approve or reject articles.</i>
+
+    <div class="container">
+        
+        <div class="search-bar">
+            <input type="text" id="searchInput" class="form-control" placeholder="Search articles...">
+        </div>
+
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th>Title</th>
+                    <th>Author</th>
+                    <th>Submitted Date</th>
+                    <th>Status</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody id="articleTable">
+                <?php foreach ($article as $article): ?>
+                    <tr>
+                      <td>
+                        <a href="review_article.php?articleID=<?php echo htmlspecialchars($article['articleID']); ?>" 
+                           class="article-link">
+                            <?php echo htmlspecialchars($article['title']); ?>
+                            <i class="fas fa-external-link-alt"></i>
+                        </a>
+                    </td>
+                        <td><?php echo htmlspecialchars($article['authorID']); ?></td>
+                        <td><?php echo htmlspecialchars($article['timePosted']); ?></td>
+                        <td><?php echo $article['status'] ? $article['status'] : 'Pending'; ?></td>
+                        <td>
+                            <form method="POST" style="display: inline;">
+                                <input type="hidden" name="article_id" value="<?php echo $article['articleID']; ?>">
+                                <button type="submit" name="approve" class="btn btn-success">Approve</button>
+                            </form>
+                            <form method="POST" style="display: inline;">
+                                <input type="hidden" name="article_id" value="<?php echo $article['articleID']; ?>">
+                                <button type="submit" name="reject" class="btn btn-danger">Reject</button>
+                            </form>
+                        </td>
+                    </tr>
+                <?php endforeach; ?>
+            </tbody>
+        </table>
+    </div>
+
+     
 </div>
 
-       <!-- Footer -->
+
+  <!-- Footer -->
   <footer>
     &copy; 2024 Mindful Pathway | All Rights Reserved
   </footer>
+
+  <!-- Back to Top Button -->
   <button class="back-to-top" onclick="scrollToTop()">↑</button>
 
   <script>
     function showNotifications() {
       alert("You have no new notifications."); 
     }
-       </script>
-<script>
-    window.onscroll = function() {
-        const backToTopButton = document.querySelector('.back-to-top');
-        if (document.body.scrollTop > 100 || document.documentElement.scrollTop > 100) {
-            backToTopButton.style.display = "block"; // Show the button
-        } else {
-            backToTopButton.style.display = "none"; // Hide the button
-        }
-    };
+
+    // Scroll to top function
     function scrollToTop() {
-        window.scrollTo({ top: 0, behavior: 'smooth' });
+      window.scrollTo({ top: 0, behavior: 'smooth' });
     }
-    
+
+    // Function to handle article approval
+    function approveArticle(articleID) {
+      if (confirm("Are you sure you want to approve this article?")) {
+        alert("Article " + articleID + " approved!");
+      }
+    }
+  </script>
+   <script>
+    const searchInput = document.getElementById('searchInput');
+    const articleTable = document.getElementById('articleTable');
+
+    searchInput.addEventListener('keyup', function () {
+        const filter = searchInput.value.toLowerCase();
+        const rows = articleTable.getElementsByTagName('tr');
+        Array.from(rows).forEach(row => {
+            const titleCell = row.getElementsByTagName('td')[0];
+            if (titleCell) {
+                const titleText = titleCell.textContent || titleCell.innerText;
+                row.style.display = titleText.toLowerCase().includes(filter) ? '' : 'none';
+            }
+        });
+    });
     function toggleSidebar() {
   var sidebar = document.querySelector('.sidebar');
   if (sidebar.style.display === 'none' || sidebar.style.display === '') {
