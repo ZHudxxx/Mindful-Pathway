@@ -493,8 +493,6 @@ footer {
         alert("Article " + articleID + " approved!");
       }
     }
-  </script>
-   <script>
     const searchInput = document.getElementById('searchInput');
     const articleTable = document.getElementById('articleTable');
 
