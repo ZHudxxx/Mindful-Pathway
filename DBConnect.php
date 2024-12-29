@@ -1,9 +1,10 @@
 <?php
-
 $dbc = mysqli_connect("localhost", "root", "", "mindfulpathway");
+
 if (mysqli_connect_errno()) {
-    echo "Failed to Open Database" . mysqli_connect_error($dbc);
+    echo "Failed to connect to the database: " . mysqli_connect_error();
 }
+
 
 if (!function_exists('query')) {
     function query($query)
@@ -21,3 +22,4 @@ if (!function_exists('query')) {
         return $rows;
     }
 }
+?>
