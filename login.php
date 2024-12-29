@@ -49,7 +49,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         // Verify password
         if (password_verify($password, $user['password_hash'])) {
             $_SESSION['userID'] = $user['userID'];
-            echo "<script>alert('Login successful! Redirecting to user homepage.'); window.location.href='user_home.php';</script>";
+            echo "<script>alert('Login successful! Redirecting to user homepage.'); window.location.href='user/user_home.php';</script>";
             exit();
         }
     }

@@ -4,7 +4,7 @@ include 'db_connection.php';
 
 // Redirect if not logged in
 if (!isset($_SESSION['adminID'])) {
-    header("Location: ../login.php");
+    header("Location: login.php");
     exit();
 }
 
