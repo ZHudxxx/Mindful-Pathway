@@ -30,6 +30,22 @@ $query = "INSERT INTO comment (content, timePosted, userID, articleID, parentID)
           VALUES ('$commentContent', NOW(), '$userID', '$articleID', " . ($parentID ? "'$parentID'" : "NULL") . ")";
 
 if (mysqli_query($dbc, $query)) {
+
+    // If the comment is a reply, send a notification to the original commenter
+    if ($parentID) {
+        // Get the user ID of the person who posted the original comment
+        $getOriginalCommentQuery = "SELECT userID FROM comment WHERE commentID = '$parentID'";
+        $result = mysqli_query($dbc, $getOriginalCommentQuery);
+        $originalComment = mysqli_fetch_assoc($result);
+        $originalUserID = $originalComment['userID'];
+
+        // Insert a notification for the user who posted the original comment
+        $message = "You have a new reply to your comment.";
+        $notificationQuery = "INSERT INTO notifications (userID, commentID, message) 
+                               VALUES ('$originalUserID', '$parentID', '$message')";
+        mysqli_query($dbc, $notificationQuery);
+    }
+    
     header("Location: readarticle.php?id=$articleID"); // Redirect back to the article page
     exit;
 } else {
