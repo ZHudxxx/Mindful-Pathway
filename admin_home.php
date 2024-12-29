@@ -95,29 +95,6 @@ while ($row = $result_users->fetch_assoc()) {
       height: 40px;
       margin-right: 10px;
     }
-
-    /* Search Bar */
-    .search-bar {
-      display: flex;
-      align-items: center;
-      position: relative;
-    }
-
-    .search-bar input {
-      width: 300px;
-      padding: 8px;
-      border-radius: 20px;
-      border: 1px solid #ccc;
-    }
-
-    .search-bar button {
-      position: absolute;
-      right: 10px;
-      background: transparent;
-      border: none;
-      cursor: pointer;
-    }
-
     /* Sidebar */
     .sidebar {
       height: 100%;
@@ -356,8 +333,8 @@ footer {
   <a href="admin_home.php" class="active">Home</a>
   <a href="admin_about.php">About</a>
   <a href="profile.php">My Profile</a>
-  <a href="article_management.html">Manage Articles</a>
-  <a href="user_management.html">Manage Users</a>
+  <a href="article_manage.php">Manage Articles</a>
+  <a href="user_managep.php">Manage Users</a>
   <a href="feedback.html">Feedback</a>
   <a href="logout.php" class="logout">Logout</a>
 </div>
