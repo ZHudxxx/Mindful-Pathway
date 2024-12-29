@@ -31,6 +31,20 @@ if (!$result) {
 while ($row = mysqli_fetch_assoc($result)) {
     $articles[] = $row;
 }
+
+$query = isset($_GET['query']) ? mysqli_real_escape_string($dbc, $_GET['query']) : '';
+
+$searchResults = [];
+if ($query) {
+    $sql = "SELECT * FROM article WHERE 
+            (title LIKE '%$query%' OR content LIKE '%$query%') 
+            AND status = 'approved'";
+    $result = mysqli_query($dbc, $sql);
+
+    while ($row = mysqli_fetch_assoc($result)) {
+        $searchResults[] = $row;
+    }
+}
 ?>
 
 <!DOCTYPE html>
@@ -288,7 +302,7 @@ footer {
       <span>Mindful Pathway</span>
     </div>
     <div class="search-bar">
-   <form method="GET" action="search.php" id="search-form">
+   <form method="GET" id="search-form">
       <input type="text" name="query" placeholder="Search..." id="search-input">
       <button type="submit" class="fa fa-search"></button>
    </form>
