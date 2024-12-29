@@ -291,7 +291,7 @@ if (isset($_SESSION['username'])) {
   <a href="article_manage.php">Manage Articles</a>
   <a href="user_manage.php">Manage Users</a>
   <a href="feedback.html">Feedback</a>
-  <a href="logout.php" class="logout">Logout</a>
+  <a href="../logout.php" class="logout">Logout</a>
 </div>
 
        <!-- Main Content Area -->
