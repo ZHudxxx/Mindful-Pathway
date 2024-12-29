@@ -253,54 +253,6 @@ footer {
     .back-to-top:hover {
       background-color: #5ce1e6;
     }
-
-    .hamburger {
-  display: none;
-  background: none;
-  border: none;
-  font-size: 24px;
-  color: white;
-  cursor: pointer;
-  margin-right: 20px;
-}
-
-.hamburger span {
-  display: block;
-  background-color: white;
-  height: 2px;
-  width: 20px;
-  margin: 5px auto;
-  transition: 0.3s;
-}
-/* Desktop View */
-@media (min-width: 769px) {
-  .sidebar {
-    display: block; 
-  }
-
-  .hamburger {
-    display: none;
-  }
-
-  .main-content {
-    margin-left: 250px; 
-  }
-}
-
-    /* Responsive: Mobile View */
-@media (max-width: 768px) {
-  .sidebar {
-    display: none; 
-  }
-
-  .hamburger {
-    display: block;
-  }
-
-  .main-content {
-    margin-left: 0; 
-  }
-}
   </style>
 </head>
 <body>
@@ -316,23 +268,17 @@ footer {
       <img src="uploads/<?php echo isset($_SESSION['img_Profile']) ? $_SESSION['img_Profile'] : 'default_profile.jpg'; ?>" 
            alt="Profile" style="width: 20px; height: 20px; border-radius: 50%; margin-right: 70px;">
     </div>
-
-  <div class="hamburger" onclick="toggleSidebar()">
-    <span></span>
-    <span></span>
-    <span></span>
   </div>
-</div>
 
   <!-- Sidebar -->
   <div class="sidebar">
     <div class="title"><?php echo "Welcome, " . htmlspecialchars($username); ?></div>
     <a href="user_home.php" class="active">Home</a>
     <a href="user_about.php">About</a>
-    <a href="profile.php">My Profile</a>
+    <a href="user_profileprofile.php">My Profile</a>
     <a href="articles.php">Article</a>
     <a href="feedback.html">Feedback</a>
-    <a href="logout.php" class="logout">Logout</a>
+    <a href="../logout.php" class="logout">Logout</a>
   </div>
 
   <!-- Main Content Area -->
@@ -385,22 +331,6 @@ footer {
     function showNotifications() {
       alert("You have no new notifications.");
     }
-    function toggleSidebar() {
-  var sidebar = document.querySelector('.sidebar');
-  if (sidebar.style.display === 'none' || sidebar.style.display === '') {
-    sidebar.style.display = 'block'; 
-  } else {
-    sidebar.style.display = 'none'; 
-  }
-}
-window.addEventListener('resize', function() {
-  var sidebar = document.querySelector('.sidebar');
-  if (window.innerWidth > 768) {
-    sidebar.style.display = 'block';
-  } else {
-    sidebar.style.display = 'none'; 
-  }
-});
   </script>
 </body>
 </html>

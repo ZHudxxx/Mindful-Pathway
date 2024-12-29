@@ -288,8 +288,8 @@ $user = $result->fetch_assoc();
     <div class="dashboard">
         <div class="sidebar">
             <ul>
-                <li><a href="user_home.html">HOME</a></li>
-                <li><a href="user_about.html">ABOUT</a></li>
+                <li><a href="user_home.php">HOME</a></li>
+                <li><a href="user_about.php">ABOUT</a></li>
                 <li><a href="user_profile.php">MY PROFILE</a></li>
                 <li><a href="user_article.php">ARTICLE</a></li>
                 <li><a href="user_feedback.php">FEEDBACK</a></li>

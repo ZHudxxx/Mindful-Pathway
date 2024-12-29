@@ -288,8 +288,8 @@ $admin = $result->fetch_assoc();
     <div class="dashboard">
         <div class="sidebar">
             <ul>
-                <li><a href="admin_home.html">HOME</a></li>
-                <li><a href="admin_about.html">ABOUT</a></li>
+                <li><a href="admin_home.php">HOME</a></li>
+                <li><a href="admin_about.php">ABOUT</a></li>
                 <li><a href="admin_profile.php">MY PROFILE</a></li>
                 <li><a href="admin_article.php">ARTICLE</a></li>
                 <li><a href="admin_feedback.php">FEEDBACK</a></li>
