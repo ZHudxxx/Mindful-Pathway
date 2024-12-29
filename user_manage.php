@@ -457,7 +457,7 @@ button:active {
               <td><?php echo htmlspecialchars($user['username']); ?></td>
               <td><?php echo htmlspecialchars($user['email']); ?></td>
               <td><?php echo htmlspecialchars($user['bio']); ?></td>
-              <td><a href="user_details.php?userID=<?php echo $user['userID']; ?>" class="admin-btn">View Details</a></td>
+              <td><button href="user_details.php?userID=<?php echo $user['userID']; ?>" class="admin-btn">View Details</button></td>
             </tr>
           <?php endforeach; ?>
         </tbody>
