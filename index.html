@@ -336,7 +336,22 @@
     .back-to-top:hover {
       background-color: #5ce1e6;
     }
+.hamburger {
+  display: none;
+  background: none;
+  border: none;
+  font-size: 24px;
+  color: white;
+  cursor: pointer;
+}
 
+.header .menu {
+  display: flex;
+}
+
+.header .menu li {
+  margin: 0 15px;
+}
     /* Media Queries for Responsiveness */
   @media (max-width: 1024px) {
     .header .menu {
@@ -375,7 +390,31 @@
     }
   }
 
-  @media (max-width: 768px) {
+    @media (max-width: 768px) {
+  .hamburger {
+    display: block;
+  }
+
+  .header .menu {
+    display: none;
+    flex-direction: column;
+    background-color: #3cacae;
+    width: 100%;
+    position: absolute;
+    top: 60px;
+    left: 0;
+    z-index: 1000;
+    padding: 10px 0;
+  }
+
+  .header .menu li {
+    margin: 10px 0;
+    text-align: center;
+  }
+
+  .header .menu.active {
+    display: flex;
+  }
     .header .logo img {
       width: 30px;
       height: 30px;
@@ -464,6 +503,9 @@
       <img src="img/favicon.png" alt="Logo"> 
       <span>Mindful Pathway</span>
     </div>
+    <button class="hamburger" onclick="toggleMenu()">
+    <i class="fas fa-bars"></i>
+  </button>
     <ul class="menu">
       <li><a href="index.html">HOME</a></li>
       <li><a href="about.html">ABOUT</a></li>
@@ -631,6 +673,21 @@ setInterval(() => {
   currentFactIndex = (currentFactIndex + 1) % factSlides.length;
   updateSlider(currentFactIndex);
 }, 4000);
+function toggleMenu() {
+  const menu = document.querySelector('.menu');
+  const hamburger = document.querySelector('.hamburger i');
+  
+  menu.classList.toggle('active');
+  
+  // Change icon to "close" when menu is active
+  if (menu.classList.contains('active')) {
+    hamburger.classList.remove('fa-bars');
+    hamburger.classList.add('fa-times');
+  } else {
+    hamburger.classList.remove('fa-times');
+    hamburger.classList.add('fa-bars');
+  }
+}
 
 </script>
 </body>
