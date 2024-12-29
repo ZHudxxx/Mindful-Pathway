@@ -22,7 +22,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $isAdmin = strpos($username, 'admin') !== false || strpos($username, '@mindfulpathway.com') !== false;
 
     if ($isAdmin) {
-       
         $sql = "SELECT adminID, password_hash FROM admin WHERE username = ?";
         $stmt = $conn->prepare($sql);
         $stmt->bind_param("s", $username);
@@ -32,11 +31,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         if ($result->num_rows === 1) {
             $admin = $result->fetch_assoc();
 
-        // Verify password
-        if (password_verify($password, $admin['password_hash'])) {
-            $_SESSION['adminID'] = $admin['adminID'];
-            echo "<script>alert('Welcome, Admin! Redirecting to admin homepage.'); window.location.href='admin_home.html';</script>";
-            exit();
+            // Verify password
+            if (password_verify($password, $admin['password_hash'])) {
+                $_SESSION['adminID'] = $admin['adminID'];
+                echo "<script>alert('Welcome, Admin! Redirecting to admin homepage.'); window.location.href='admin_home.php';</script>";
+                exit();
+            }
         }
     }
 
@@ -47,13 +47,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $stmt->execute();
     $result = $stmt->get_result();
 
-        if ($result->num_rows === 1) {
-            $user = $result->fetch_assoc();
+    if ($result->num_rows === 1) {
+        $user = $result->fetch_assoc();
 
         // Verify password
         if (password_verify($password, $user['password_hash'])) {
             $_SESSION['userID'] = $user['userID'];
-            echo "<script>alert('Login successful! Redirecting to user homepage.'); window.location.href='user_home.html';</script>";
+            echo "<script>alert('Login successful! Redirecting to user homepage.'); window.location.href='user_home.php';</script>";
             exit();
         }
     }
