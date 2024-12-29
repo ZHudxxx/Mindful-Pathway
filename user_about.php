@@ -277,7 +277,7 @@ if (isset($_SESSION['username'])) {
   </div>
   <div class="menu">
     <i class="fas fa-bell" style="font-size: 20px; margin-right: 20px;" onclick="showNotifications()"></i>
-    <img src="uploads/<?php echo isset($_SESSION['img_Profile']) ? htmlspecialchars($_SESSION['img_Profile']) : 'default-profile.jpg'; ?>" 
+    <img src="uploads/<?php echo isset($_SESSION['img_Profile']) ? htmlspecialchars($_SESSION['img_Profile']) : 'default_profile.jpg'; ?>" 
          alt="Profile" style="width: 20px; height: 20px; border-radius: 50%; margin-right: 70px;">
   </div>
 </div>
@@ -288,7 +288,7 @@ if (isset($_SESSION['username'])) {
     <a href="user_home.php">Home</a>
     <a href="user_about.php"  class="active">About</a>
     <a href="profile.php">My Profile</a>
-    <a href="article.html">Article</a>
+    <a href="articles.php">Article</a>
     <a href="feedback.html">Feedback</a>
     <a href="logout.php" class="logout">Logout</a>
   </div>

@@ -322,7 +322,7 @@ footer {
   </div>
   <div class="menu">
     <i class="fas fa-bell" style="font-size: 20px; margin-right: 20px;" onclick="showNotifications()"></i>
-    <img src="uploads/<?php echo isset($_SESSION['img_Profile']) ? htmlspecialchars($_SESSION['img_Profile']) : 'default-profile.jpg'; ?>" 
+    <img src="uploads/<?php echo isset($_SESSION['img_Profile']) ? htmlspecialchars($_SESSION['img_Profile']) : 'default_profile.jpg'; ?>" 
          alt="Profile" style="width: 20px; height: 20px; border-radius: 50%; margin-right: 70px;">
   </div>
 </div>
@@ -334,7 +334,7 @@ footer {
   <a href="admin_about.php">About</a>
   <a href="profile.php">My Profile</a>
   <a href="article_manage.php">Manage Articles</a>
-  <a href="user_managep.php">Manage Users</a>
+  <a href="user_manage.php">Manage Users</a>
   <a href="feedback.html">Feedback</a>
   <a href="logout.php" class="logout">Logout</a>
 </div>

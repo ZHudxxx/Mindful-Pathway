@@ -32,32 +32,29 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         if ($result->num_rows === 1) {
             $admin = $result->fetch_assoc();
 
-            // Verify password
-            if (password_verify($password, $admin['password_hash'])) {
-                $_SESSION['adminID'] = $admin['adminID'];
-                $_SESSION['username'] = $username;
-                echo "<script>alert('Welcome, Admin! Redirecting to admin dashboard.'); window.location.href='admin_home.php';</script>";
-                exit();
-            }
+        // Verify password
+        if (password_verify($password, $admin['password_hash'])) {
+            $_SESSION['adminID'] = $admin['adminID'];
+            echo "<script>alert('Welcome, Admin! Redirecting to admin homepage.'); window.location.href='admin_home.html';</script>";
+            exit();
         }
-    } else {
-        // Check in user table
-        $sql = "SELECT userID, password_hash FROM user WHERE username = ?";
-        $stmt = $conn->prepare($sql);
-        $stmt->bind_param("s", $username);
-        $stmt->execute();
-        $result = $stmt->get_result();
+    }
+
+    // Check in users table
+    $sql = "SELECT userID, password_hash FROM user WHERE username = ?";
+    $stmt = $conn->prepare($sql);
+    $stmt->bind_param("s", $username);
+    $stmt->execute();
+    $result = $stmt->get_result();
 
         if ($result->num_rows === 1) {
             $user = $result->fetch_assoc();
 
-            // Verify password
-            if (password_verify($password, $user['password_hash'])) {
-                $_SESSION['userID'] = $user['userID'];
-                $_SESSION['username'] = $username;
-                echo "<script>alert('Login successful! Redirecting to user dashboard.'); window.location.href='user_home.php';</script>";
-                exit(); 
-            }
+        // Verify password
+        if (password_verify($password, $user['password_hash'])) {
+            $_SESSION['userID'] = $user['userID'];
+            echo "<script>alert('Login successful! Redirecting to user homepage.'); window.location.href='user_home.html';</script>";
+            exit();
         }
     }
 
