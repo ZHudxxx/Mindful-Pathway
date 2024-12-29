@@ -278,7 +278,7 @@ footer {
     <a href="user_profileprofile.php">My Profile</a>
     <a href="articles.php">Article</a>
     <a href="feedback.html">Feedback</a>
-    <a href="logout.php" class="logout">Logout</a>
+    <a href="../logout.php" class="logout">Logout</a>
   </div>
 
   <!-- Main Content Area -->
