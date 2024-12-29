@@ -247,6 +247,172 @@
         .back-to-top:hover {
           background-color: #5ce1e6;
         }
+        .hamburger {
+  display: none;
+  background: none;
+  border: none;
+  font-size: 24px;
+  color: white;
+  cursor: pointer;
+  margin-right: 20px;
+}
+
+.header .menu {
+  display: flex;
+}
+
+.header .menu li {
+  margin: 0 15px;
+}
+    /* Media Queries for Responsiveness */
+  @media (max-width: 1024px) {
+    .hamburger {
+    display: block;
+  }
+    .header .menu {
+      display: none;
+    flex-direction: column;
+    background-color: #3cacae;
+    width: 100%;
+    position: absolute;
+    top: 50px;
+    left: 0;
+    z-index: 1000;
+    padding: 20px;
+    margin-top: 0;
+    }
+
+    .header .menu li {
+      margin: 10px 2px;
+      text-align: center;
+     padding-top: 0;
+
+    }
+    .header .menu.active {
+    display: flex;
+  }
+  .header .logo img {
+      width: 30px;
+      height: 30px;
+    }
+
+    .header .logo span {
+      font-size: 22px;
+    }
+    .main-content{
+      padding: 10px;
+      padding-top: 2px;
+      margin-left: 10px;
+    }
+    .benda-about {
+            justify-content: center;
+            margin-left: 0px;
+            padding-left: 0px;
+            width: auto;
+        }
+    .content {
+      padding: 5px;
+      margin-left: 0px;
+    }
+    .about-card {
+            width: 200px;
+            padding: 10px;
+            margin-left: 0px; 
+        }
+    }
+    footer {
+      font-size: 14px;
+    }
+
+    @media (max-width: 768px) {
+  .hamburger {
+    display: block;
+  }
+
+  .header .menu {
+    display: none;
+    flex-direction: column;
+    background-color: #3cacae;
+    width: 100%;
+    position: absolute;
+    top: 50px;
+    left: 0;
+    z-index: 1000;
+    padding: 10px 0;
+  }
+
+  .header .menu li {
+    margin: 10px 0;
+    text-align: center;
+  }
+
+  .header .menu.active {
+    display: flex;
+  }
+    .header .logo img {
+      width: 30px;
+      height: 30px;
+    }
+
+    .header .logo span {
+      font-size: 18px;
+    }
+    .about-card {
+            width: 220px; 
+        }
+
+        .benda-about {
+            justify-content: center;
+        }
+    }
+
+    .back-to-top {
+      width: 35px;
+      height: 35px;
+      font-size: 16px;
+    }
+  
+
+  @media (max-width: 480px) {
+    .header {
+      flex-direction: column;
+      padding: 10px;
+    }
+
+    .header .menu {
+      align-items: center;
+    }
+
+    .header .menu li a {
+      font-size: 14px;
+    }
+
+    .about-card {
+            width: 100%; 
+            padding: 15px; 
+        }
+
+        .benda-about {
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .about-card .content h2 {
+            font-size: 22px; 
+        }
+
+        .about-card .content h3 {
+            font-size: 20px; 
+        }
+
+        .about-card .content p {
+            font-size: 12px; 
+        }
+
+    footer {
+      font-size: 12px;
+    }
+  }
       </style>
 </head>
 <body>
@@ -256,6 +422,9 @@
       <img src="img/favicon.png" alt="Logo"> 
       <span>Mindful Pathway</span>
     </div>
+    <button class="hamburger" onclick="toggleMenu()">
+      <i class="fas fa-bars"></i>
+    </button>
     <ul class="menu">
       <li><a href="index.html">HOME</a></li>
       <li><a href="about.html">ABOUT</a></li>
@@ -330,6 +499,21 @@
     function scrollToTop() {
         window.scrollTo({ top: 0, behavior: 'smooth' });
     }
+    function toggleMenu() {
+  const menu = document.querySelector('.menu');
+  const hamburger = document.querySelector('.hamburger i');
+  
+  menu.classList.toggle('active');
+  
+  // Change icon to "close" when menu is active
+  if (menu.classList.contains('active')) {
+    hamburger.classList.remove('fa-bars');
+    hamburger.classList.add('fa-times');
+  } else {
+    hamburger.classList.remove('fa-times');
+    hamburger.classList.add('fa-bars');
+  }
+}
 </script>
 </body>
 </html>
