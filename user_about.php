@@ -340,7 +340,7 @@ if (isset($_SESSION['username'])) {
     <a href="user_home.php">Home</a>
     <a href="user_about.php"  class="active">About</a>
     <a href="user_profile.php">My Profile</a>
-    <a href="articles.php">Article</a>
+    <a href="user_article.php">Article</a>
     <a href="feedback.html">Feedback</a>
     <a href="logout.php" class="logout">Logout</a>
   </div>

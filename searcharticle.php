@@ -195,9 +195,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['query'])) {
     <div class="header">
         <h1>MINDFUL PATHWAY</h1>
         <div class="menu">
-            <a href="#">HOME</a>
-            <a href="#">ABOUT</a>
-            <a href="article.html">ARTICLE</a>
+            <a href="user_home.php">HOME</a>
+            <a href="user_about.php">ABOUT</a>
+            <a href="user_article.php">ARTICLE</a>
             <a href="#">MORE</a>
             <a href="login.html"
                 style="background-color: white; color: #3cacae; padding: 5px 10px; border-radius: 5px;">LOGIN</a>
