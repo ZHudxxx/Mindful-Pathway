@@ -42,15 +42,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $stmt->bind_param("s", $username);
     $stmt->execute();
     $result = $stmt->get_result();
-
+    
     if ($result->num_rows === 1) {
         $user = $result->fetch_assoc();
-
+        
         // Verify password
         if (password_verify($password, $user['password_hash'])) {
             $_SESSION['userID'] = $user['userID'];
-            echo "<script>alert('Login successful! Redirecting to user homepage.'); window.location.href='user/user_home.php';</script>";
+            echo "<script>alert('Login successful! Redirecting to user homepage.'); </script>";
+            echo "<script>window.location.href='user_home.php';</script>";
+            
             exit();
+            
         }
     }
 
