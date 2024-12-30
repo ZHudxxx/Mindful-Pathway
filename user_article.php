@@ -55,7 +55,7 @@
             display: flex;
             align-items: center;
             position: relative;
-            
+
         }
 
         .search-bar input {
@@ -196,6 +196,7 @@
             border-radius: 10px;
             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
             margin: 20px auto;
+            margin-top: 50px;
             max-width: 900px;
             text-align: center;
         }
@@ -243,6 +244,7 @@
         .content {
             flex: 1;
             padding: 20px;
+
         }
 
 
@@ -263,7 +265,7 @@
             <img src="img/favicon.png" alt="Logo">
             <span>Mindful Pathway</span>
         </div>
-        
+
         <div class="menu">
             <i class="fas fa-bell" style="font-size: 20px; margin-right: 20px;" onclick="showNotifications()"></i>
             <img src="uploads/<?php echo isset($_SESSION['img_Profile']) ? $_SESSION['img_Profile'] : 'default-profile.jpg'; ?>"
@@ -362,6 +364,19 @@
             </div>
         </div>
     </div>
+    <script>
+        window.embeddedChatbotConfig = {
+            chatbotId: "Bim8_kBed-XDQ_TodjahJ",
+            domain: "www.chatbase.co"
+        }
+    </script>
+    <script
+        src="https://www.chatbase.co/embed.min.js"
+        chatbotId="Bim8_kBed-XDQ_TodjahJ"
+        domain="www.chatbase.co"
+        defer>
+    </script>
+
     <!-- Footer -->
     <footer>
         &copy; 2024 Mindful Pathway | All Rights Reserved

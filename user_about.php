@@ -17,11 +17,11 @@ if (isset($_SESSION['username'])) {
     $result = $stmt->get_result();
 
     if ($result->num_rows == 0) {
-        header('Location: login.php');
+        header('Location: login.html');
         exit();
     }
 } else {
-    header('Location: login.php');
+    header('Location: login.html');
     exit();
 }
 ?>

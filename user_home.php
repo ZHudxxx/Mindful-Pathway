@@ -12,7 +12,7 @@ if (mysqli_connect_errno()) {
 if (isset($_SESSION['username'])) {
   $username = $_SESSION['username']; // Assuming 'username' is stored in session
 } else {
-  header('Location: login.php');
+  header('Location: login.html');
   exit();
 }
 $articles = [];
