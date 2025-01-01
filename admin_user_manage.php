@@ -198,7 +198,6 @@ footer {
   background-color: #3cacae;
   color: white;
   padding: 15px;
-  position: fixed;
   bottom: 0;
   left: 0;
   right: 0;
