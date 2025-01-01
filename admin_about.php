@@ -235,17 +235,16 @@ if (isset($_SESSION['username'])) {
       transform: translateY(1px);
     }
       
-    footer {
-      text-align: center;
-      background-color: #3cacae;
-      color: white;
-      padding: 15px;
-      bottom: 0;
-      left: 0;
-      right: 0;
-      z-index: 2; 
-    }
-    
+   footer {
+  text-align: center;
+  background-color: #3cacae;
+  color: white;
+  padding: 15px;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 2; 
+}
         .back-to-top {
           position: fixed;
           bottom: 20px;
