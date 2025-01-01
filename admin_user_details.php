@@ -442,12 +442,12 @@ button:active {
 <!-- Manage Users Section -->
   <div class="admin-section">
     <div class="admin-card">
-        <?php  $profile_picture = !empty($user['imgProfile']) ? $user['imgProfile'] : 'default.jpg';
-        ?>
-        <img src="uploads/<?php echo htmlspecialchars($profile_picture); ?>" alt="Profile Picture" style="width: 150px; height: 150px;">
-        <?php else: ?>
-            <p>No profile picture available.</p>
-        <?php endif; ?
+       <?php if (!empty($user['imgProfile'])): ?>
+    <img src="uploads/<?php echo htmlspecialchars($user['imgProfile']); ?>" alt="Profile Picture" style="width: 150px; height: 150px;">
+<?php else: ?>
+    <p>No profile picture available.</p>
+<?php endif; ?>
+
    
         <p><strong>Username:</strong> <?php echo htmlspecialchars($user['username']); ?></p>
         <p><strong>Email:</strong> <?php echo htmlspecialchars($user['email']); ?></p>
