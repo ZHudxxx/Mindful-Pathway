@@ -191,9 +191,6 @@ $users = mysqli_fetch_all($result, MYSQLI_ASSOC);
       background-position: center;
       margin-bottom: 30px;
     }
-
-  
-  
 footer {
   text-align: center;
   background-color: #3cacae;
