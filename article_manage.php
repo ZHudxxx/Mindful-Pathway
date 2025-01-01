@@ -481,11 +481,10 @@ footer {
                     <th>Author</th>
                     <th>Submitted Date</th>
                     <th>Status</th>
-                    <th>Action</th>
                 </tr>
             </thead>
             <tbody id="articleTable">
-                <?php foreach ($articles as $article): ?>
+                <?php foreach ($approved_articles as $article): ?>
                     <tr>
                       <td>
                         <a href="review_article.php?articleID=<?php echo htmlspecialchars($article['articleID']); ?>" 
@@ -496,7 +495,7 @@ footer {
                     </td>
                         <td><?php echo htmlspecialchars($article['authorID']); ?></td>
                         <td><?php echo htmlspecialchars($article['timePosted']); ?></td>
-                        <td><?php echo $article['status'] ? $article['status'] : 'Pending'; ?></td>
+                        <td><?php echo htmlspecialchars($article['status']); ?></td>
                     </tr>
                 <?php endforeach; ?>
             </tbody>
