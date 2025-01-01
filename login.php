@@ -31,28 +31,41 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         // Verify password
         if (password_verify($password, $admin['password_hash'])) {
             $_SESSION['adminID'] = $admin['adminID'];
-            header('Location: admin_home.php');
+            echo "<script>
+                    alert('Welcome, Admin!');
+                    window.location.href = 'admin_home.php';
+                  </script>";
             exit();
         }
     }
+
     // Check in users table
     $sql = "SELECT userID, password_hash FROM user WHERE username = ?";
     $stmt = $conn->prepare($sql);
     $stmt->bind_param("s", $username);
     $stmt->execute();
     $result = $stmt->get_result();
-    
+
     if ($result->num_rows === 1) {
         $user = $result->fetch_assoc();
-        
+
         // Verify password
         if (password_verify($password, $user['password_hash'])) {
             $_SESSION['userID'] = $user['userID'];
-            header('Location: user_home.php');
-            exit();  
+            echo "<script>
+                    alert('Welcome, $username!');
+                    window.location.href = 'user_home.php';
+                  </script>";
+            exit();
         }
     }
-    echo "<script>alert('Invalid username or password!'); window.location.href='login.html';</script>";
+
+    // Invalid login
+    echo "<script>
+            alert('Invalid username or password!');
+            window.location.href = 'login.html';
+          </script>";
 }
+
 $conn->close();
 ?>
