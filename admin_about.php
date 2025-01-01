@@ -234,8 +234,7 @@ if (isset($_SESSION['username'])) {
       background-color: #1f6363;
       transform: translateY(1px);
     }
-      
-   footer {
+footer {
   text-align: center;
   background-color: #3cacae;
   color: white;
