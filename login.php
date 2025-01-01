@@ -1,4 +1,4 @@
-<?php
+ <?php
 session_start();
 
 $servername = "localhost";
@@ -31,10 +31,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         // Verify password
         if (password_verify($password, $admin['password_hash'])) {
             $_SESSION['adminID'] = $admin['adminID'];
-            echo "<script>
-                    alert('Welcome, Admin!');
-                    window.location.href = 'admin_home.php';
-                  </script>";
+            echo "<script>alert('Welcome, Admin! Redirecting to admin homepage.'); window.location.href='admin_home.php';</script>";
             exit();
         }
     }
@@ -45,26 +42,22 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $stmt->bind_param("s", $username);
     $stmt->execute();
     $result = $stmt->get_result();
-
+    
     if ($result->num_rows === 1) {
         $user = $result->fetch_assoc();
-
+        
         // Verify password
         if (password_verify($password, $user['password_hash'])) {
             $_SESSION['userID'] = $user['userID'];
-            echo "<script>
-                    alert('Welcome, $username!');
-                    window.location.href = 'user_home.php';
-                  </script>";
+            echo "<script>alert('Login successful! Redirecting to user homepage.'); </script>";
+            echo "<script>window.location.href='user_home.php';</script>";
+            
             exit();
+            
         }
     }
 
-    // Invalid login
-    echo "<script>
-            alert('Invalid username or password!');
-            window.location.href = 'login.html';
-          </script>";
+    echo "<script>alert('Invalid username or password!'); window.location.href='login.html';</script>";
 }
 
 $conn->close();
