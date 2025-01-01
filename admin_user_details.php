@@ -202,7 +202,6 @@ if (isset($_GET['userID'])) {
       margin-bottom: 30px;
     }
 
-  
 footer {
   text-align: center;
   background-color: #3cacae;
