@@ -418,7 +418,7 @@ button:active {
     <div class="title"><?php echo "Welcome, $username"; ?></div>
     <a href="admin_home.php" >Home</a>
     <a href="admin_about.php">About</a>
-    <a href="profile.php">My Profile</a>
+    <a href="admin_profile.php">My Profile</a>
     <a href="article_manage.php">Manage Articles</a>
     <a href="user_manage.php"  class="active">Manage Users</a>
     <a href="feedback.html">Feedback</a>
