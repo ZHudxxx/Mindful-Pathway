@@ -37,7 +37,7 @@ $pending_query = "SELECT article.*, user.username FROM article
                   WHERE article.status IS NULL ORDER BY article.timePosted DESC";
 $approved_query = "SELECT article.*, user.username FROM article 
                   LEFT JOIN user ON article.authorID = user.userID
-                  WHERE article.status = 'Approved' ORDER BY article.timePosted DESC";
+                  ORDER BY article.timePosted DESC";
 
 $pending_result = mysqli_query($dbc, $pending_query);
 $approved_result = mysqli_query($dbc, $approved_query);
