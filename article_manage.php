@@ -12,7 +12,7 @@ if (isset($_SESSION['username'])) {
     
 
     $query = "SELECT * FROM admin WHERE username = '$username'";
-    $result = mysqli_query($conn, $query);
+    $result = mysqli_query($dbc, $query);
 
   
     if (mysqli_num_rows($result) == 0) {
@@ -30,13 +30,13 @@ if (isset($_POST['approve']) || isset($_POST['Reject'])) {
 
 
     $update_query = "UPDATE article SET status = '$status' WHERE id = '$articleID'";
-    mysqli_query($conn, $update_query);
+    mysqli_query($dbc, $update_query);
 }
 
 $query = "SELECT article.*, user.username FROM article 
           LEFT JOIN user ON article.authorID = user.userID
           WHERE article.status IS NULL ORDER BY article.timePosted DESC";
-$result = mysqli_query($conn, $query);
+$result = mysqli_query(dbc, $query);
 
 $articles = [];
 while ($row = mysqli_fetch_assoc($result)) {
