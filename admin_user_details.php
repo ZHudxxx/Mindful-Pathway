@@ -404,9 +404,9 @@ button:active {
     <div class="title"><?php echo "Welcome, $username"; ?></div>
     <a href="admin_home.php" >Home</a>
     <a href="admin_about.php">About</a>
-    <a href="profile.php">My Profile</a>
+    <a href="admin_profile.php">My Profile</a>
     <a href="article_manage.php">Manage Articles</a>
-    <a href="user_manage.php"  class="active">Manage Users</a>
+    <a href="admin_user_manage.php"  class="active">Manage Users</a>
     <a href="feedback.html">Feedback</a>
 
     <a href="logout.php" class="logout">Logout</a>
@@ -439,10 +439,10 @@ button:active {
         <button href="delete_user.php?userID=<?php echo $user['userID']; ?>" class="btn-danger" onclick="return confirm('Are you sure you want to delete this user?')">Delete User</button>
     </div>
 
-     
+     <button href="admin_user_manage.php">Back to User Management</button>
 </div>
 </div>
-<button href="user_manage.php">Back to User Management</button>
+
 </div>
 </div>
   <!-- Footer -->
