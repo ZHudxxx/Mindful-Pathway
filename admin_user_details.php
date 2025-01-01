@@ -421,13 +421,12 @@ button:active {
 <!-- Manage Users Section -->
   <div class="admin-section">
     <div class="admin-card">
-       <?php if (!empty($user['imgProfile'])): ?>
+      <?php if (!empty($user['imgProfile']) && file_exists('uploads/' . $user['imgProfile'])): ?>
     <img src="uploads/<?php echo htmlspecialchars($user['imgProfile']); ?>" alt="Profile Picture" style="width: 150px; height: 150px;">
 <?php else: ?>
-    <p>No profile picture available.</p>
+    <img src="uploads/default_profile.jpg" alt="Default Profile Picture" style="width: 150px; height: 150px;">
 <?php endif; ?>
 
-   
         <p><strong>Username:</strong> <?php echo htmlspecialchars($user['username']); ?></p>
         <p><strong>Email:</strong> <?php echo htmlspecialchars($user['email']); ?></p>
         <p><strong>Bio:</strong> <?php echo htmlspecialchars($user['bio']); ?></p>
@@ -437,8 +436,6 @@ button:active {
         <button href="update_user.php?userID=<?php echo $user['userID']; ?>" class="btn-success">Update User</button>
         <button href="delete_user.php?userID=<?php echo $user['userID']; ?>" class="btn-danger" onclick="return confirm('Are you sure you want to delete this user?')">Delete User</button>
     </div>
-
-     
 </div>
 
 
