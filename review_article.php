@@ -344,8 +344,8 @@ footer {
   <a href="admin_home.php" class="active">Home</a>
   <a href="admin_about.html">About</a>
   <a href="admin_profile.php">My Profile</a>
-  <a href="article_management.html">Manage Articles</a>
-  <a href="user_management.html">Manage Users</a>
+  <a href="article_manage.php">Manage Articles</a>
+  <a href="admin_user_manage.php">Manage Users</a>
   <a href="feedback.html">Feedback</a>
   <a href="logout.php" class="logout">Logout</a>
 </div>
