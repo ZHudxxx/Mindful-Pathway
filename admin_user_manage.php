@@ -274,8 +274,9 @@ footer {
         background-color: #3ea3a4;
         color: white;
     }
-
-  /* Approve and Reject Buttons */
+    .container {
+    margin-bottom: 90px;
+}
 .btn {
   padding: 5px 15px;
   font-size: 14px;
@@ -430,14 +431,15 @@ button:active {
     <i>Manage user details.</i>
 
     <div class="container">
-        <button href="add_user.php" style="margin-left: 1000px; ">ADD NEW USERS</button>
-       
+    <button onclick="window.location.href='admin_add_user.php'" style="margin-left: 1000px;">ADD NEW USERS</button>
+
+        
 <!-- Manage Users Section -->
   <div class="admin-section">
     <div class="admin-card">
-        <div class="search-bar">
-            <input type="text" id="searchInput" class="form-control" placeholder="Search users...">
-        </div>
+    <div class="search-bar">
+      <input type="text" id="searchInput" class="form-control" placeholder="Search users...">
+      </div>
       <table class="table table-bordered" id="userTable">
         <thead>
           <tr>
@@ -460,13 +462,10 @@ button:active {
           <?php endforeach; ?>
         </tbody>
       </table>
-    </div>
+      </div>
   </div>
-
-    </div>
-
 </div>
-
+          </div>
 
   <!-- Footer -->
   <footer>
