@@ -35,7 +35,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             exit();
         }
     }
-
     // Check in users table
     $sql = "SELECT userID, password_hash FROM user WHERE username = ?";
     $stmt = $conn->prepare($sql);
@@ -59,6 +58,5 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     echo "<script>alert('Invalid username or password!'); window.location.href='login.html';</script>";
 }
-
 $conn->close();
 ?>
