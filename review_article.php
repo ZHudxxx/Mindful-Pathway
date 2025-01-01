@@ -71,7 +71,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $stmt->close();
     $dbc->close();
 
-    header("Location: admin_home.php");
+    header("Location: article_manage.php");
     exit();
 }
 ?>
