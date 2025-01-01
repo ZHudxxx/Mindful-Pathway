@@ -52,7 +52,35 @@ while ($row = mysqli_fetch_assoc($pending_result)) {
 while ($row = mysqli_fetch_assoc($approved_result)) {
     $approved_articles[] = $row;
 }
+$article = $result->fetch_assoc();
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $articleID = intval($_POST['articleID']);
+    $action = $_POST['action'];
 
+    if ($action === 'Approve') {
+        $status = 'Approved';
+    } elseif ($action === 'Reject') {
+        $status = 'Rejected';
+    } else {
+        echo "Invalid action.";
+        exit();
+    }
+
+   $stmt = $dbc->prepare("UPDATE article SET status = ? WHERE articleID = ?");
+    $stmt->bind_param("si", $status, $articleID);
+
+    if ($stmt->execute()) {
+    echo "<script>alert('Article status successfully updated to " . $status . "'); window.location.href = 'review_article.php';</script>";
+} else {
+    echo "<script>alert('Failed to update article status.'); window.location.href = 'review_article.php';</script>";
+}
+
+    $stmt->close();
+    $dbc->close();
+
+    header("Location: article_manage.php");
+    exit();
+}
 ?>
 
 <!DOCTYPE html>
