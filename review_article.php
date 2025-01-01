@@ -342,8 +342,8 @@ footer {
 <div class="sidebar">
   <div class="title"><?php echo "Welcome, " . htmlspecialchars($username); ?></div>
   <a href="admin_home.php" class="active">Home</a>
-  <a href="about.html">About</a>
-  <a href="profile.php">My Profile</a>
+  <a href="admin_about.html">About</a>
+  <a href="admin_profile.php">My Profile</a>
   <a href="article_management.html">Manage Articles</a>
   <a href="user_management.html">Manage Users</a>
   <a href="feedback.html">Feedback</a>
