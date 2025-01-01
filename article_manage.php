@@ -24,7 +24,7 @@ if (isset($_SESSION['username'])) {
     exit();
 }
 
-if (isset($_POST['approve']) || isset($_POST['Reject'])) {
+if (isset($_POST['Approve']) || isset($_POST['Reject'])) {
     $article_id = $_POST['articleID'];
     $status = isset($_POST['Approve']) ? 'Approved' : 'Rejected';
 
@@ -35,7 +35,7 @@ if (isset($_POST['approve']) || isset($_POST['Reject'])) {
 
 $query = "SELECT article.*, user.username FROM article 
           LEFT JOIN user ON article.authorID = user.userID
-          WHERE article.status IS NULL ORDER BY article.timePosted DESC";
+          ORDER BY article.timePosted DESC";
 $result = mysqli_query($dbc, $query);
 
 $articles = [];
