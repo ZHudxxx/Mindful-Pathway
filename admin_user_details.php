@@ -444,6 +444,7 @@ button:active {
 </div>
 <button href="user_manage.php">Back to User Management</button>
 </div>
+</div>
   <!-- Footer -->
   <footer>
     &copy; 2024 Mindful Pathway | All Rights Reserved
