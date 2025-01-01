@@ -341,7 +341,7 @@ if (isset($_SESSION['username'])) {
   <a href="admin_about.php"  class="active">About</a>
   <a href="admin_profile.php">My Profile</a>
   <a href="article_manage.php">Manage Articles</a>
-  <a href="user_manage.php">Manage Users</a>
+  <a href="admin_user_manage.php">Manage Users</a>
   <a href="feedback.html">Feedback</a>
   <a href="logout.php" class="logout">Logout</a>
 </div>
