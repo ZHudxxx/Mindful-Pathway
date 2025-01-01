@@ -23,26 +23,78 @@ if (isset($_SESSION['username'])) {
     header('Location: login.php');
     exit();
 }
-// Get user ID from URL
 if (isset($_GET['userID'])) {
-    $userID = $_GET['userID'];
-    
-    // Fetch user details
-    $query = "SELECT * FROM user WHERE userID = '$userID'";
-    $result = mysqli_query($dbc, $query);
+  $userID = $_GET['userID'];
+  
+  // Fetch user details
+  $query = "SELECT * FROM user WHERE userID = '$userID'";
+  $result = mysqli_query($dbc, $query);
 
-    if (!$result) {
-        die('Query Failed: ' . mysqli_error($dbc));
-    }
+  if (!$result) {
+      die('Query Failed: ' . mysqli_error($dbc));
+  }
 
-    $user = mysqli_fetch_assoc($result);
-    if (!$user) {
-        die('User not found.');
-    }
+  $user = mysqli_fetch_assoc($result);
+  if (!$user) {
+      die('User not found.');
+  }
 } else {
-    die('User ID not provided.');
+  die('User ID not provided.');
 }
 
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update_user'])) {
+  $username = mysqli_real_escape_string($dbc, $_POST['username']);
+  $email = mysqli_real_escape_string($dbc, $_POST['email']);
+  $bio = mysqli_real_escape_string($dbc, $_POST['bio']);
+  
+  if (isset($_FILES['image']) && $_FILES['image']['error'] === 0) {
+      $imageTmpPath = $_FILES['image']['tmp_name'];
+      $imageName = $_FILES['image']['name'];
+      $imageExt = pathinfo($imageName, PATHINFO_EXTENSION);
+      $allowedExt = ['jpg', 'jpeg', 'png', 'gif'];
+
+      if (in_array(strtolower($imageExt), $allowedExt)) {
+          $newImageName = 'user_' . $userID . '.' . $imageExt;
+          $imageDest = 'uploads/' . $newImageName;
+
+          if (move_uploaded_file($imageTmpPath, $imageDest)) {
+              $imagePath = $imageDest;
+          } else {
+              echo "Error uploading the image.";
+              $imagePath = $user['imgProfile'];  // Keep current image if upload fails
+          }
+      } else {
+          echo "Invalid image format. Only JPG, PNG, and GIF are allowed.";
+          $imagePath = $user['imgProfile'];  // Keep current image if format is not valid
+      }
+  } else {
+      $imagePath = $user['imgProfile'];  // Keep current image if no new image is uploaded
+  }
+
+  // Update query
+  $updateQuery = "UPDATE user SET username = '$username', email = '$email', bio = '$bio', imgProfile = '$imagePath' WHERE userID = '$userID'";
+  $updateResult = mysqli_query($dbc, $updateQuery);
+  
+  if ($updateResult) {
+      header("Location: admin_user_manage.php"); 
+      exit();
+  } else {
+      echo "Error updating user: " . mysqli_error($dbc);
+  }
+}
+
+if (isset($_POST['delete_user'])) {
+  // Delete the user from the database
+  $deleteQuery = "DELETE FROM user WHERE userID = '$userID'";
+  $deleteResult = mysqli_query($dbc, $deleteQuery);
+
+  if ($deleteResult) {
+      header('Location: admin_user_manage.php');
+      exit();
+  } else {
+      die('Error deleting user: ' . mysqli_error($dbc));
+  }
+}
 ?>
 
 <!DOCTYPE html>
@@ -245,7 +297,7 @@ footer {
         width: 100%;
         border-collapse: collapse;
         margin-top: 20px;
-        margin-bottom: 20px;
+        margin-bottom: 30px;
     }
 
     table, th, td {
@@ -262,33 +314,6 @@ footer {
         color: white;
     }
 
-  /* Approve and Reject Buttons */
-.btn {
-  padding: 5px 15px;
-  font-size: 14px;
-  border-radius: 5px;
-  cursor: pointer;
-  border: none;
-  margin-right: 10px;
-}
-
-.btn-success {
-  background-color: #4CAF50;
-  color: white;
-}
-
-.btn-success:hover {
-  background-color: #45a049;
-}
-
-.btn-danger {
-  background-color: #f44336;
-  color: white;
-}
-
-.btn-danger:hover {
-  background-color: #da190b;
-}
 .search-bar {
             margin-bottom: 20px;
             align-items: center;
@@ -329,7 +354,83 @@ button:hover {
 button:active {
   background-color: #298c88; 
 }
-        .hamburger {
+
+/* Form Styles */
+form {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    padding: 20px;
+    margin-left:20px ;
+}
+
+label {
+    font-weight: bold;
+    color: #555;
+}
+
+input[type="text"], input[type="email"], textarea {
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    font-size: 16px;
+    width: 100%;
+}
+
+input[type="file"] {
+    padding: 5px;
+    font-size: 16px;
+}
+
+textarea {
+    min-height: 100px;
+    resize: vertical;
+}
+input[readonly].grey-input {
+    background-color:#c2dfe0; 
+    color:rgb(0, 0, 0); 
+    border: 1px solidrgb(0, 0, 0);
+    cursor: not-allowed; 
+}
+textarea[readonly].grey-input {
+    background-color:#c2dfe0; 
+    color: #666666;
+    border: 1px solid #ccc; 
+    cursor: not-allowed; 
+    resize: none; 
+}
+.buttons-container {
+    display: flex;
+    gap: 10px; 
+}
+
+.update-button {
+    background-color: #4CAF50; 
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    cursor: pointer;
+    font-size: 16px;
+}
+
+.update-button:hover {
+    background-color: #45a049; 
+}
+
+.delete-button {
+    background-color: #f44336; 
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    cursor: pointer;
+    font-size: 16px;
+}
+
+.delete-button:hover {
+    background-color: #e53935; 
+}
+
+  .hamburger {
   display: none;
   background: none;
   border: none;
@@ -413,38 +514,47 @@ button:active {
   </div>
 
  <!-- Main Content Area -->
- <div class="main-content">
+<div class="main-content">
     <h1>User Details</h1>
 
     <div class="container">
-       
-<!-- Manage Users Section -->
-  <div class="admin-section">
-    <div class="admin-card">
-      <?php if (!empty($user['imgProfile']) && file_exists('uploads/' . $user['imgProfile'])): ?>
-      <img src="uploads/<?php echo htmlspecialchars($user['imgProfile']); ?>" alt="Profile Picture" style="width: 150px; height: 150px;">
-  <?php else: ?>
-      <img src="uploads/default_profile.jpg" alt="Default Profile Picture" style="width: 150px; height: 150px;">
-  <?php endif; ?>
-  
+        <div class="admin-section">
+            <div class="admin-card">
+                <form method="POST" action="" enctype="multipart/form-data">
+                    
+                    <!-- Show Profile Image -->
+                    <label for="image">Profile Image:</label>
+                    <?php if (!empty($user['imgProfile']) && file_exists('uploads/' . $user['imgProfile'])): ?>
+                        <img src="uploads/<?php echo htmlspecialchars($user['imgProfile']); ?>" alt="Profile Picture" style="width: 150px; height: 150px;">
+                    <?php else: ?>
+                        <img src="uploads/default_profile.jpg" alt="Default Profile Picture" style="width: 150px; height: 150px;">
+                    <?php endif; ?>
+                    <input type="file" name="image" accept="image/*">
+                    
+                    <label for="userId">User ID:</label>
+                    <input type="text" name="userId" value="<?php echo htmlspecialchars($user['userID']); ?>" readonly class="grey-input">
 
-   
-        <p><strong>Username:</strong> <?php echo htmlspecialchars($user['username']); ?></p>
-        <p><strong>Email:</strong> <?php echo htmlspecialchars($user['email']); ?></p>
-        <p><strong>Bio:</strong> <?php echo htmlspecialchars($user['bio']); ?></p>
-        
+                    <label for="username">Username:</label>
+                    <input type="text" name="username" value="<?php echo htmlspecialchars($user['username']); ?>" readonly class="grey-input">
 
-        <!-- Update and Delete Buttons -->
-        <button href="update_user.php?userID=<?php echo $user['userID']; ?>" class="btn-success">Update User</button>
-        <button href="delete_user.php?userID=<?php echo $user['userID']; ?>" class="btn-danger" onclick="return confirm('Are you sure you want to delete this user?')">Delete User</button>
+                    <label for="email">Email:</label>
+                    <input type="email" name="email" value="<?php echo htmlspecialchars($user['email']); ?>" required>
+
+                    <label for="bio">Bio:</label>
+                    <textarea name="bio" readonly class="grey-input"><?php echo htmlspecialchars($user['bio']); ?></textarea>
+
+
+                    <div class="buttons-container">
+                        <button type="submit" name="update_user" class="update-button">Update User</button>
+                        <button type="submit" name="delete_user" class="delete-button" onclick="return confirm('Are you sure you want to delete this user?')">Delete User</button>
+                    </div>
+                </form>
+            </div>
+        </div>
     </div>
-
-     <button href="admin_user_manage.php">Back to User Management</button>
-</div>
 </div>
 
-</div>
-</div>
+
   <!-- Footer -->
   <footer>
     &copy; 2024 Mindful Pathway | All Rights Reserved
@@ -470,7 +580,7 @@ button:active {
         const filter = searchInput.value.toLowerCase();
         const rows = userTable.getElementsByTagName('tr');
         Array.from(rows).forEach(row => {
-            const usernameCell = row.getElementsByTagName('td')[1]; // Assuming username is in the second column
+            const usernameCell = row.getElementsByTagName('td')[1]; 
             if (usernameCell) {
                 const usernameText = usernameCell.textContent || usernameCell.innerText;
                 row.style.display = usernameText.toLowerCase().includes(filter) ? '' : 'none';
@@ -495,6 +605,12 @@ button:active {
             sidebar.style.display = 'none'; 
         }
     });
+    function confirmDelete(userID) {
+        var confirmation = confirm("Are you sure you want to delete this user?");
+        if (confirmation) {
+            window.location.href = "delete_user.php?userID=" + userID;
+        }
+    }
   </script>
 </body>
 </html>
