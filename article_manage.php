@@ -32,15 +32,25 @@ if (isset($_POST['Approve']) || isset($_POST['Reject'])) {
     $update_query = "UPDATE article SET status = '$status' WHERE id = '$articleID'";
     mysqli_query($dbc, $update_query);
 }
+$pending_query = "SELECT article.*, user.username FROM article 
+                  LEFT JOIN user ON article.authorID = user.userID
+                  WHERE article.status IS NULL ORDER BY article.timePosted DESC";
+$approved_query = "SELECT article.*, user.username FROM article 
+                  LEFT JOIN user ON article.authorID = user.userID
+                  WHERE article.status = 'Approved' ORDER BY article.timePosted DESC";
 
-$query = "SELECT article.*, user.username FROM article 
-          LEFT JOIN user ON article.authorID = user.userID
-          ORDER BY article.timePosted DESC";
-$result = mysqli_query($dbc, $query);
+$pending_result = mysqli_query($dbc, $pending_query);
+$approved_result = mysqli_query($dbc, $approved_query);
 
-$articles = [];
-while ($row = mysqli_fetch_assoc($result)) {
-    $articles[] = $row;
+$pending_articles = [];
+$approved_articles = [];
+
+while ($row = mysqli_fetch_assoc($pending_result)) {
+    $pending_articles[] = $row;
+}
+
+while ($row = mysqli_fetch_assoc($approved_result)) {
+    $approved_articles[] = $row;
 }
 
 ?>
@@ -425,7 +435,45 @@ footer {
         <div class="search-bar">
             <input type="text" id="searchInput" class="form-control" placeholder="Search articles...">
         </div>
-
+        <h2>Pending Articles</h2>
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th>Title</th>
+                    <th>Author</th>
+                    <th>Submitted Date</th>
+                    <th>Status</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                <?php foreach ($pending_articles as $article): ?>
+                    <tr>
+                        <td>
+                            <a href="review_article.php?articleID=<?php echo htmlspecialchars($article['articleID']); ?>" 
+                               class="article-link">
+                                <?php echo htmlspecialchars($article['title']); ?>
+                                <i class="fas fa-external-link-alt"></i>
+                            </a>
+                        </td>
+                        <td><?php echo htmlspecialchars($article['username']); ?></td>
+                        <td><?php echo htmlspecialchars($article['timePosted']); ?></td>
+                        <td>Pending</td>
+                        <td>
+                            <form method="POST" style="display: inline;">
+                                <input type="hidden" name="articleID" value="<?php echo $article['articleID']; ?>">
+                                <button type="submit" name="Approve" class="btn btn-success">Approve</button>
+                            </form>
+                            <form method="POST" style="display: inline;">
+                                <input type="hidden" name="articleID" value="<?php echo $article['articleID']; ?>">
+                                <button type="submit" name="Reject" class="btn btn-danger">Reject</button>
+                            </form>
+                        </td>
+                    </tr>
+                <?php endforeach; ?>
+            </tbody>
+        </table>
+         <h2>Articles Already Reviewed</h2>
         <table class="table table-bordered">
             <thead>
                 <tr>
@@ -449,16 +497,6 @@ footer {
                         <td><?php echo htmlspecialchars($article['authorID']); ?></td>
                         <td><?php echo htmlspecialchars($article['timePosted']); ?></td>
                         <td><?php echo $article['status'] ? $article['status'] : 'Pending'; ?></td>
-                        <td>
-                            <form method="POST" style="display: inline;">
-                                <input type="hidden" name="article_id" value="<?php echo $article['articleID']; ?>">
-                                <button type="submit" name="approve" class="btn btn-success">Approve</button>
-                            </form>
-                            <form method="POST" style="display: inline;">
-                                <input type="hidden" name="article_id" value="<?php echo $article['articleID']; ?>">
-                                <button type="submit" name="reject" class="btn btn-danger">Reject</button>
-                            </form>
-                        </td>
                     </tr>
                 <?php endforeach; ?>
             </tbody>
