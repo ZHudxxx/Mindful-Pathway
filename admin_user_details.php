@@ -91,29 +91,6 @@ if (isset($_GET['userID'])) {
       height: 40px;
       margin-right: 10px;
     }
-
-    /* Search Bar */
-    .search-bar {
-      display: flex;
-      align-items: center;
-      position: relative;
-    }
-
-    .search-bar input {
-      width: 300px;
-      padding: 8px;
-      border-radius: 20px;
-      border: 1px solid #ccc;
-    }
-
-    .search-bar button {
-      position: absolute;
-      right: 10px;
-      background: transparent;
-      border: none;
-      cursor: pointer;
-    }
-
     /* Sidebar */
     .sidebar {
       height: 100%;
@@ -146,9 +123,9 @@ if (isset($_GET['userID'])) {
 
     .sidebar .title {
       font-size: 24px;
-      font-weight: bold;
       padding-left: 20px;
       margin-bottom: 30px;
+      margin-top: 20px;
     }
 
     .sidebar .active {
@@ -403,22 +380,24 @@ button:active {
 </head>
 <body>
 
-  <!-- Header -->
-  <div class="header">
-    <div class="logo">
-      <img src="img/favicon.png" alt="Logo">
-      <span>Mindful Pathway</span>
-    </div>
-    <div class="menu">
-      <i class="fas fa-bell" style="font-size: 20px; margin-right: 20px;" onclick="showNotifications()"></i>
-      <img src="uploads/<?php echo $_SESSION['img_Profile']; ?>" alt="Profile" style="width: 20px; height: 20px; border-radius: 50%; margin-right: 70px;">
-    </div>
-    <div class="hamburger" onclick="toggleSidebar()">
-      <span></span>
-      <span></span>
-      <span></span>
-    </div>
+<!-- Header -->
+<div class="header">
+  <div class="logo">
+    <img src="img/favicon.png" alt="Logo">
+    <span>Mindful Pathway</span>
   </div>
+  <div class="menu">
+    <i class="fas fa-bell" style="font-size: 20px; margin-right: 20px;" onclick="showNotifications()"></i>
+    <img src="uploads/<?php echo isset($_SESSION['img_Profile']) ? htmlspecialchars($_SESSION['img_Profile']) : 'default_profile.jpg'; ?>" 
+         alt="Profile" style="width: 20px; height: 20px; border-radius: 50%; margin-right: 70px;">
+  </div>
+  <div class="hamburger" onclick="toggleSidebar()">
+    <span></span>
+    <span></span>
+    <span></span>
+  </div>
+</div>
+
 
   <!-- Sidebar -->
   <div class="sidebar">
