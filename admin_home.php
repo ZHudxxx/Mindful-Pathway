@@ -1,15 +1,15 @@
 <?php
 session_start();
 
-$dbc = new mysqli("localhost", "root", "", "mindfulpathway");
-if ($dbc->connect_errno) {
-    echo "Failed to Open Database: " . $dbc->connect_error;
+$conn = new mysqli("localhost", "root", "", "mindfulpathway");
+if ($conn->connect_errno) {
+    echo "Failed to Open Database: " . $conn->connect_error;
     exit();
 }
 
 if (isset($_SESSION['username'])) {
     $username = $_SESSION['username'];
-    $stmt = $dbc->prepare("SELECT * FROM admin WHERE username = ?");
+    $stmt = $conn->prepare("SELECT * FROM admin WHERE username = ?");
     $stmt->bind_param("s", $username);
     $stmt->execute();
     $result = $stmt->get_result();
@@ -23,7 +23,7 @@ if (isset($_SESSION['username'])) {
     exit();
 }
 
-$stmt = $dbc->prepare("
+$stmt = $conn->prepare("
     SELECT article.articleID, article.title, article.timePosted, article.status, user.username 
     FROM article 
     JOIN user ON article.authorID = user.userID 
@@ -40,7 +40,7 @@ while ($row = $result->fetch_assoc()) {
 
 
 // Fetch Users (Preview)
-$stmt_users = $dbc->prepare("SELECT userID, username, bio, email FROM user ORDER BY username ASC LIMIT 5");
+$stmt_users = $conn->prepare("SELECT userID, username, bio, email FROM user ORDER BY username ASC LIMIT 5");
 $stmt_users->execute();
 $result_users = $stmt_users->get_result();
 
@@ -469,8 +469,6 @@ footer {
     function showNotifications() {
       alert("You have no new notifications."); 
     }
-       </script>
-<script>
     window.onscroll = function() {
         const backToTopButton = document.querySelector('.back-to-top');
         if (document.body.scrollTop > 100 || document.documentElement.scrollTop > 100) {
