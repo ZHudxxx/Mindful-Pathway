@@ -36,7 +36,7 @@ if (isset($_POST['approve']) || isset($_POST['Reject'])) {
 $query = "SELECT article.*, user.username FROM article 
           LEFT JOIN user ON article.authorID = user.userID
           WHERE article.status IS NULL ORDER BY article.timePosted DESC";
-$result = mysqli_query(dbc, $query);
+$result = mysqli_query($dbc, $query);
 
 $articles = [];
 while ($row = mysqli_fetch_assoc($result)) {
@@ -437,7 +437,7 @@ footer {
                 </tr>
             </thead>
             <tbody id="articleTable">
-                <?php foreach ($article as $article): ?>
+                <?php foreach ($articles as $article): ?>
                     <tr>
                       <td>
                         <a href="review_article.php?articleID=<?php echo htmlspecialchars($article['articleID']); ?>" 
