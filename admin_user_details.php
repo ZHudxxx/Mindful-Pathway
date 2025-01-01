@@ -12,7 +12,7 @@ if (isset($_SESSION['username'])) {
     
 
     $query = "SELECT * FROM admin WHERE username = '$username'";
-    $result = mysqli_query($conn, $query);
+    $result = mysqli_query($dbc, $query);
 
   
     if (mysqli_num_rows($result) == 0) {
