@@ -13,7 +13,7 @@ if (!isset($_SESSION['userID'])) {
 
 // Get the user ID from the session
 $userID = $_SESSION['userID'];
-
+$username = $_SESSION['username']; // Username of the logged-in user
 // Get the form data
 $articleID = $_POST['article_id'];
 $commentContent = trim($_POST['comment_content']);
@@ -45,7 +45,7 @@ if (mysqli_query($dbc, $query)) {
         $originalUsername = $originalComment['username'];
 
         // Insert a notification for the user who posted the original comment
-        $message = $originalUsername." have reply to your comment.";
+        $message = $username." have reply to your comment.";
         $notificationQuery = "INSERT INTO notifications (userID, commentID, articleID, messages) 
                                VALUES ('$originalUserID', '$parentID','$articleID', '$message')";
         mysqli_query($dbc, $notificationQuery);

@@ -445,7 +445,7 @@ if ($resultN) {
             <div class="content">
               <h3><?php echo htmlspecialchars($article['title']); ?></h3>
               <p><?php echo htmlspecialchars(substr($article['content'], 0, 100)); ?>...</p>
-              <a href="user_article.php?id=<?php echo $article['articleID']; ?>" class="article-button">Read More</a>
+              <a href="readarticle.php?id=<?php echo $article['articleID']; ?>" class="article-button">Read More</a>
             </div>
           </div>
         <?php endforeach; ?>
