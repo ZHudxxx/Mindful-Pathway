@@ -285,10 +285,10 @@
     </div>
 
     <div class="content">
-        <div class="facts ">
-            <h2>Article : Mental Health Awareness</h2>
+          <h2>Article : Mental Health Awareness</h2>
                         <p>"The more that you read, the more things you will know. The more that you learn, the more places you'll
                             go." — Dr. Seuss</p>
+        <div class="facts ">
             <table style="width: 100%;">
                 <tr>
                     <td style="width: 70%; vertical-align: top; text-align: left; padding-right: 50px;">
