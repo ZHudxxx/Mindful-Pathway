@@ -161,7 +161,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     <label for="summary">Short Summary of Your Article (Optional)</label>
                     <textarea id="summary" name="summary" class="form-control" rows="2" placeholder="Provide a brief summary or introduction (1-2 sentences)."></textarea>
                     
-                    <button type="button" id="submit-btn" class="submit-btn">
+                    <button type="submit" id="submit-btn" class="submit-btn">
                         <i class="fas fa-paper-plane"></i> SUBMIT
                     </button>
                 </form>
