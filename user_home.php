@@ -33,7 +33,7 @@ while ($row = mysqli_fetch_assoc($result)) {
 // Fetch unread notifications for the logged-in user
 $userID = $_SESSION['userID']; // Assuming userID is stored in the session
 $notifications = [];
-$queryN = "SELECT * FROM notifications WHERE userID = '$userID' AND is_read = 0 ORDER BY timePosted DESC";
+$queryN = "SELECT * FROM notifications WHERE userID = '$userID'  ORDER BY timePosted DESC";
 $resultN = mysqli_query($dbc, $queryN);
 
 if ($resultN) {
@@ -394,9 +394,13 @@ if ($resultN) {
       <?php else: ?>
         <ul style="list-style: none; padding: 0; margin: 0;">
           <?php foreach ($notifications as $notification): ?>
-            <li style="padding: 10px; border-bottom: 1px solid #ddd;" onclick="markAsRead(<?php echo $notification['notificationID']; ?>)">
-              <p style="margin: 0; color:black;"><?php echo htmlspecialchars($notification['messages']); ?></p>
-              <small style="color: grey;"><?php echo $notification['timePosted']; ?></small>
+            <li>
+              <a href="readarticle.php?id=<?php echo htmlspecialchars($notification['articleID']); ?>"
+                onclick="markAsRead(<?php echo $notification['notificationID']; ?>)"
+                style="text-decoration: none; color: black;">
+                <p style="margin: 0;"><?php echo htmlspecialchars($notification['messages']); ?></p>
+                <small style="color: grey;"><?php echo $notification['timePosted']; ?></small>
+              </a>
             </li>
           <?php endforeach; ?>
         </ul>
@@ -441,7 +445,7 @@ if ($resultN) {
             <div class="content">
               <h3><?php echo htmlspecialchars($article['title']); ?></h3>
               <p><?php echo htmlspecialchars(substr($article['content'], 0, 100)); ?>...</p>
-              <a href="article.php?id=<?php echo $article['articleID']; ?>" class="article-button">Read More</a>
+              <a href="user_article.php?id=<?php echo $article['articleID']; ?>" class="article-button">Read More</a>
             </div>
           </div>
         <?php endforeach; ?>
@@ -498,26 +502,14 @@ if ($resultN) {
           notificationID: notificationID
         },
         success: function(response) {
-          try {
-            // Parse the response to get the article URL
-            const data = JSON.parse(response);
-
-            if (data.success) {
-              // Redirect to the article page
-              window.location.href = `Article.php?id=${data.articleID}`;
-            } else {
-              alert('Failed to navigate to the article. ' + (data.message || ''));
-            }
-          } catch (e) {
-            console.error('Invalid JSON response:', response);
-            alert('Error processing the response. Please try again.');
-          }
+          console.log('Notification marked as read:', response);
         },
         error: function() {
-          alert('Error marking notification as read.');
+          console.error('Error marking notification as read.');
         }
       });
     }
+
 
 
     function toggleSidebar() {
