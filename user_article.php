@@ -285,14 +285,13 @@
     </div>
 
     <div class="content">
-          <h2>Article : Mental Health Awareness</h2>
-                        <p>"The more that you read, the more things you will know. The more that you learn, the more places you'll
-                            go." — Dr. Seuss</p>
         <div class="facts ">
             <table style="width: 100%;">
                 <tr>
                     <td style="width: 70%; vertical-align: top; text-align: left; padding-right: 50px;">
-                        
+                         <h2>Article : Mental Health Awareness</h2>
+                        <p>"The more that you read, the more things you will know. The more that you learn, the more places you'll
+                            go." — Dr. Seuss</p>
                     </td>
                     <td style="width: 30%; vertical-align: top; text-align: left;">
                         <i>What do you want to learn today?</i>
