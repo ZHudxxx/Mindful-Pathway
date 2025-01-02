@@ -10,7 +10,23 @@ document.getElementById("submit-btn").addEventListener("click", function () {
 });
 
 <button class="back-to-top" onclick="scrollToTop()">↑</button>
+<script>
+    document.getElementById("submit-btn").addEventListener("click", function () {
+        // Get the confirmation message element
+        const confirmationMessage = document.getElementById("confirmation-message");
 
+        // Display the confirmation message
+        confirmationMessage.classList.remove("hidden");
+
+        // Optional: Clear the form fields after submission
+        document.getElementById("article-form").reset();
+    });
+
+    // Scroll to top functionality for the back-to-top button
+    function scrollToTop() {
+        window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+</script>
 
   // Close the search bar
   function closeSearch() {
