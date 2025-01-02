@@ -1,27 +1,38 @@
 <?php
 session_start();
 
-$dbc = mysqli_connect("localhost", "root", "", "mindfulpathway");
-if (mysqli_connect_errno()) {
-  echo "Failed to Open Database: " . mysqli_connect_error();
-  exit();
+// Establish a database connection using PDO
+try {
+    $pdo = new PDO('mysql:host=localhost;dbname=mindfulpathway', 'root', '');
+    $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+} catch (PDOException $e) {
+    die("Database connection failed: " . $e->getMessage());
 }
 
+// Check if the user is logged in
 if (isset($_SESSION['username'])) {
-  $username = $_SESSION['username']; 
+    $username = $_SESSION['username'];
 } else {
-  header('Location: login.html');
-  exit();
+    header('Location: login.html');
+    exit();
 }
+
 // Handle form submission
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $title = $_POST['title'];
-    $category = $_POST['category'];
+    // Validate form inputs
+    $title = $_POST['title'] ?? null;
+    $category = $_POST['category'] ?? null;
     $status = $_POST['status'] ?? 'Pending'; // Default status
-    $content = $_POST['content'];
+    $content = $_POST['content'] ?? null;
     $tags = $_POST['tags'] ?? null; // Optional field
     $summary = $_POST['summary'] ?? 'No summary provided'; // Default summary
-    $authorID = $_SESSION['userID']; // Assume the user ID is stored in the session
+    $authorID = $_SESSION['userID'] ?? null; // Assume the user ID is stored in the session
+
+    // Handle missing required fields
+    if (empty($title) || empty($category) || empty($content)) {
+        echo "<p style='color: red;'>Please fill in all required fields.</p>";
+        exit();
+    }
 
     // Handle image upload
     $coverIMG = null;
@@ -29,11 +40,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $targetDir = 'uploads/';
         $coverIMG = $targetDir . basename($_FILES['coverIMG']['name']);
         if (!move_uploaded_file($_FILES['coverIMG']['tmp_name'], $coverIMG)) {
-            die("Failed to upload the image.");
+            die("<p style='color: red;'>Failed to upload the image.</p>");
         }
     }
 
-    // Insert article into database
+    // Insert article into the database
     $sql = "INSERT INTO article (title, category, status, coverIMG, content, tags, summary, timePosted, authorID) 
             VALUES (:title, :category, :status, :coverIMG, :content, :tags, :summary, NOW(), :authorID)";
     $stmt = $pdo->prepare($sql);
@@ -50,7 +61,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             ':authorID' => $authorID,
         ]);
         echo "<p style='color: green;'>Article submitted successfully!</p>";
-    } catch (Exception $e) {
+    } catch (PDOException $e) {
         echo "<p style='color: red;'>Error: " . $e->getMessage() . "</p>";
     }
 }
