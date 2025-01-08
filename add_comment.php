@@ -13,7 +13,7 @@ if (!isset($_SESSION['userID'])) {
 
 // Get the user ID from the session
 $userID = $_SESSION['userID'];
-
+$username = $_SESSION['username']; // Username of the logged-in user
 // Get the form data
 $articleID = $_POST['article_id'];
 $commentContent = trim($_POST['comment_content']);
@@ -34,13 +34,18 @@ if (mysqli_query($dbc, $query)) {
     // If the comment is a reply, send a notification to the original commenter
     if ($parentID) {
         // Get the user ID of the person who posted the original comment
-        $getOriginalCommentQuery = "SELECT userID FROM comment WHERE commentID = '$parentID'";
+        $getOriginalCommentQuery = "
+        SELECT u.username, c.userID 
+        FROM comment c
+        INNER JOIN user u ON c.userID = u.userID
+        WHERE c.commentID = '$parentID' ";
         $result = mysqli_query($dbc, $getOriginalCommentQuery);
         $originalComment = mysqli_fetch_assoc($result);
         $originalUserID = $originalComment['userID'];
+        $originalUsername = $originalComment['username'];
 
         // Insert a notification for the user who posted the original comment
-        $message = $originalUserID." have reply to your comment.";
+        $message = $username." have reply to your comment.";
         $notificationQuery = "INSERT INTO notifications (userID, commentID, articleID, messages) 
                                VALUES ('$originalUserID', '$parentID','$articleID', '$message')";
         mysqli_query($dbc, $notificationQuery);

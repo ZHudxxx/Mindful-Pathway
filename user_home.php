@@ -29,17 +29,15 @@ if (!$result) {
 while ($row = mysqli_fetch_assoc($result)) {
   $articles[] = $row;
 }
-?>
-<?php
+
 // Fetch unread notifications for the logged-in user
 $userID = $_SESSION['userID']; // Assuming userID is stored in the session
 $notifications = [];
-$queryN = "SELECT * FROM notifications WHERE userID = '$userID' AND is_read = 0 ORDER BY timePosted DESC";
+$queryN = "SELECT * FROM notifications WHERE userID = '$userID'  ORDER BY timePosted DESC";
 $resultN = mysqli_query($dbc, $queryN);
 
 if ($resultN) {
   $notifications = mysqli_fetch_all($resultN, MYSQLI_ASSOC);
-  echo '<pre>' . print_r($notifications, true) . '</pre>'; // Debug output
 } else {
   echo "Error fetching notifications: " . mysqli_error($dbc);
 }
@@ -320,6 +318,57 @@ if ($resultN) {
         margin-left: 0;
       }
     }
+
+    /* Notifications Dropdown */
+    #notifications-dropdown {
+      display: none;
+      /* Initially hidden */
+      position: absolute;
+      right: 20px;
+      top: 60px;
+      background-color: #fff;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+      width: 300px;
+      max-height: 400px;
+      overflow-y: auto;
+      /* Ensure scrolling for large content */
+      z-index: 1000;
+      /* Make sure it's on top */
+    }
+
+    /* Adjust padding and styles inside the dropdown */
+    #notifications-dropdown ul {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+
+    #notifications-dropdown li {
+      padding: 10px;
+      border-bottom: 1px solid #ddd;
+      cursor: pointer;
+    }
+
+    #notifications-dropdown li:last-child {
+      border-bottom: none;
+      /* Remove border for the last item */
+    }
+
+    #notifications-dropdown li:hover {
+      background-color: #f5f5f5;
+      /* Add a hover effect for better UX */
+    }
+
+    #notifications-dropdown h5 {
+      margin: 0;
+      padding: 10px;
+      background-color: #3cacae;
+      color: white;
+      border-radius: 8px 8px 0 0;
+      font-size: 16px;
+    }
   </style>
 </head>
 
@@ -345,9 +394,13 @@ if ($resultN) {
       <?php else: ?>
         <ul style="list-style: none; padding: 0; margin: 0;">
           <?php foreach ($notifications as $notification): ?>
-            <li style="padding: 10px; border-bottom: 1px solid #ddd;" onclick="markAsRead(<?php echo $notification['notificationID']; ?>)">
-              <p style="margin: 0;"><?php echo htmlspecialchars($notification['message']); ?></p>
-              <small style="color: grey;"><?php echo $notification['timePosted']; ?></small>
+            <li>
+              <a href="readarticle.php?id=<?php echo htmlspecialchars($notification['articleID']); ?>"
+                onclick="markAsRead(<?php echo $notification['notificationID']; ?>)"
+                style="text-decoration: none; color: black;">
+                <p style="margin: 0;"><?php echo htmlspecialchars($notification['messages']); ?></p>
+                <small style="color: grey;"><?php echo $notification['timePosted']; ?></small>
+              </a>
             </li>
           <?php endforeach; ?>
         </ul>
@@ -392,7 +445,7 @@ if ($resultN) {
             <div class="content">
               <h3><?php echo htmlspecialchars($article['title']); ?></h3>
               <p><?php echo htmlspecialchars(substr($article['content'], 0, 100)); ?>...</p>
-              <a href="article.php?id=<?php echo $article['articleID']; ?>" class="article-button">Read More</a>
+              <a href="readarticle.php?id=<?php echo $article['articleID']; ?>" class="article-button">Read More</a>
             </div>
           </div>
         <?php endforeach; ?>
@@ -431,6 +484,15 @@ if ($resultN) {
       }
     }
 
+    // Close dropdown when clicking outside
+    document.addEventListener("click", function(event) {
+      var dropdown = document.getElementById("notifications-dropdown");
+      var bellIcon = document.querySelector(".fas.fa-bell");
+      if (!dropdown.contains(event.target) && event.target !== bellIcon) {
+        dropdown.style.display = "none";
+      }
+    });
+
     function markAsRead(notificationID) {
       // Make an AJAX request to mark the notification as read
       $.ajax({
@@ -440,23 +502,14 @@ if ($resultN) {
           notificationID: notificationID
         },
         success: function(response) {
-          // Optionally, update the UI to remove the notification or mark it as read
-          alert('Notification marked as read!');
+          console.log('Notification marked as read:', response);
         },
         error: function() {
-          alert('Error marking notification as read.');
+          console.error('Error marking notification as read.');
         }
       });
     }
 
-
-    // Optionally, you can hide the notifications when clicking anywhere outside the dropdown.
-    document.addEventListener("click", function(event) {
-      var dropdown = document.getElementById("notifications-dropdown");
-      if (!dropdown.contains(event.target) && !event.target.closest(".fas.fa-bell")) {
-        dropdown.style.display = "none";
-      }
-    });
 
 
     function toggleSidebar() {
