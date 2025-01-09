@@ -394,25 +394,13 @@ $imgProfile = $user['imgProfile'] ?? 'uploads/default-profile.png';
     <footer>
         &copy; <?php echo date('Y'); ?> Mindful Pathway. All rights reserved.
     </footer>
-    <button class="back-to-top" onclick="scrollToTop()">↑</button>
-
+   
 <script>
   function showNotifications() {
     alert("You have no new notifications."); 
   }
 
-  window.onscroll = function() {
-      const backToTopButton = document.querySelector('.back-to-top');
-      if (document.body.scrollTop > 100 || document.documentElement.scrollTop > 100) {
-          backToTopButton.style.display = "block";
-      } else {
-          backToTopButton.style.display = "none"; 
-      }
-  };
-    
-  function scrollToTop() {
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-  }
+  
   function toggleSidebar() {
 var sidebar = document.querySelector('.sidebar');
 if (sidebar.style.display === 'none' || sidebar.style.display === '') {
