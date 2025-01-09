@@ -388,7 +388,7 @@ $admin = $result->fetch_assoc();
 
         <div class="main-content">
             <div class="profile-container">
-                <h1>MY PROFILE</h1>
+             <!---   <h1>MY PROFILE</h1> -->
                 <form action="admin_profile.php" method="POST" enctype="multipart/form-data">
                     <div class="profile-img">
                         <img id="profileImage" src="<?php echo htmlspecialchars($admin['imgProfile'] ?? 'uploads/default-profile.png'); ?>" alt="Profile Image">
