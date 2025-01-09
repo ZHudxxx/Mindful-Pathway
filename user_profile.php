@@ -1,50 +1,35 @@
 <?php
+// Start session
 session_start();
-include 'db_connection.php';
 
-// Redirect if not logged in
-if (!isset($_SESSION['userID'])) {
-    header("Location: login.php");
+// Database connection
+$dbc = new mysqli("localhost", "root", "", "mindfulpathway");
+if ($dbc->connect_errno) {
+    echo "Failed to Open Database: " . $dbc->connect_error;
     exit();
 }
 
-$userID = $_SESSION['userID'];
-
-// Handle profile updates
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $email = $_POST['email'];
-    $bio = $_POST['bio'];
-    $imgProfile = $_FILES['imgProfile'];
-
-    // Image upload handling
-    if ($imgProfile['size'] > 0 && $imgProfile['error'] === UPLOAD_ERR_OK) {
-        $targetDir = "uploads/";
-        $targetFile = $targetDir . uniqid() . "-" . basename($imgProfile['name']);
-        if (move_uploaded_file($imgProfile['tmp_name'], $targetFile)) {
-            $uploadedImage = $targetFile;
-        } else {
-            echo "<script>alert('Failed to upload the image.');</script>";
-        }
-    } else {
-        $uploadedImage = $_POST['existingImgProfile'] ?? 'uploads/default-profile.png';
-    }
-
-    // Update user profile
-    $query = "UPDATE user SET email = ?, bio = ?, imgProfile = ? WHERE userID = ?";
-    $stmt = $conn->prepare($query);
-    $stmt->bind_param("sssi", $email, $bio, $uploadedImage, $userID);
-    $stmt->execute();
-
-    echo "<script>alert('Profile updated successfully!');</script>";
+// Authentication Check
+if (!isset($_SESSION['userID'])) {
+    header('Location: login.php');
+    exit();
 }
+
+$userID = $_SESSION['userID']; // Get userID from session
 
 // Fetch user data
 $query = "SELECT * FROM user WHERE userID = ?";
-$stmt = $conn->prepare($query);
+$stmt = $dbc->prepare($query);
 $stmt->bind_param("i", $userID);
 $stmt->execute();
 $result = $stmt->get_result();
 $user = $result->fetch_assoc();
+
+// Set variables
+$username = $user['username'] ?? 'Guest'; // Default to 'Guest' if username is null
+$email = $user['email'] ?? '';
+$bio = $user['bio'] ?? '';
+$imgProfile = $user['imgProfile'] ?? 'uploads/default-profile.png';
 ?>
 
 <!DOCTYPE html>
@@ -67,6 +52,7 @@ $user = $result->fetch_assoc();
             flex-direction: column;
             min-height: 100vh;
             background-color: #f5f5f5;
+            
         }
      
         /* Header */
@@ -378,7 +364,7 @@ $user = $result->fetch_assoc();
 
         <div class="main-content">
             <div class="profile-container">
-                <h1>MY PROFILE</h1>
+               <!-- <h1>MY PROFILE</h1> -->
                 <form action="user_profile.php" method="POST" enctype="multipart/form-data">
                     <div class="profile-img">
                         <img id="profileImage" src="<?php echo htmlspecialchars($user['imgProfile'] ?? 'uploads/default-profile.png'); ?>" alt="Profile Image">
