@@ -30,6 +30,46 @@ $username = $user['username'] ?? 'Guest'; // Default to 'Guest' if username is n
 $email = $user['email'] ?? '';
 $bio = $user['bio'] ?? '';
 $imgProfile = $user['imgProfile'] ?? 'uploads/default-profile.png';
+
+// Handle form submission and file upload
+if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+    $newImgProfile = $_FILES['imgProfile'] ?? null;
+
+    if ($newImgProfile && $newImgProfile['error'] == 0) {
+        // Generate a unique name for the uploaded file to avoid overwriting
+        $fileExtension = pathinfo($newImgProfile['name'], PATHINFO_EXTENSION);
+        $newFileName = uniqid("profile_", true) . "." . $fileExtension;
+
+        // Set the target directory to store uploaded files
+        $uploadDir = 'uploads/';
+        $targetFile = $uploadDir . $newFileName;
+
+        // Move the uploaded file to the desired directory
+        if (move_uploaded_file($newImgProfile['tmp_name'], $targetFile)) {
+            // File upload successful, update the user's profile image in the database
+            $updateQuery = "UPDATE user SET imgProfile = ? WHERE userID = ?";
+            $stmt = $dbc->prepare($updateQuery);
+            $stmt->bind_param("si", $targetFile, $userID);
+            if ($stmt->execute()) {
+                // Successfully updated profile image
+                $imgProfile = $targetFile; // Update the image path
+            } else {
+                echo "Error updating the database: " . $stmt->error;
+            }
+        } else {
+            echo "Error uploading file.";
+        }
+    }
+
+    // Update user info (email and bio) if necessary
+    $newEmail = $_POST['email'];
+    $newBio = $_POST['bio'];
+
+    $updateInfoQuery = "UPDATE user SET email = ?, bio = ? WHERE userID = ?";
+    $stmt = $dbc->prepare($updateInfoQuery);
+    $stmt->bind_param("ssi", $newEmail, $newBio, $userID);
+    $stmt->execute();
+}
 ?>
 
 <!DOCTYPE html>
