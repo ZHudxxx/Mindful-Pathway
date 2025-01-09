@@ -364,10 +364,10 @@ $admin = $result->fetch_assoc();
     <span>Mindful Pathway</span>
   </div>
   <div class="menu">
-    <i class="fas fa-bell" style="font-size: 20px; margin-right: 20px;" onclick="showNotifications()"></i>
-    <img src="uploads/<?php echo isset($_SESSION['img_Profile']) ? htmlspecialchars($_SESSION['img_Profile']) : 'default_profile.jpg'; ?>" 
-         alt="Profile" style="width: 20px; height: 20px; border-radius: 50%; margin-right: 70px;">
-  </div>
+  <img src="<?php echo !empty($admin['imgProfile']) ? htmlspecialchars($admin['imgProfile']) : 'uploads/default-profile.png'; ?>"
+  alt="Profile" style="width: 40px; height: 40px; border-radius: 50%; margin-right: 20px;">
+        <i class="fas fa-bell" style="font-size: 20px; margin-right: 20px;" onclick="showNotifications()"></i>
+    </div>
   <div class="hamburger" onclick="toggleSidebar()">
     <span></span>
     <span></span>
