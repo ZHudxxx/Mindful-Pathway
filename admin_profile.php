@@ -358,7 +358,7 @@ $admin = $result->fetch_assoc();
     </style>
 </head>
 <body>
-    <<div class="header">
+    <div class="header">
   <div class="logo">
     <img src="img/favicon.png" alt="Logo">
     <span>Mindful Pathway</span>
