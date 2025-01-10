@@ -61,6 +61,7 @@ $admin = $result->fetch_assoc();
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Mindful Pathway - My Profile</title>
     <link rel="stylesheet" href="style.css">
@@ -347,6 +348,13 @@ $admin = $result->fetch_assoc();
     margin-left: 0; 
   }
 }
+@media (max-width: 768px) {
+  .profile-img {
+      width: 100px; /* Smaller profile image for mobile */
+      height: 100px;
+  }
+}
+
         /* Footer */
         footer {
             text-align: center;
@@ -358,23 +366,23 @@ $admin = $result->fetch_assoc();
     </style>
 </head>
 <body>
-    <div class="header">
+    <!-- Header -->
+<div class="header">
   <div class="logo">
     <img src="img/favicon.png" alt="Logo">
     <span>Mindful Pathway</span>
   </div>
   <div class="menu">
-  <img src="<?php echo !empty($admin['imgProfile']) ? htmlspecialchars($admin['imgProfile']) : 'uploads/default-profile.png'; ?>"
-  alt="Profile" style="width: 40px; height: 40px; border-radius: 50%; margin-right: 20px;">
-        <i class="fas fa-bell" style="font-size: 20px; margin-right: 20px;" onclick="showNotifications()"></i>
-    </div>
+    <i class="fas fa-bell" style="font-size: 20px; margin-right: 20px;" onclick="showNotifications()"></i>
+    <img src="<?php echo !empty($admin['imgProfile']) ? htmlspecialchars($admin['imgProfile']) : 'uploads/default-profile.png'; ?>"
+      alt="Profile" style="width: 40px; height: 40px; border-radius: 50%; margin-right: 20px;">
+  </div>
   <div class="hamburger" onclick="toggleSidebar()">
     <span></span>
     <span></span>
     <span></span>
-  </div>
 </div>
-
+</div>
     <div class="sidebar">
         <div class="title"><?php echo "Welcome, " . htmlspecialchars($admin['username']); ?></div>
         <a href="admin_home.php" >Home</a>
@@ -419,12 +427,23 @@ $admin = $result->fetch_assoc();
         &copy; 2024 Mindful Pathway | All Rights Reserved
     </footer>
 
-    <script>
-    function showNotifications() {
+  <script>
+   function showNotifications() {
       alert("You have no new notifications."); 
     }
 
-   
+    window.onscroll = function() {
+        const backToTopButton = document.querySelector('.back-to-top');
+        if (document.body.scrollTop > 100 || document.documentElement.scrollTop > 100) {
+            backToTopButton.style.display = "block";
+        } else {
+            backToTopButton.style.display = "none"; 
+        }
+    };
+      
+    function scrollToTop() {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
     function toggleSidebar() {
   var sidebar = document.querySelector('.sidebar');
   if (sidebar.style.display === 'none' || sidebar.style.display === '') {
