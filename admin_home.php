@@ -7,6 +7,43 @@ if ($conn->connect_errno) {
     exit();
 }
 
+// Authentication Check
+if (!isset($_SESSION['adminID'])) {
+    header('Location: login.php');
+    exit();
+}
+$adminID = $_SESSION['adminID'];
+
+// Handle profile updates
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $email = $_POST['email'];
+    $bio = $_POST['bio'];
+    $imgProfile = $_FILES['imgProfile'];
+
+    // Image upload handling
+    if ($imgProfile['size'] > 0 && $imgProfile['error'] === UPLOAD_ERR_OK) {
+        $targetDir = "uploads/";
+        $targetFile = $targetDir . uniqid() . "-" . basename($imgProfile['name']);
+        if (move_uploaded_file($imgProfile['tmp_name'], $targetFile)) {
+            $uploadedImage = $targetFile;
+        } else {
+            echo "<script>alert('Failed to upload the image.');</script>";
+        }
+    } else {
+        $uploadedImage = $_POST['existingImgProfile'] ?? 'uploads/default-profile.png';
+    }
+
+    // Update admin profile
+    $query = "UPDATE admin SET email = ?, bio = ?, imgProfile = ? WHERE adminID = ?";
+    $stmt = $conn->prepare($query);
+    $stmt->bind_param("sssi", $email, $bio, $uploadedImage, $adminID);
+    if ($stmt->execute()) {
+        echo "<script>alert('Profile updated successfully!');</script>";
+    } else {
+        echo "<script>alert('Failed to update profile.');</script>";
+    }
+}
+    
 if (isset($_SESSION['username'])) {
     $username = $_SESSION['username'];
     $stmt = $conn->prepare("SELECT * FROM admin WHERE username = ?");
@@ -18,6 +55,7 @@ if (isset($_SESSION['username'])) {
         header('Location: login.php');
         exit();
     }
+    $admin = $result->fetch_assoc();
 } else {
     header('Location: login.php');
     exit();
@@ -48,6 +86,7 @@ $users = [];
 while ($row = $result_users->fetch_assoc()) {
     $users[] = $row;
 }
+
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -369,8 +408,8 @@ footer {
   </div>
   <div class="menu">
     <i class="fas fa-bell" style="font-size: 20px; margin-right: 20px;" onclick="showNotifications()"></i>
-    <img src="uploads/<?php echo isset($_SESSION['img_Profile']) ? htmlspecialchars($_SESSION['img_Profile']) : 'default_profile.jpg'; ?>" 
-         alt="Profile" style="width: 20px; height: 20px; border-radius: 50%; margin-right: 70px;">
+    <img src="<?php echo !empty($admin['imgProfile']) ? htmlspecialchars($admin['imgProfile']) : 'uploads/default-profile.png'; ?>"
+  alt="Profile" style="width: 40px; height: 40px; border-radius: 50%; margin-right: 20px;">
   </div>
   <div class="hamburger" onclick="toggleSidebar()">
     <span></span>

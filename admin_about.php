@@ -1,25 +1,55 @@
 <?php
-// Start session
 session_start();
 
-// Database connection
-$dbc = new mysqli("localhost", "root", "", "mindfulpathway");
-if ($dbc->connect_errno) {
-    echo "Failed to Open Database: " . $dbc->connect_error;
+$conn = new mysqli("localhost", "root", "", "mindfulpathway");
+if ($conn->connect_errno) {
+    echo "Failed to Open Database: " . $conn->connect_error;
     exit();
 }
-// Authentication Check
-if (isset($_SESSION['username'])) {
-    $username = $_SESSION['username'];
-    $stmt = $dbc->prepare("SELECT * FROM admin WHERE username = ?");
-    $stmt->bind_param("s", $username);
-    $stmt->execute();
-    $result = $stmt->get_result();
 
-    if ($result->num_rows == 0) {
-        header('Location: login.php');
-        exit();
+// Authentication Check
+if (!isset($_SESSION['adminID'])) {
+    header('Location: login.php');
+    exit();
+}
+$adminID = $_SESSION['adminID'];
+
+// Handle profile updates
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $email = $_POST['email'];
+    $bio = $_POST['bio'];
+    $imgProfile = $_FILES['imgProfile'];
+
+    // Image upload handling
+    if ($imgProfile['size'] > 0 && $imgProfile['error'] === UPLOAD_ERR_OK) {
+        $targetDir = "uploads/";
+        $targetFile = $targetDir . uniqid() . "-" . basename($imgProfile['name']);
+        if (move_uploaded_file($imgProfile['tmp_name'], $targetFile)) {
+            $uploadedImage = $targetFile;
+        } else {
+            echo "<script>alert('Failed to upload the image.');</script>";
+        }
+    } else {
+        $uploadedImage = $_POST['existingImgProfile'] ?? 'uploads/default-profile.png';
     }
+
+    // Update admin profile
+    $query = "UPDATE admin SET email = ?, bio = ?, imgProfile = ? WHERE adminID = ?";
+    $stmt = $conn->prepare($query);
+    $stmt->bind_param("sssi", $email, $bio, $uploadedImage, $adminID);
+    if ($stmt->execute()) {
+        echo "<script>alert('Profile updated successfully!');</script>";
+    } else {
+        echo "<script>alert('Failed to update profile.');</script>";
+    }
+}
+
+if (isset($_SESSION['adminID'])) {
+    $adminID = $_SESSION['adminID'];
+    $stmt = $conn->prepare("SELECT * FROM admin WHERE adminID = ?");
+    $stmt->bind_param("i", $adminID);
+    $stmt->execute();
+    $admin = $stmt->get_result()->fetch_assoc();
 } else {
     header('Location: login.php');
     exit();
@@ -322,21 +352,21 @@ footer {
   </div>
   <div class="menu">
     <i class="fas fa-bell" style="font-size: 20px; margin-right: 20px;" onclick="showNotifications()"></i>
-    <img src="uploads/<?php echo isset($_SESSION['img_Profile']) ? htmlspecialchars($_SESSION['img_Profile']) : 'default_profile.jpg'; ?>" 
-         alt="Profile" style="width: 20px; height: 20px; border-radius: 50%; margin-right: 70px;">
+    <img src="<?php echo !empty($admin['imgProfile']) ? htmlspecialchars($admin['imgProfile']) : 'uploads/default-profile.png'; ?>"
+      alt="Profile" style="width: 40px; height: 40px; border-radius: 50%; margin-right: 20px;">
   </div>
   <div class="hamburger" onclick="toggleSidebar()">
     <span></span>
     <span></span>
     <span></span>
-  </div>
+</div>
 </div>
 
 <!-- Sidebar -->
 <div class="sidebar">
-  <div class="title"><?php echo "Welcome, " . htmlspecialchars($username); ?></div>
+  <div class="title"><?php echo "Welcome, " . htmlspecialchars($admin['username']); ?></div>
   <a href="admin_home.php">Home</a>
-  <a href="admin_about.php"  class="active">About</a>
+  <a href="admin_about.php" class="active">About</a>
   <a href="admin_profile.php">My Profile</a>
   <a href="article_manage.php">Manage Articles</a>
   <a href="admin_user_manage.php">Manage Users</a>
@@ -344,51 +374,53 @@ footer {
   <a href="logout.php" class="logout">Logout</a>
 </div>
 
-       <!-- Main Content Area -->
-  <div class="main-content">
-    <h1>ABOUT</h1>
-    <i>About Us and our infomation</i>
-    <div class="benda-about"id="benda-about">
+<!-- Main Content Area -->
+<div class="main-content">
+        <h1>ABOUT</h1>
+        <i>About Us and our infomation</i>
+        <div class="benda-about"id="benda-about">
+            <div class="about-card">
+                <div class="content">
+        <h2>Welcome to Mindful pathway</h2>
+        <p>At Mindful pathway, we aim to create a supportive and informative platform for mental health and psychology awareness.
+        Whether you're here to share your thoughts, gain insights, or seek help, we’re here to empower you with knowledge and connections.</p>
+    </div>
+    </div>
         <div class="about-card">
             <div class="content">
-    <h2>Welcome to Mindful pathway</h2>
-    <p>At Mindful pathway, we aim to create a supportive and informative platform for mental health and psychology awareness.
-    Whether you're here to share your thoughts, gain insights, or seek help, we’re here to empower you with knowledge and connections.</p>
-</div>
-</div>
-    <div class="about-card">
-        <div class="content">
-            <h3>Our Mission</h3>
-    <p> - Raise awareness about mental health and well-being.<br>
-        - Foster a community where users can share and learn through articles and discussions.<br>
-        - Provide tools like AI interaction to guide users toward better mental health practices.</p>
-    </div>
-</div>
-<div class="about-card">
-    <div class="content">
-        <h3>Why Choose Us?</h3>
-        <p>We believe that mental health is as important as physical health. At Mindful pathway, you’re not just a user—you’re part of a community that values empathy, support, and understanding.</p>
-      </div>
+                <h3>Our Mission</h3>
+        <p> - Raise awareness about mental health and well-being.<br>
+            - Foster a community where users can share and learn through articles and discussions.<br>
+            - Provide tools like AI interaction to guide users toward better mental health practices.</p>
+        </div>
     </div>
     <div class="about-card">
         <div class="content">
-            <h3>Need Assistance?</h3>
-            <p>If you have questions or need support, feel free to contact us:<br>
-                Email: support@mindfulpathway.com <br>
-                Live Chat: Available on our platform.<br>
-                Help Center: Access FAQs and resources for quick assistance.</p>
+            <h3>Why Choose Us?</h3>
+            <p>We believe that mental health is as important as physical health. At Mindful pathway, you’re not just a user—you’re part of a community that values empathy, support, and understanding.</p>
           </div>
-</div>
-</div>
+        </div>
+        <div class="about-card">
+            <div class="content">
+                <h3>Need Assistance?</h3>
+                <p>If you have questions or need support, feel free to contact us:<br>
+                    Email: support@mindfulpathway.com <br>
+                    Live Chat: Available on our platform.<br>
+                    Help Center: Access FAQs and resources for quick assistance.</p>
+              </div>
     </div>
-    <!-- Footer -->
-  <footer>
-    &copy; 2024 Mindful Pathway | All Rights Reserved
-  </footer>
-  <button class="back-to-top" onclick="scrollToTop()">↑</button>
+    </div>
 
-  <script>
-    function showNotifications() {
+<!-- Footer -->
+<footer>
+  <p>&copy; 2025 Mindful Pathway. All rights reserved.</p>
+</footer>
+
+<!-- Back to Top Button -->
+<button class="back-to-top" id="backToTopBtn" onclick="scrollToTop()">↑</button>
+
+<script>
+   function showNotifications() {
       alert("You have no new notifications."); 
     }
 
