@@ -245,22 +245,29 @@ while ($row = $result_users->fetch_assoc()) {
         }
     </style>
 </head>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Panel</title>
+    <link rel="stylesheet" href="style.css"> <!-- Assuming you have a CSS file for styles -->
+</head>
 <body>
     <div class="sidebar">
         <div class="logo">
             <img src="img/logo.png" alt="Logo">
             <h1>Admin Panel</h1>
         </div>
-          <!-- Sidebar -->
-    <div class="sidebar">
-      <div class="title"><?php echo "Welcome, " . htmlspecialchars($username); ?></div>
-      <a href="admin_home.php" >Home</a>
-      <a href="admin_about.php">About</a>
-      <a href="admin_profile.php">My Profile</a>
-      <a href="article_manage.php">Manage Articles</a>
-      <a href="admin_user_manage.php">Manage Users</a>
-      <a href="admin_feedback.php"class= active">Feedback</a>
-      <a href="logout.php" class="logout">Logout</a>
+        <div class="title"><?php echo "Welcome, " . htmlspecialchars($username); ?></div>
+        <a href="admin_home.php">Home</a>
+        <a href="admin_about.php">About</a>
+        <a href="admin_profile.php">My Profile</a>
+        <a href="article_manage.php">Manage Articles</a>
+        <a href="admin_user_manage.php">Manage Users</a>
+        <a href="admin_feedback.php" class="active">Feedback</a>
+        <a href="logout.php" class="logout">Logout</a>
+    </div>
 
     <div class="main-content">
         <div class="header">
@@ -300,19 +307,21 @@ while ($row = $result_users->fetch_assoc()) {
                 </form>
             </div>
         </div>
-         <!-- Footer -->
+    </div>
+
+    <!-- Footer -->
     <footer>
         &copy; 2024 Mindful Pathway | All Rights Reserved
     </footer>
 
     <script>
         function toggleSidebar() {
-            const sidebar = document.getElementById('sidebar');
-            const content = document.getElementById('content');
+            const sidebar = document.querySelector('.sidebar');
+            const content = document.querySelector('.main-content');
             sidebar.classList.toggle('active');
             content.classList.toggle('collapsed');
         }
     </script>
-    </div>
 </body>
 </html>
+
