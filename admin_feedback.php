@@ -109,25 +109,22 @@ while ($row = $result_users->fetch_assoc()) {
             overflow: hidden;
         }
 
-        /* Sidebar styling */
         .sidebar {
             width: 250px;
             background-color: #39B7B7;
             color: white;
             display: flex;
             flex-direction: column;
-            justify-content: space-between;
         }
 
         .sidebar .logo {
-            display: flex;
-            align-items: center;
             padding: 20px;
+            text-align: center;
         }
 
         .sidebar .logo img {
-            width: 40px;
-            margin-right: 10px;
+            width: 50px;
+            margin-bottom: 10px;
         }
 
         .sidebar .logo h1 {
@@ -135,30 +132,24 @@ while ($row = $result_users->fetch_assoc()) {
             font-weight: 700;
         }
 
-        .sidebar nav {
-            flex-grow: 1;
-        }
-
         .sidebar nav a {
             display: block;
             padding: 15px 20px;
             color: white;
             text-decoration: none;
-            font-weight: 500;
         }
 
         .sidebar nav a:hover, .sidebar nav a.active {
-            background-color: #39B7B7;
+            background-color: #2a9a9a;
         }
 
         .sidebar .logout {
             padding: 15px 20px;
             text-align: center;
-            background-color: #39B7B7;
+            background-color: #2a9a9a;
             cursor: pointer;
         }
 
-        /* Main content styling */
         .main-content {
             flex-grow: 1;
             display: flex;
@@ -168,27 +159,12 @@ while ($row = $result_users->fetch_assoc()) {
         .header {
             background-color: #39B7B7;
             padding: 15px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
             color: white;
         }
 
         .header .title {
             font-size: 18px;
             font-weight: 700;
-        }
-
-        .header .user {
-            display: flex;
-            align-items: center;
-        }
-
-        .header .user img {
-            width: 35px;
-            height: 35px;
-            border-radius: 50%;
-            margin-left: 10px;
         }
 
         .content {
@@ -202,45 +178,37 @@ while ($row = $result_users->fetch_assoc()) {
             font-size: 24px;
         }
 
-        .feedback-section {
-            display: flex;
-            gap: 20px;
+        .feedback-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
         }
 
-        .feedback-list {
-            flex: 2;
+        .feedback-table th,
+        .feedback-table td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
         }
 
-        .feedback-card {
-            background-color: #F9F9F9;
-            padding: 15px;
-            border-radius: 5px;
-            margin-bottom: 10px;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-        }
-
-        .feedback-card h3 {
-            font-size: 16px;
-            font-weight: 700;
-            margin-bottom: 5px;
-        }
-
-        .feedback-card p {
-            font-size: 14px;
+        .feedback-table th {
+            background-color: #39B7B7;
+            color: white;
         }
 
         .feedback-form {
-            flex: 1;
-            background-color: #F9F9F9;
+            max-width: 400px;
+            margin: 0 auto;
             padding: 20px;
+            background-color: #f9f9f9;
             border-radius: 5px;
             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
         }
 
         .feedback-form h3 {
+            margin-bottom: 10px;
             font-size: 16px;
             font-weight: 700;
-            margin-bottom: 10px;
         }
 
         .feedback-form textarea {
@@ -248,9 +216,8 @@ while ($row = $result_users->fetch_assoc()) {
             height: 100px;
             margin-bottom: 10px;
             padding: 10px;
-            border: 1px solid #CCC;
+            border: 1px solid #ccc;
             border-radius: 5px;
-            resize: none;
         }
 
         .feedback-form button {
@@ -263,63 +230,60 @@ while ($row = $result_users->fetch_assoc()) {
             font-size: 14px;
             cursor: pointer;
         }
-
-        .footer {
-            text-align: center;
-            padding: 10px;
-            background-color: #F1F1F1;
-            font-size: 12px;
-        }
     </style>
 </head>
 <body>
     <div class="sidebar">
-        <div>
-            <div class="logo">
-                <img src="img/favicon.png" alt="Logo">
-                <h1>Admin Panel</h1>
-            </div>
-            <nav>
-                <a href="#" class="active">Dashboard</a>
-                <a href="#">Users</a>
-                <a href="#">Content</a>
-                <a href="#">Feedback</a>
-            </nav>
+        <div class="logo">
+            <img src="img/logo.png" alt="Logo">
+            <h1>Admin Panel</h1>
         </div>
+        <nav>
+            <a href="#" class="active">Dashboard</a>
+            <a href="#">Manage Articles</a>
+            <a href="#">Manage Users</a>
+            <a href="#">Feedback</a>
+        </nav>
         <div class="logout">LOG OUT</div>
     </div>
 
     <div class="main-content">
         <div class="header">
-            <div class="title">Feedback Management</div>
-            <div class="user">
-                <span>Admin</span>
-                <img src="img/admin-icon.png" alt="Admin Icon">
-            </div>
+            <div class="title">Manage Feedback</div>
         </div>
         <div class="content">
-            <div class="feedback-section">
-                <div class="feedback-list">
-                    <div class="feedback-card">
-                        <h3>Admin Feedback</h3>
-                        <p>Posted on: 2025-01-01</p>
-                        <p>Thank you for sharing your thoughts! We’ve taken note of your feedback and are working to make improvements to the platform.</p>
-                    </div>
-                    <div class="feedback-card">
-                        <h3>Admin Response</h3>
-                        <p>Posted on: 2024-12-15</p>
-                        <p>We’re happy to hear you found the content helpful! Please let us know if there are any specific topics you’d like to see covered.</p>
-                    </div>
-                </div>
-                <div class="feedback-form">
-                    <h3>Add Admin Notes</h3>
-                    <textarea placeholder="Write your response or notes here..."></textarea>
-                    <button>Submit Note</button>
-                </div>
+            <table class="feedback-table">
+                <thead>
+                    <tr>
+                        <th>Title</th>
+                        <th>Author</th>
+                        <th>Submitted Date</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>User Feedback 1</td>
+                        <td>Admin</td>
+                        <td>2025-01-01</td>
+                        <td>Approved</td>
+                    </tr>
+                    <tr>
+                        <td>User Feedback 2</td>
+                        <td>Admin</td>
+                        <td>2024-12-15</td>
+                        <td>Pending</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <div class="feedback-form">
+                <h3>Submit Admin Feedback</h3>
+                <form method="POST" action="submit_feedback.php">
+                    <textarea name="feedback" placeholder="Write your feedback here..." required></textarea>
+                    <button type="submit">Submit</button>
+                </form>
             </div>
-        </div>
-        <div class="footer">
-            &copy; 2025 Admin Panel | All Rights Reserved
         </div>
     </div>
 </body>
