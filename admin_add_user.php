@@ -1,28 +1,66 @@
 <?php
 session_start();
 
-// Database connection
-$dbc = new mysqli("localhost", "root", "", "mindfulpathway");
-if ($dbc->connect_errno) {
-    echo "Failed to Open Database: " . $dbc->connect_error;
+$conn = new mysqli("localhost", "root", "", "mindfulpathway");
+if ($conn->connect_errno) {
+    echo "Failed to Open Database: " . $conn->connect_error;
     exit();
 }
+
+// Authentication Check
+if (!isset($_SESSION['adminID'])) {
+    header('Location: login.php');
+    exit();
+}
+$adminID = $_SESSION['adminID'];
+
+// Handle profile updates
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $email = $_POST['email'];
+    $bio = $_POST['bio'];
+    $imgProfile = $_FILES['imgProfile'];
+
+    // Image upload handling
+    if ($imgProfile['size'] > 0 && $imgProfile['error'] === UPLOAD_ERR_OK) {
+        $targetDir = "uploads/";
+        $targetFile = $targetDir . uniqid() . "-" . basename($imgProfile['name']);
+        if (move_uploaded_file($imgProfile['tmp_name'], $targetFile)) {
+            $uploadedImage = $targetFile;
+        } else {
+            echo "<script>alert('Failed to upload the image.');</script>";
+        }
+    } else {
+        $uploadedImage = $_POST['existingImgProfile'] ?? 'uploads/default-profile.png';
+    }
+
+    // Update admin profile
+    $query = "UPDATE admin SET email = ?, bio = ?, imgProfile = ? WHERE adminID = ?";
+    $stmt = $conn->prepare($query);
+    $stmt->bind_param("sssi", $email, $bio, $uploadedImage, $adminID);
+    if ($stmt->execute()) {
+        echo "<script>alert('Profile updated successfully!');</script>";
+    } else {
+        echo "<script>alert('Failed to update profile.');</script>";
+    }
+}
+    
 if (isset($_SESSION['username'])) {
     $username = $_SESSION['username'];
-    
+    $stmt = $conn->prepare("SELECT * FROM admin WHERE username = ?");
+    $stmt->bind_param("s", $username);
+    $stmt->execute();
+    $result = $stmt->get_result();
 
-    $query = "SELECT * FROM admin WHERE username = '$username'";
-    $result = mysqli_query($dbc, $query);
-
-  
-    if (mysqli_num_rows($result) == 0) {
+    if ($result->num_rows == 0) {
         header('Location: login.php');
         exit();
     }
+    $admin = $result->fetch_assoc();
 } else {
     header('Location: login.php');
     exit();
 }
+
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $username = htmlspecialchars($_POST['username']);
     $email = htmlspecialchars($_POST['email']);
@@ -357,8 +395,8 @@ textarea.form-control {
   </div>
   <div class="menu">
     <i class="fas fa-bell" style="font-size: 20px; margin-right: 20px;" onclick="showNotifications()"></i>
-    <img src="uploads/<?php echo isset($_SESSION['img_Profile']) ? htmlspecialchars($_SESSION['img_Profile']) : 'default_profile.jpg'; ?>" 
-         alt="Profile" style="width: 20px; height: 20px; border-radius: 50%; margin-right: 70px;">
+    <img src="<?php echo !empty($admin['imgProfile']) ? htmlspecialchars($admin['imgProfile']) : 'uploads/default-profile.png'; ?>"
+    alt="Profile" style="width: 40px; height: 40px; border-radius: 50%; margin-right: 20px;">
   </div>
   <div class="hamburger" onclick="toggleSidebar()">
     <span></span>
@@ -368,17 +406,16 @@ textarea.form-control {
 </div>
 
   <!-- Sidebar -->
-  <div class="sidebar">
-    <div class="title"><?php echo "Welcome, $username"; ?></div>
-    <a href="admin_home.php" >Home</a>
-    <a href="admin_about.php">About</a>
-    <a href="admin_profile.php">My Profile</a>
-    <a href="article_manage.php" >Manage Articles</a>
-    <a href="admin_user_manage.php" class="active">Manage Users</a>
-    <a href="feedback.html">Feedback</a>
-
-    <a href="logout.php" class="logout">Logout</a>
-  </div>
+<div class="sidebar">
+  <div class="title"><?php echo "Welcome, " . htmlspecialchars($username); ?></div>
+  <a href="admin_home.php" >Home</a>
+  <a href="admin_about.php">About</a>
+  <a href="admin_profile.php">My Profile</a>
+  <a href="article_manage.php">Manage Articles</a>
+  <a href="admin_user_manage.php" class="active">Manage Users</a>
+  <a href="feedback.html">Feedback</a>
+  <a href="logout.php" class="logout">Logout</a>
+</div>
 
  <!-- Main Content Area -->
  <div class="main-content">
