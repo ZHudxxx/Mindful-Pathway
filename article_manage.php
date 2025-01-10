@@ -440,7 +440,7 @@ footer {
   <a href="admin_profile.php">My Profile</a>
   <a href="article_manage.php" class="active">Manage Articles</a>
   <a href="admin_user_manage.php">Manage Users</a>
-  <a href="feedback.html">Feedback</a>
+  <a href="admin_feedback.php">Feedback</a>
   <a href="logout.php" class="logout">Logout</a>
 </div>
 
