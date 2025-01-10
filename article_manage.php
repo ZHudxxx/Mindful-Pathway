@@ -1,87 +1,80 @@
 <?php
 session_start();
 
-// Database connection
-$dbc = new mysqli("localhost", "root", "", "mindfulpathway");
-if ($dbc->connect_errno) {
-    echo "Failed to Open Database: " . $dbc->connect_error;
+$conn = new mysqli("localhost", "root", "", "mindfulpathway");
+if ($conn->connect_errno) {
+    echo "Failed to Open Database: " . $conn->connect_error;
     exit();
 }
-if (isset($_SESSION['username'])) {
-    $username = $_SESSION['username'];
-    
 
-    $query = "SELECT * FROM admin WHERE username = '$username'";
-    $result = mysqli_query($dbc, $query);
-
-  
-    if (mysqli_num_rows($result) == 0) {
-        header('Location: login.php');
-        exit();
-    }
-} else {
+// Authentication Check
+if (!isset($_SESSION['adminID'])) {
     header('Location: login.php');
     exit();
 }
+$adminID = $_SESSION['adminID'];
 
-if (isset($_POST['Approve']) || isset($_POST['Reject'])) {
-    $article_id = $_POST['articleID'];
-    $status = isset($_POST['Approve']) ? 'Approved' : 'Rejected';
-
-
-    $update_query = "UPDATE article SET status = '$status' WHERE id = '$articleID'";
-    mysqli_query($dbc, $update_query);
-}
-$pending_query = "SELECT article.*, user.username FROM article 
-                  LEFT JOIN user ON article.authorID = user.userID
-                  WHERE article.status IS NULL ORDER BY article.timePosted DESC";
-$approved_query = "SELECT article.*, user.username FROM article 
-                  LEFT JOIN user ON article.authorID = user.userID
-                  ORDER BY article.timePosted DESC";
-
-$pending_result = mysqli_query($dbc, $pending_query);
-$approved_result = mysqli_query($dbc, $approved_query);
-
-$pending_articles = [];
-$approved_articles = [];
-
-while ($row = mysqli_fetch_assoc($pending_result)) {
-    $pending_articles[] = $row;
-}
-
-while ($row = mysqli_fetch_assoc($approved_result)) {
-    $approved_articles[] = $row;
-}
-$article = $result->fetch_assoc();
+// Handle profile updates
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $articleID = intval($_POST['articleID']);
-    $action = $_POST['action'];
+    $email = $_POST['email'];
+    $bio = $_POST['bio'];
+    $imgProfile = $_FILES['imgProfile'];
 
-    if ($action === 'Approve') {
-        $status = 'Approved';
-    } elseif ($action === 'Reject') {
-        $status = 'Rejected';
+    // Image upload handling
+    if ($imgProfile['size'] > 0 && $imgProfile['error'] === UPLOAD_ERR_OK) {
+        $targetDir = "uploads/";
+        $targetFile = $targetDir . uniqid() . "-" . basename($imgProfile['name']);
+        if (!move_uploaded_file($imgProfile['tmp_name'], $targetFile)) {
+            echo "<script>alert('Failed to upload the image.');</script>";
+        } else {
+            $uploadedImage = $targetFile;
+        }
     } else {
-        echo "Invalid action.";
-        exit();
+        $uploadedImage = $_POST['existingImgProfile'] ?? 'uploads/default-profile.png';
     }
 
-   $stmt = $dbc->prepare("UPDATE article SET status = ? WHERE articleID = ?");
-    $stmt->bind_param("si", $status, $articleID);
-
+    // Update admin profile
+    $query = "UPDATE admin SET email = ?, bio = ?, imgProfile = ? WHERE adminID = ?";
+    $stmt = $conn->prepare($query);
+    $stmt->bind_param("sssi", $email, $bio, $uploadedImage, $adminID);
     if ($stmt->execute()) {
-    echo "<script>alert('Article status successfully updated to " . $status . "'); window.location.href = 'review_article.php';</script>";
-} else {
-    echo "<script>alert('Failed to update article status.'); window.location.href = 'review_article.php';</script>";
+        echo "<script>alert('Profile updated successfully!');</script>";
+    } else {
+        echo "<script>alert('Failed to update profile.');</script>";
+    }
 }
 
-    $stmt->close();
-    $dbc->close();
+// Fetch user details
+$query = "SELECT * FROM admin WHERE adminID = ?";
+$stmt = $conn->prepare($query);
+$stmt->bind_param("i", $adminID);
+$stmt->execute();
+$result = $stmt->get_result();
+$admin = $result->fetch_assoc();
 
-    header("Location: article_manage.php");
-    exit();
+// Fetch articles
+$pending_query = "SELECT article.*, user.username FROM article LEFT JOIN user ON article.authorID = user.userID WHERE article.status IS NULL ORDER BY article.timePosted DESC";
+$approved_query = "SELECT article.*, user.username FROM article LEFT JOIN user ON article.authorID = user.userID ORDER BY article.timePosted DESC";
+
+$pending_result = $conn->query($pending_query);
+$approved_result = $conn->query($approved_query);
+
+$pending_articles = $pending_result->fetch_all(MYSQLI_ASSOC);
+$approved_articles = $approved_result->fetch_all(MYSQLI_ASSOC);
+
+// Approve or Reject articles
+if (isset($_POST['Approve']) || isset($_POST['Reject'])) {
+    $articleID = $_POST['articleID'];
+    $status = isset($_POST['Approve']) ? 'Approved' : 'Rejected';
+
+    $update_query = "UPDATE article SET status = ? WHERE id = ?";
+    $stmt = $conn->prepare($update_query);
+    $stmt->bind_param("si", $status, $articleID);
+    $stmt->execute();
 }
+
 ?>
+
 
 <!DOCTYPE html>
 <html lang="en">
@@ -422,7 +415,6 @@ footer {
 </head>
 <body>
 
- <!-- Header -->
 <div class="header">
   <div class="logo">
     <img src="img/favicon.png" alt="Logo">
@@ -430,9 +422,10 @@ footer {
   </div>
   <div class="menu">
     <i class="fas fa-bell" style="font-size: 20px; margin-right: 20px;" onclick="showNotifications()"></i>
-    <img src="uploads/<?php echo isset($_SESSION['img_Profile']) ? htmlspecialchars($_SESSION['img_Profile']) : 'default_profile.jpg'; ?>" 
-         alt="Profile" style="width: 20px; height: 20px; border-radius: 50%; margin-right: 70px;">
+    <img src="<?php echo !empty($admin['imgProfile']) ? htmlspecialchars($admin['imgProfile']) : 'uploads/default-profile.png'; ?>"
+    alt="Profile" style="width: 40px; height: 40px; border-radius: 50%; margin-right: 20px;">
   </div>
+  
   <div class="hamburger" onclick="toggleSidebar()">
     <span></span>
     <span></span>
@@ -440,18 +433,16 @@ footer {
   </div>
 </div>
 
-  <!-- Sidebar -->
-  <div class="sidebar">
-    <div class="title"><?php echo "Welcome, $username"; ?></div>
-    <a href="admin_home.php" >Home</a>
-    <a href="admin_about.php">About</a>
-    <a href="admin_profile.php">My Profile</a>
-    <a href="article_manage.php" class="active">Manage Articles</a>
-    <a href="admin_user_manage.php">Manage Users</a>
-    <a href="feedback.html">Feedback</a>
-
-    <a href="logout.php" class="logout">Logout</a>
-  </div>
+<div class="sidebar">
+  <div class="title"><?php echo "Welcome, " . htmlspecialchars($admin['username']); ?></div>
+  <a href="admin_home.php">Home</a>
+  <a href="admin_about.php">About</a>
+  <a href="admin_profile.php">My Profile</a>
+  <a href="article_manage.php" class="active">Manage Articles</a>
+  <a href="admin_user_manage.php">Manage Users</a>
+  <a href="feedback.html">Feedback</a>
+  <a href="logout.php" class="logout">Logout</a>
+</div>
 
  <!-- Main Content Area -->
  <div class="main-content">
