@@ -1,4 +1,93 @@
+<?php
+session_start();
 
+$conn = new mysqli("localhost", "root", "", "mindfulpathway");
+if ($conn->connect_errno) {
+    echo "Failed to Open Database: " . $conn->connect_error;
+    exit();
+}
+
+// Authentication Check
+if (!isset($_SESSION['adminID'])) {
+    header('Location: login.php');
+    exit();
+}
+$adminID = $_SESSION['adminID'];
+
+// Handle profile updates
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $email = $_POST['email'];
+    $bio = $_POST['bio'];
+    $imgProfile = $_FILES['imgProfile'];
+
+    // Image upload handling
+    if ($imgProfile['size'] > 0 && $imgProfile['error'] === UPLOAD_ERR_OK) {
+        $targetDir = "uploads/";
+        $targetFile = $targetDir . uniqid() . "-" . basename($imgProfile['name']);
+        if (move_uploaded_file($imgProfile['tmp_name'], $targetFile)) {
+            $uploadedImage = $targetFile;
+        } else {
+            echo "<script>alert('Failed to upload the image.');</script>";
+        }
+    } else {
+        $uploadedImage = $_POST['existingImgProfile'] ?? 'uploads/default-profile.png';
+    }
+
+    // Update admin profile
+    $query = "UPDATE admin SET email = ?, bio = ?, imgProfile = ? WHERE adminID = ?";
+    $stmt = $conn->prepare($query);
+    $stmt->bind_param("sssi", $email, $bio, $uploadedImage, $adminID);
+    if ($stmt->execute()) {
+        echo "<script>alert('Profile updated successfully!');</script>";
+    } else {
+        echo "<script>alert('Failed to update profile.');</script>";
+    }
+}
+    
+if (isset($_SESSION['username'])) {
+    $username = $_SESSION['username'];
+    $stmt = $conn->prepare("SELECT * FROM admin WHERE username = ?");
+    $stmt->bind_param("s", $username);
+    $stmt->execute();
+    $result = $stmt->get_result();
+
+    if ($result->num_rows == 0) {
+        header('Location: login.php');
+        exit();
+    }
+    $admin = $result->fetch_assoc();
+} else {
+    header('Location: login.php');
+    exit();
+}
+
+$stmt = $conn->prepare("
+    SELECT article.articleID, article.title, article.timePosted, article.status, user.username 
+    FROM article 
+    JOIN user ON article.authorID = user.userID 
+    ORDER BY timePosted DESC LIMIT 5
+");
+$stmt->execute();
+$result = $stmt->get_result();
+
+$articles = [];
+while ($row = $result->fetch_assoc()) {
+    $row['status'] = $row['status'] ?: 'Pending';
+    $articles[] = $row;
+}
+
+
+// Fetch Users (Preview)
+$stmt_users = $conn->prepare("SELECT userID, username, bio, email FROM user ORDER BY username ASC LIMIT 5");
+$stmt_users->execute();
+$result_users = $stmt_users->get_result();
+
+$users = [];
+while ($row = $result_users->fetch_assoc()) {
+    $users[] = $row;
+}
+
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
