@@ -1,20 +1,65 @@
 <?php
+// Start session
 session_start();
 
-// Directly establish the database connection here
-$dbc = mysqli_connect("localhost", "root", "", "mindfulpathway");
-if (mysqli_connect_errno()) {
-  echo "Failed to Open Database: " . mysqli_connect_error();
-  exit();
+// Database connection
+$dbc = new mysqli("localhost", "root", "", "mindfulpathway");
+if ($dbc->connect_errno) {
+    echo "Failed to Open Database: " . $dbc->connect_error;
+    exit();
 }
 
-// Check if the user is logged in
-if (isset($_SESSION['username'])) {
-  $username = $_SESSION['username']; // Assuming 'username' is stored in session
-} else {
-  header('Location: login.html');
-  exit();
+// Authentication Check
+if (!isset($_SESSION['userID'])) {
+    header('Location: login.php');
+    exit();
 }
+
+$userID = $_SESSION['userID'];
+
+$query = "SELECT * FROM user WHERE userID = ?";
+$stmt = $dbc->prepare($query);
+$stmt->bind_param("i", $userID);
+$stmt->execute();
+$result = $stmt->get_result();
+$user = $result->fetch_assoc();
+
+// Set variables
+$username = $user['username'] ?? 'Guest'; // Default to 'Guest' if username is null
+$email = $user['email'] ?? '';
+$bio = $user['bio'] ?? '';
+$imgProfile = $user['imgProfile'] ?? 'uploads/default-profile.png';
+
+// Handle profile updates
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+  $email = $_POST['email'];
+  $bio = $_POST['bio'];
+  $imgProfile = $_FILES['imgProfile'];
+
+  // Image upload handling
+  if ($imgProfile['size'] > 0 && $imgProfile['error'] === UPLOAD_ERR_OK) {
+      $targetDir = "uploads/";
+      $targetFile = $targetDir . uniqid() . "-" . basename($imgProfile['name']);
+      if (move_uploaded_file($imgProfile['tmp_name'], $targetFile)) {
+          $uploadedImage = $targetFile;
+      } else {
+          echo "<script>alert('Failed to upload the image.');</script>";
+      }
+  } else {
+      $uploadedImage = $_POST['existingImgProfile'] ?? 'uploads/default-profile.png';
+  }
+
+  // Update user profile
+  $query = "UPDATE user SET email = ?, bio = ?, imgProfile = ? WHERE userID = ?";
+  $stmt = $conn->prepare($query);
+  $stmt->bind_param("sssi", $email, $bio, $uploadedImage, $userID);
+  if ($stmt->execute()) {
+      echo "<script>alert('Profile updated successfully!');</script>";
+  } else {
+      echo "<script>alert('Failed to update profile.');</script>";
+  }
+}
+
 $articles = [];
 
 // Query to fetch the latest articles
@@ -382,8 +427,8 @@ if ($resultN) {
     </div>
     <div class="menu">
       <i class="fas fa-bell" style="font-size: 20px; margin-right: 20px;" onclick="showNotifications()"></i>
-      <img src="uploads/<?php echo isset($_SESSION['img_Profile']) ? $_SESSION['img_Profile'] : 'default_profile.jpg'; ?>"
-        alt="Profile" style="width: 20px; height: 20px; border-radius: 50%; margin-right: 70px;">
+      <img src="<?php echo !empty($user['imgProfile']) ? htmlspecialchars($user['imgProfile']) : 'uploads/default-profile.png'; ?>"
+        alt="Profile" style="width: 40px; height: 40px; border-radius: 50%; margin-right: 20px;">
     </div>
 
     <!-- Notifications Dropdown -->
