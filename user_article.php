@@ -1,3 +1,78 @@
+<?php
+// Start session
+session_start();
+
+// Database connection
+$dbc = new mysqli("localhost", "root", "", "mindfulpathway");
+if ($dbc->connect_errno) {
+    echo "Failed to Open Database: " . $dbc->connect_error;
+    exit();
+}
+
+// Authentication Check
+if (!isset($_SESSION['userID'])) {
+    header('Location: login.php');
+    exit();
+}
+
+$userID = $_SESSION['userID'];
+
+$query = "SELECT * FROM user WHERE userID = ?";
+$stmt = $dbc->prepare($query);
+$stmt->bind_param("i", $userID);
+$stmt->execute();
+$result = $stmt->get_result();
+$user = $result->fetch_assoc();
+
+// Set variables
+$username = $user['username'] ?? 'Guest'; // Default to 'Guest' if username is null
+$email = $user['email'] ?? '';
+$bio = $user['bio'] ?? '';
+$imgProfile = $user['imgProfile'] ?? 'uploads/default-profile.png';
+
+// Handle profile updates
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+  $email = $_POST['email'];
+  $bio = $_POST['bio'];
+  $imgProfile = $_FILES['imgProfile'];
+
+  // Image upload handling
+  if ($imgProfile['size'] > 0 && $imgProfile['error'] === UPLOAD_ERR_OK) {
+      $targetDir = "uploads/";
+      $targetFile = $targetDir . uniqid() . "-" . basename($imgProfile['name']);
+      if (move_uploaded_file($imgProfile['tmp_name'], $targetFile)) {
+          $uploadedImage = $targetFile;
+      } else {
+          echo "<script>alert('Failed to upload the image.');</script>";
+      }
+  } else {
+      $uploadedImage = $_POST['existingImgProfile'] ?? 'uploads/default-profile.png';
+  }
+
+  // Update user profile
+  $query = "UPDATE user SET email = ?, bio = ?, imgProfile = ? WHERE userID = ?";
+  $stmt = $conn->prepare($query);
+  $stmt->bind_param("sssi", $email, $bio, $uploadedImage, $userID);
+  if ($stmt->execute()) {
+      echo "<script>alert('Profile updated successfully!');</script>";
+  } else {
+      echo "<script>alert('Failed to update profile.');</script>";
+  }
+}
+
+// Fetch unread notifications for the logged-in user
+$userID = $_SESSION['userID']; // Assuming userID is stored in the session
+$notifications = [];
+$queryN = "SELECT * FROM notifications WHERE userID = '$userID'  ORDER BY timePosted DESC";
+$resultN = mysqli_query($dbc, $queryN);
+
+if ($resultN) {
+  $notifications = mysqli_fetch_all($resultN, MYSQLI_ASSOC);
+} else {
+  echo "Error fetching notifications: " . mysqli_error($dbc);
+}
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -10,8 +85,6 @@
         integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
         crossorigin="anonymous">
     </script>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
-        integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
     <style>
         body {
             display: flex;
@@ -268,21 +341,27 @@
 
         <div class="menu">
             <i class="fas fa-bell" style="font-size: 20px; margin-right: 20px;" onclick="showNotifications()"></i>
-            <img src="uploads/<?php echo isset($_SESSION['img_Profile']) ? $_SESSION['img_Profile'] : 'default-profile.jpg'; ?>"
-                alt="Profile" style="width: 20px; height: 20px; border-radius: 50%; margin-right: 70px;">
+            <img src="<?php echo !empty($user['imgProfile']) ? htmlspecialchars($user['imgProfile']) : 'uploads/default-profile.png'; ?>"
+        alt="Profile" style="width: 40px; height: 40px; border-radius: 50%; margin-right: 20px;">
         </div>
     </div>
+    <div class="hamburger" onclick="toggleSidebar()">
+      <span></span>
+      <span></span>
+      <span></span>
+    </div>
+  </div>
 
     <!-- Sidebar -->
-    <div class="sidebar">
-
-        <a href="user_home.php" class="active">Home</a>
-        <a href="user_about.php">About</a>
-        <a href="user_profile.php">My Profile</a>
-        <a href="articles.php">Article</a>
-        <a href="feedback.html">Feedback</a>
-        <a href="logout.php" class="logout">Logout</a>
-    </div>
+  <div class="sidebar">
+    <div class="title"><?php echo "Welcome, " . htmlspecialchars($username); ?></div>
+    <a href="user_home.php" >Home</a>
+    <a href="user_about.php">About</a>
+    <a href="user_profile.php">My Profile</a>
+    <a href="user_article.php" class="active">Article</a>
+    <a href="feedback.html">Feedback</a>
+    <a href="logout.php" class="logout">Logout</a>
+  </div>
 
     <div class="content">
         <div class="facts ">
