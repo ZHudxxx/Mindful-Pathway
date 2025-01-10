@@ -298,6 +298,19 @@ while ($row = $result_users->fetch_assoc()) {
                 </form>
             </div>
         </div>
+         <!-- Footer -->
+    <footer>
+        &copy; 2024 Mindful Pathway | All Rights Reserved
+    </footer>
+
+    <script>
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            const content = document.getElementById('content');
+            sidebar.classList.toggle('active');
+            content.classList.toggle('collapsed');
+        }
+    </script>
     </div>
 </body>
 </html>
