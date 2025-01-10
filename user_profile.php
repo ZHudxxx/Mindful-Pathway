@@ -76,6 +76,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Mindful Pathway - My Profile</title>
     <link rel="stylesheet" href="style.css">
@@ -380,17 +381,18 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     <span>Mindful Pathway</span>
   </div>
   <div class="menu">
+  <i class="fas fa-bell" style="font-size: 20px; margin-right: 20px;" onclick="showNotifications()"></i>
   <img src="<?php echo !empty($user['imgProfile']) ? htmlspecialchars($user['imgProfile']) : 'uploads/default-profile.png'; ?>"
   alt="Profile" style="width: 40px; height: 40px; border-radius: 50%; margin-right: 20px;">
-        <i class="fas fa-bell" style="font-size: 20px; margin-right: 20px;" onclick="showNotifications()"></i>
     </div>
+
   <div class="hamburger" onclick="toggleSidebar()">
     <span></span>
     <span></span>
     <span></span>
   </div>
 </div>
-
+  
     <!-- Sidebar -->
   <div class="sidebar">
     <div class="title"><?php echo "Welcome, " . htmlspecialchars($username); ?></div>
@@ -435,27 +437,38 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         &copy; <?php echo date('Y'); ?> Mindful Pathway. All rights reserved.
     </footer>
    
-<script>
-  function showNotifications() {
-    alert("You have no new notifications."); 
-  }
+    <script>
+   function showNotifications() {
+      alert("You have no new notifications."); 
+    }
 
-  
-  function toggleSidebar() {
-var sidebar = document.querySelector('.sidebar');
-if (sidebar.style.display === 'none' || sidebar.style.display === '') {
-  sidebar.style.display = 'block'; 
-} else {
-  sidebar.style.display = 'none'; 
-}
+    window.onscroll = function() {
+        const backToTopButton = document.querySelector('.back-to-top');
+        if (document.body.scrollTop > 100 || document.documentElement.scrollTop > 100) {
+            backToTopButton.style.display = "block";
+        } else {
+            backToTopButton.style.display = "none"; 
+        }
+    };
+      
+    function scrollToTop() {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+    function toggleSidebar() {
+  var sidebar = document.querySelector('.sidebar');
+  if (sidebar.style.display === 'none' || sidebar.style.display === '') {
+    sidebar.style.display = 'block'; 
+  } else {
+    sidebar.style.display = 'none'; 
+  }
 }
 window.addEventListener('resize', function() {
-var sidebar = document.querySelector('.sidebar');
-if (window.innerWidth > 768) {
-  sidebar.style.display = 'block';
-} else {
-  sidebar.style.display = 'none'; 
-}
+  var sidebar = document.querySelector('.sidebar');
+  if (window.innerWidth > 768) {
+    sidebar.style.display = 'block';
+  } else {
+    sidebar.style.display = 'none'; 
+  }
 });
 </script>
 </body>
