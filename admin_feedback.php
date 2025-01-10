@@ -251,12 +251,17 @@ while ($row = $result_users->fetch_assoc()) {
             <img src="img/logo.png" alt="Logo">
             <h1>Admin Panel</h1>
         </div>
-        <nav>
-            <a href="#" class="active">Dashboard</a>
-            <a href="#">Manage Articles</a>
-            <a href="#">Manage Users</a>
-            <a href="#">Feedback</a>
-        </nav>
+          <!-- Sidebar -->
+    <div class="sidebar">
+      <div class="title"><?php echo "Welcome, " . htmlspecialchars($username); ?></div>
+      <a href="admin_home.php" >Home</a>
+      <a href="admin_about.php">About</a>
+      <a href="admin_profile.php">My Profile</a>
+      <a href="article_manage.php">Manage Articles</a>
+      <a href="admin_user_manage.php">Manage Users</a>
+      <a href="admin_feedback.php"class= active">Feedback</a>
+      <a href="logout.php" class="logout">Logout</a>
+    </div>
         <div class="logout">LOG OUT</div>
     </div>
 
