@@ -261,9 +261,6 @@ while ($row = $result_users->fetch_assoc()) {
       <a href="admin_user_manage.php">Manage Users</a>
       <a href="admin_feedback.php"class= active">Feedback</a>
       <a href="logout.php" class="logout">Logout</a>
-    </div>
-        <div class="logout">LOG OUT</div>
-    </div>
 
     <div class="main-content">
         <div class="header">
