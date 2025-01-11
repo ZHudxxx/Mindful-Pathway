@@ -316,6 +316,26 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         .save-btn button:hover {
             background-color: #28b9bf;
         }
+
+        .back-to-top {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      background-color: #359799;
+      color: white;
+      border: none;
+      border-radius: 50%;
+      width: 40px;
+      height: 40px;
+      font-size: 20px;
+      cursor: pointer;
+      display: none;
+      z-index: 1000;
+    }
+
+    .back-to-top:hover {
+      background-color: #5ce1e6;
+    }
      
         .hamburger {
             display: none;
@@ -364,14 +384,68 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     margin-left: 0; 
   }
 }
-        /* Footer */
-        footer {
-            text-align: center;
-            padding: 10px;
-            background-color: #3cacae;
-            color: white;
-            font-size: 14px;
-        }
+footer {
+      text-align: center;
+      background-color: #3cacae;
+      color: white;
+      padding: 15px;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      z-index: 2;
+    }
+
+
+        /* Notifications Dropdown */
+    #notifications-dropdown {
+      display: none;
+      /* Initially hidden */
+      position: absolute;
+      right: 20px;
+      top: 60px;
+      background-color: #fff;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+      width: 300px;
+      max-height: 400px;
+      overflow-y: auto;
+      /* Ensure scrolling for large content */
+      z-index: 1000;
+      /* Make sure it's on top */
+    }
+
+    /* Adjust padding and styles inside the dropdown */
+    #notifications-dropdown ul {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+
+    #notifications-dropdown li {
+      padding: 10px;
+      border-bottom: 1px solid #ddd;
+      cursor: pointer;
+    }
+
+    #notifications-dropdown li:last-child {
+      border-bottom: none;
+      /* Remove border for the last item */
+    }
+
+    #notifications-dropdown li:hover {
+      background-color: #f5f5f5;
+      /* Add a hover effect for better UX */
+    }
+
+    #notifications-dropdown h5 {
+      margin: 0;
+      padding: 10px;
+      background-color: #3cacae;
+      color: white;
+      border-radius: 8px 8px 0 0;
+      font-size: 16px;
+    }
     </style>
 </head>
 <body>
@@ -407,6 +481,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         <div class="main-content">
             <div class="profile-container">
                <!-- <h1>MY PROFILE</h1> -->
+             
                 <form action="user_profile.php" method="POST" enctype="multipart/form-data">
                     <div class="profile-img">
                         <img id="profileImage" src="<?php echo htmlspecialchars($user['imgProfile'] ?? 'uploads/default-profile.png'); ?>" alt="Profile Image">
@@ -436,40 +511,62 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     <footer>
         &copy; <?php echo date('Y'); ?> Mindful Pathway. All rights reserved.
     </footer>
-   
-    <script>
-   function showNotifications() {
-      alert("You have no new notifications."); 
-    }
+    <!-- Back to Top Button -->
+ <button class="back-to-top" onclick="scrollToTop()">↑</button>
 
-    window.onscroll = function() {
-        const backToTopButton = document.querySelector('.back-to-top');
-        if (document.body.scrollTop > 100 || document.documentElement.scrollTop > 100) {
-            backToTopButton.style.display = "block";
-        } else {
-            backToTopButton.style.display = "none"; 
-        }
-    };
-      
-    function scrollToTop() {
-        window.scrollTo({ top: 0, behavior: 'smooth' });
-    }
-    function toggleSidebar() {
-  var sidebar = document.querySelector('.sidebar');
-  if (sidebar.style.display === 'none' || sidebar.style.display === '') {
-    sidebar.style.display = 'block'; 
-  } else {
-    sidebar.style.display = 'none'; 
+<script>
+  // Close the search bar
+  function closeSearch() {
+    document.getElementById('search-input').value = '';
   }
+
+  // Scroll to top function
+  function scrollToTop() {
+    window.scrollTo({
+      top: 0,
+      behavior: 'smooth'
+    });
+  }
+
+  function showNotifications() {
+    const notificationsDropdown = document.getElementById('notifications-dropdown');
+    notificationsDropdown.style.display = notificationsDropdown.style.display === 'block' ? 'none' : 'block';
 }
-window.addEventListener('resize', function() {
-  var sidebar = document.querySelector('.sidebar');
-  if (window.innerWidth > 768) {
-    sidebar.style.display = 'block';
-  } else {
-    sidebar.style.display = 'none'; 
+
+  // Close dropdown when clicking outside
+  document.addEventListener("click", function(event) {
+    var dropdown = document.getElementById("notifications-dropdown");
+    var bellIcon = document.querySelector(".fas.fa-bell");
+    if (!dropdown.contains(event.target) && event.target !== bellIcon) {
+      dropdown.style.display = "none";
+    }
+  });
+
+  function showNotifications() {
+    const notificationsDropdown = document.getElementById('notifications-dropdown');
+    notificationsDropdown.style.display = notificationsDropdown.style.display === 'block' ? 'none' : 'block';
+}
+
+
+  function toggleSidebar() {
+    var sidebar = document.querySelector('.sidebar');
+    if (sidebar.style.display === 'none' || sidebar.style.display === '') {
+      sidebar.style.display = 'block';
+    } else {
+      sidebar.style.display = 'none';
+    }
   }
-});
+  window.addEventListener('resize', function() {
+    var sidebar = document.querySelector('.sidebar');
+    if (window.innerWidth > 768) {
+      sidebar.style.display = 'block';
+    } else {
+      sidebar.style.display = 'none';
+    }
+  });
+</script>
+<script>
+(function(){if(!window.chatbase||window.chatbase("getState")!=="initialized"){window.chatbase=(...arguments)=>{if(!window.chatbase.q){window.chatbase.q=[]}window.chatbase.q.push(arguments)};window.chatbase=new Proxy(window.chatbase,{get(target,prop){if(prop==="q"){return target.q}return(...args)=>target(prop,...args)}})}const onLoad=function(){const script=document.createElement("script");script.src="https://www.chatbase.co/embed.min.js";script.id="Bim8_kBed-XDQ_TodjahJ";script.domain="www.chatbase.co";document.body.appendChild(script)};if(document.readyState==="complete"){onLoad()}else{window.addEventListener("load",onLoad)}})();
 </script>
 </body>
 </html>

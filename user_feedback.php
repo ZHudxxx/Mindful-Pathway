@@ -17,6 +17,7 @@ if (!isset($_SESSION['userID'])) {
 
 $userID = $_SESSION['userID'];
 
+// Fetch user data
 $query = "SELECT * FROM user WHERE userID = ?";
 $stmt = $dbc->prepare($query);
 $stmt->bind_param("i", $userID);
@@ -24,91 +25,25 @@ $stmt->execute();
 $result = $stmt->get_result();
 $user = $result->fetch_assoc();
 
-// Set variables
 $username = $user['username'] ?? 'Guest'; // Default to 'Guest' if username is null
-$email = $user['email'] ?? '';
-$bio = $user['bio'] ?? '';
-$imgProfile = $user['imgProfile'] ?? 'uploads/default-profile.png';
-
-// Handle profile updates
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-  $email = $_POST['email'];
-  $bio = $_POST['bio'];
-  $imgProfile = $_FILES['imgProfile'];
-
-  // Image upload handling
-  if ($imgProfile['size'] > 0 && $imgProfile['error'] === UPLOAD_ERR_OK) {
-      $targetDir = "uploads/";
-      $targetFile = $targetDir . uniqid() . "-" . basename($imgProfile['name']);
-      if (move_uploaded_file($imgProfile['tmp_name'], $targetFile)) {
-          $uploadedImage = $targetFile;
-      } else {
-          echo "<script>alert('Failed to upload the image.');</script>";
-      }
-  } else {
-      $uploadedImage = $_POST['existingImgProfile'] ?? 'uploads/default-profile.png';
-  }
-
-  // Update user profile
-  $query = "UPDATE user SET email = ?, bio = ?, imgProfile = ? WHERE userID = ?";
-  $stmt = $conn->prepare($query);
-  $stmt->bind_param("sssi", $email, $bio, $uploadedImage, $userID);
-  if ($stmt->execute()) {
-      echo "<script>alert('Profile updated successfully!');</script>";
-  } else {
-      echo "<script>alert('Failed to update profile.');</script>";
-  }
-}
 
 
-// Handle form submission
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    // Validate form inputs
-    $title = $_POST['title'] ?? null;
-    $category = $_POST['category'] ?? null;
-    $status = $_POST['status'] ?? 'Pending'; // Default status
-    $content = $_POST['content'] ?? null;
-    $tags = $_POST['tags'] ?? null; // Optional field
-    $summary = $_POST['summary'] ?? 'No summary provided'; // Default summary
-    $authorID = $_SESSION['userID'] ?? null; // Assume the user ID is stored in the session
+// Check if the form is submitted
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    // Sanitize and assign the content
+    $content = mysqli_real_escape_string($dbc, $_POST['content']);
 
-    // Handle missing required fields
-    if (empty($title) || empty($category) || empty($content)) {
-        echo "<p style='color: red;'>Please fill in all required fields.</p>";
-        exit();
-    }
+    // Insert feedback into the database
+    $stmt = $dbc->prepare("INSERT INTO feedback (userID, content, status) VALUES (?, ?, 'pending')");
+    $stmt->bind_param("is", $userID, $content);
 
-    // Handle image upload
-    $coverIMG = null;
-    if (isset($_FILES['coverIMG']) && $_FILES['coverIMG']['error'] === UPLOAD_ERR_OK) {
-        $targetDir = 'uploads/';
-        $coverIMG = $targetDir . basename($_FILES['coverIMG']['name']);
-        if (!move_uploaded_file($_FILES['coverIMG']['tmp_name'], $coverIMG)) {
-            die("<p style='color: red;'>Failed to upload the image.</p>");
-        }
-    }
-
-    // Insert article into the database
-    $sql = "INSERT INTO article (title, category, status, coverIMG, content, tags, summary, timePosted, authorID) 
-            VALUES (:title, :category, :status, :coverIMG, :content, :tags, :summary, NOW(), :authorID)";
-    $stmt = $pdo->prepare($sql);
-
-    try {
-        $stmt->execute([
-            ':title' => $title,
-            ':category' => $category,
-            ':status' => $status,
-            ':coverIMG' => $coverIMG,
-            ':content' => $content,
-            ':tags' => $tags,
-            ':summary' => $summary,
-            ':authorID' => $authorID,
-        ]);
-        echo "<p style='color: green;'>Article submitted successfully!</p>";
-    } catch (PDOException $e) {
-        echo "<p style='color: red;'>Error: " . $e->getMessage() . "</p>";
+    if ($stmt->execute()) {
+        echo "Feedback submitted successfully!";
+    } else {
+        echo "Error submitting feedback: " . $stmt->error;
     }
 }
+
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -313,19 +248,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             background-color: #2b8c8b;
         }
 
-        /* Footer */
-        footer {
-            background-color: #3cacae;
-            color: white;
-            text-align: center;
-            padding: 15px;
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            width: 100%;
-            box-shadow: 0 -2px 4px rgba(0, 0, 0, 0.1);
-            font-size: 14px;
-        }
+    footer {
+      text-align: center;
+      background-color: #3cacae;
+      color: white;
+      padding: 15px;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      z-index: 2;
+    }
 
         .back-to-top {
       position: fixed;
@@ -450,7 +382,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 </head>
 <body>
     <!-- Header -->
-    <div class="header">
+  <div class="header">
     <div class="logo">
       <img src="img/favicon.png" alt="Logo">
       <span>Mindful Pathway</span>
@@ -461,6 +393,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         alt="Profile" style="width: 40px; height: 40px; border-radius: 50%; margin-right: 20px;">
     </div>
 
+
+    
     <!-- Notifications Dropdown -->
     <div id="notifications-dropdown" style="display: none; position: absolute; right: 20px; top: 60px; background-color: #fff; border: 1px solid #ddd; border-radius: 8px; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1); width: 300px; max-height: 400px; overflow-y: auto;">
       <h5 style="background-color: #3cacae; color: white; padding: 10px; margin: 0; border-radius: 8px 8px 0 0;">Notifications</h5>
@@ -481,7 +415,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         </ul>
       <?php endif; ?>
 
-          </div>
+    </div>
 
           <div class="hamburger" onclick="toggleSidebar()">
       <span></span>
@@ -494,7 +428,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <!-- Sidebar -->
   <div class="sidebar">
     <div class="title"><?php echo "Welcome, " . htmlspecialchars($username); ?></div>
-    <a href="user_home.php">Home</a>
+    <a href="user_home.php" >Home</a>
     <a href="user_about.php">About</a>
     <a href="user_profile.php">My Profile</a>
     <a href="user_article.php">Article</a>
@@ -503,23 +437,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   </div>
 
     <!-- Main Content -->
-    <div class="main-content" id="content">
-        <h1>FEEDBACK FROM OUR COMMUNITY</h1>
+    <div class="main-content">
+        <h1>Submit Your Feedback</h1>
         <div class="feedback-container">
-            <div class="feedback-card">
-                <h3>Sarah Ali</h3>
-                <p>Posted on: 2024-10-21</p>
-                <p>This article was very informative. I learned a lot about mindfulness and how it can help in daily life. Thank you for sharing!</p>
-            </div>
-            <div class="feedback-card">
-                <h3>Harris Shuaib</h3>
-                <p>Posted on: 2024-09-09</p>
-                <p>I really appreciate how you explained the steps to manage anxiety. I will definitely try some of these techniques!</p>
-            </div>
             <div class="feedback-form">
-                <h3>Your Thoughts Matter for Us!</h3>
-                <textarea placeholder="Write your feedback here..."></textarea>
-                <button class="submit-btn">Submit Feedback</button>
+                <form method="POST" action="">
+                    <textarea name="content" placeholder="Enter your feedback here..." required></textarea>
+                    <!-- Hidden userID input field -->
+                    <input type="hidden" name="userID" value="<?php echo $userID; ?>">
+
+                    <!-- Submit button -->
+                    <button type="submit" class="submit-btn">Submit Feedback</button>
+                </form>
+                </form>
             </div>
         </div>
     </div>
@@ -528,8 +458,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <footer>
         &copy; 2024 Mindful Pathway | All Rights Reserved
     </footer>
-<!-- Back to Top Button -->
-<button class="back-to-top" onclick="scrollToTop()">↑</button>
+ <!-- Back to Top Button -->
+ <button class="back-to-top" onclick="scrollToTop()">↑</button>
 
 <script>
   // Close the search bar
@@ -546,13 +476,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   }
 
   function showNotifications() {
-    var dropdown = document.getElementById("notifications-dropdown");
-    if (dropdown.style.display === "none" || dropdown.style.display === "") {
-      dropdown.style.display = "block";
-    } else {
-      dropdown.style.display = "none";
-    }
-  }
+    const notificationsDropdown = document.getElementById('notifications-dropdown');
+    notificationsDropdown.style.display = notificationsDropdown.style.display === 'block' ? 'none' : 'block';
+}
 
   // Close dropdown when clicking outside
   document.addEventListener("click", function(event) {
@@ -563,23 +489,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
   });
 
-  function markAsRead(notificationID) {
-    // Make an AJAX request to mark the notification as read
-    $.ajax({
-      url: 'noti_mark_as_read.php', // PHP script to mark as read
-      method: 'POST',
-      data: {
-        notificationID: notificationID
-      },
-      success: function(response) {
-        console.log('Notification marked as read:', response);
-      },
-      error: function() {
-        console.error('Error marking notification as read.');
-      }
-    });
-  }
-
+  function showNotifications() {
+    const notificationsDropdown = document.getElementById('notifications-dropdown');
+    notificationsDropdown.style.display = notificationsDropdown.style.display === 'block' ? 'none' : 'block';
+}
 
 
   function toggleSidebar() {
