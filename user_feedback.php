@@ -5,8 +5,7 @@ session_start();
 // Database connection
 $dbc = new mysqli("localhost", "root", "", "mindfulpathway");
 if ($dbc->connect_errno) {
-    echo "Failed to Open Database: " . $dbc->connect_error;
-    exit();
+    die("Failed to connect to the database: " . $dbc->connect_error);
 }
 
 // Authentication Check
@@ -27,24 +26,32 @@ $user = $result->fetch_assoc();
 
 $username = $user['username'] ?? 'Guest'; // Default to 'Guest' if username is null
 
-
-// Check if the form is submitted
-if ($_SERVER["REQUEST_METHOD"] == "POST") {
+// Feedback submission logic
+$feedback_message = '';
+if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['content'])) {
     // Sanitize and assign the content
-    $content = mysqli_real_escape_string($dbc, $_POST['content']);
+    $content = $dbc->real_escape_string($_POST['content']);
 
     // Insert feedback into the database
     $stmt = $dbc->prepare("INSERT INTO feedback (userID, content, status) VALUES (?, ?, 'pending')");
     $stmt->bind_param("is", $userID, $content);
 
     if ($stmt->execute()) {
-        echo "Feedback submitted successfully!";
+        $feedback_message = "Feedback submitted successfully!";
     } else {
-        echo "Error submitting feedback: " . $stmt->error;
+        $feedback_message = "Error submitting feedback: " . $stmt->error;
     }
 }
 
+// Query to get feedback based on userID
+$sql = "SELECT content, status, response_content, review_date FROM feedback WHERE userID = ?";
+$stmt = $dbc->prepare($sql);
+$stmt->bind_param("i", $userID);
+$stmt->execute();
+$feedback_results = $stmt->get_result();
 ?>
+
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -378,6 +385,20 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
       border-radius: 8px 8px 0 0;
       font-size: 16px;
     }
+    .feedback-box {
+            border: 1px solid #ccc;
+            padding: 15px;
+            margin-bottom: 15px;
+            border-radius: 5px;
+            background-color: #f9f9f9;
+        }
+        .status {
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+        .response {
+            margin-top: 10px;
+        }
     </style>
 </head>
 <body>
@@ -436,23 +457,36 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <a href="logout.php" class="logout">Logout</a>
   </div>
 
-    <!-- Main Content -->
+    <!-- Main Content Section -->
     <div class="main-content">
-        <h1>Submit Your Feedback</h1>
-        <div class="feedback-container">
-            <div class="feedback-form">
-                <form method="POST" action="">
-                    <textarea name="content" placeholder="Enter your feedback here..." required></textarea>
-                    <!-- Hidden userID input field -->
-                    <input type="hidden" name="userID" value="<?php echo $userID; ?>">
+        <h1>Feedback</h1>
+        <?php if (!empty($feedback_message)): ?>
+            <p><?= htmlspecialchars($feedback_message); ?></p>
+        <?php endif; ?>
 
-                    <!-- Submit button -->
-                    <button type="submit" class="submit-btn">Submit Feedback</button>
-                </form>
+        <div class="feedback-container">
+            <!-- Feedback Form -->
+            <div class="feedback-form">
+                <form action="<?= htmlspecialchars($_SERVER['PHP_SELF']); ?>" method="POST">
+                    <textarea name="content" placeholder="Write your feedback here..." required></textarea>
+                    <button type="submit" class="submit-btn">Submit</button>
                 </form>
             </div>
+
+            <!-- Display Feedback -->
+            <?php while ($feedback = $feedback_results->fetch_assoc()): ?>
+                <div class="feedback-card">
+                    <h3>Status: <?= htmlspecialchars($feedback['status']); ?></h3>
+                    <p>Feedback: <?= htmlspecialchars($feedback['content']); ?></p>
+                    <?php if (!empty($feedback['response_content'])): ?>
+                        <p>Response: <?= htmlspecialchars($feedback['response_content']); ?></p>
+                        <p>Reviewed on: <?= htmlspecialchars($feedback['review_date']); ?></p>
+                    <?php endif; ?>
+                </div>
+            <?php endwhile; ?>
         </div>
     </div>
+  
 
     <!-- Footer -->
     <footer>
