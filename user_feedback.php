@@ -1,21 +1,65 @@
 <?php
+// Start session
 session_start();
 
-// Establish a database connection using PDO
-try {
-    $pdo = new PDO('mysql:host=localhost;dbname=mindfulpathway', 'root', '');
-    $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-} catch (PDOException $e) {
-    die("Database connection failed: " . $e->getMessage());
-}
-
-// Check if the user is logged in
-if (isset($_SESSION['username'])) {
-    $username = $_SESSION['username'];
-} else {
-    header('Location: login.html');
+// Database connection
+$dbc = new mysqli("localhost", "root", "", "mindfulpathway");
+if ($dbc->connect_errno) {
+    echo "Failed to Open Database: " . $dbc->connect_error;
     exit();
 }
+
+// Authentication Check
+if (!isset($_SESSION['userID'])) {
+    header('Location: login.php');
+    exit();
+}
+
+$userID = $_SESSION['userID'];
+
+$query = "SELECT * FROM user WHERE userID = ?";
+$stmt = $dbc->prepare($query);
+$stmt->bind_param("i", $userID);
+$stmt->execute();
+$result = $stmt->get_result();
+$user = $result->fetch_assoc();
+
+// Set variables
+$username = $user['username'] ?? 'Guest'; // Default to 'Guest' if username is null
+$email = $user['email'] ?? '';
+$bio = $user['bio'] ?? '';
+$imgProfile = $user['imgProfile'] ?? 'uploads/default-profile.png';
+
+// Handle profile updates
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+  $email = $_POST['email'];
+  $bio = $_POST['bio'];
+  $imgProfile = $_FILES['imgProfile'];
+
+  // Image upload handling
+  if ($imgProfile['size'] > 0 && $imgProfile['error'] === UPLOAD_ERR_OK) {
+      $targetDir = "uploads/";
+      $targetFile = $targetDir . uniqid() . "-" . basename($imgProfile['name']);
+      if (move_uploaded_file($imgProfile['tmp_name'], $targetFile)) {
+          $uploadedImage = $targetFile;
+      } else {
+          echo "<script>alert('Failed to upload the image.');</script>";
+      }
+  } else {
+      $uploadedImage = $_POST['existingImgProfile'] ?? 'uploads/default-profile.png';
+  }
+
+  // Update user profile
+  $query = "UPDATE user SET email = ?, bio = ?, imgProfile = ? WHERE userID = ?";
+  $stmt = $conn->prepare($query);
+  $stmt->bind_param("sssi", $email, $bio, $uploadedImage, $userID);
+  if ($stmt->execute()) {
+      echo "<script>alert('Profile updated successfully!');</script>";
+  } else {
+      echo "<script>alert('Failed to update profile.');</script>";
+  }
+}
+
 
 // Handle form submission
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -96,20 +140,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
         }
 
-        .logo {
-            display: flex;
-            align-items: center;
-        }
+        .header .logo {
+      font-size: 24px;
+      font-weight: bold;
+      display: flex;
+      align-items: center;
+    }
 
-        .logo img {
-            height: 40px;
-            margin-right: 10px;
-        }
+    .header .logo img {
+      width: 40px;
+      height: 40px;
+      margin-right: 10px;
+    }
 
-        .logo span {
-            font-weight: bold;
-            font-size: 20px;
-        }
 
         .menu {
             display: flex;
@@ -139,44 +182,60 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
 
         /* Sidebar */
-        .sidebar {
-            position: fixed;
-            top: 50px;
-            left: 0;
-            width: 250px;
-            height: 100%;
-            background-color: #3cacae;
-            color: white;
-            padding-top: 20px;
-            transform: translateX(-100%);
-            transition: transform 0.3s ease-in-out;
-            z-index: 999;
-        }
+    .sidebar {
+      height: 100%;
+      width: 250px;
+      position: fixed;
+      top: 0;
+      left: 0;
+      background-color: #3ea3a4;
+      padding-top: 60px;
+      z-index: 500;
+      color: white;
+      box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+      transition: 0.3s;
+    }
 
-        .sidebar.active {
-            transform: translateX(0);
-        }
+    .sidebar a {
+      padding: 10px 15px;
+      text-decoration: none;
+      font-size: 18px;
+      color: white;
+      display: block;
+      transition: background-color 0.3s ease;
+      text-align: center;
+      margin-bottom: 10px;
+    }
 
-        .sidebar ul {
-            list-style: none;
-            padding: 0;
-            margin: 0;
-        }
+    .sidebar a:hover {
+      background-color: #575757;
+    }
 
-        .sidebar ul li {
-            padding: 15px 20px;
-        }
+    .sidebar .title {
+      font-size: 24px;
+      padding-left: 20px;
+      margin-bottom: 30px;
+      margin-top: 20px;
+    }
 
-        .sidebar ul li a {
-            text-decoration: none;
-            color: white;
-            font-size: 18px;
-        }
+    .sidebar .active {
+      background-color: #5ce1e6;
+    }
 
-        .sidebar ul li a:hover {
-            background-color: #2b8c8b;
-            border-radius: 5px;
-        }
+    .sidebar .logout {
+      background-color: #5ce1e6;
+      color: #333;
+      width: 80%;
+      text-align: center;
+      padding: 10px 10px;
+      border-radius: 25px;
+      margin: 20px auto 0;
+      margin-top: 80px;
+    }
+
+    .sidebar .logout:hover {
+      background-color: #b1fcff;
+    }
 
         /* Main Content */
         .main-content {
@@ -268,75 +327,180 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             font-size: 14px;
         }
 
-        /* Responsive Design */
-        @media (max-width: 768px) {
-            .hamburger {
-                display: block;
-            }
+        .back-to-top {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      background-color: #359799;
+      color: white;
+      border: none;
+      border-radius: 50%;
+      width: 40px;
+      height: 40px;
+      font-size: 20px;
+      cursor: pointer;
+      display: none;
+      z-index: 1000;
+    }
 
-            .menu {
-                display: none;
-            }
+    .back-to-top:hover {
+      background-color: #5ce1e6;
+    }
 
-            .sidebar {
-                width: 200px;
-            }
+    .hamburger {
+      display: none;
+      background: none;
+      border: none;
+      font-size: 24px;
+      color: white;
+      cursor: pointer;
+      margin-right: 20px;
+    }
 
-            .main-content {
-                margin-left: 0;
-            }
+    .hamburger span {
+      display: block;
+      background-color: white;
+      height: 2px;
+      width: 20px;
+      margin: 5px auto;
+      transition: 0.3s;
+    }
 
-            .feedback-container {
-                flex-direction: column;
-            }
+    /* Desktop View */
+    @media (min-width: 769px) {
+      .sidebar {
+        display: block;
+      }
 
-            .feedback-card {
-                max-width: 100%;
-            }
-        }
+      .hamburger {
+        display: none;
+      }
 
-        @media (max-width: 480px) {
-            .feedback-card {
-                padding: 15px;
-            }
+      .main-content {
+        margin-left: 250px;
+      }
+    }
 
-            .feedback-form {
-                padding: 15px;
-            }
+    /* Responsive: Mobile View */
+    @media (max-width: 768px) {
+      .sidebar {
+        display: none;
+      }
 
-            footer {
-                font-size: 12px;
-            }
-        }
+      .hamburger {
+        display: block;
+      }
+
+      .main-content {
+        margin-left: 0;
+      }
+    }
+
+    /* Notifications Dropdown */
+    #notifications-dropdown {
+      display: none;
+      /* Initially hidden */
+      position: absolute;
+      right: 20px;
+      top: 60px;
+      background-color: #fff;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+      width: 300px;
+      max-height: 400px;
+      overflow-y: auto;
+      /* Ensure scrolling for large content */
+      z-index: 1000;
+      /* Make sure it's on top */
+    }
+
+    /* Adjust padding and styles inside the dropdown */
+    #notifications-dropdown ul {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+
+    #notifications-dropdown li {
+      padding: 10px;
+      border-bottom: 1px solid #ddd;
+      cursor: pointer;
+    }
+
+    #notifications-dropdown li:last-child {
+      border-bottom: none;
+      /* Remove border for the last item */
+    }
+
+    #notifications-dropdown li:hover {
+      background-color: #f5f5f5;
+      /* Add a hover effect for better UX */
+    }
+
+    #notifications-dropdown h5 {
+      margin: 0;
+      padding: 10px;
+      background-color: #3cacae;
+      color: white;
+      border-radius: 8px 8px 0 0;
+      font-size: 16px;
+    }
     </style>
 </head>
 <body>
     <!-- Header -->
     <div class="header">
-        <div class="logo">
-            <button class="hamburger" onclick="toggleSidebar()">
-                <i class="fa-solid fa-bars"></i>
-            </button>
-            <img src="img/favicon.png" alt="Logo">
-            <span>Mindful Pathway</span>
-        </div>
-        <ul class="menu">
-            <li><a href="#" class="notification"><i class="fas fa-bell"></i></a></li>
-            <li><a href="profile.html" class="profile"><i class="fas fa-user-circle"></i></a></li>
-        </ul>
+    <div class="logo">
+      <img src="img/favicon.png" alt="Logo">
+      <span>Mindful Pathway</span>
+    </div>
+    <div class="menu">
+      <i class="fas fa-bell" style="font-size: 20px; margin-right: 20px;" onclick="showNotifications()"></i>
+      <img src="<?php echo !empty($user['imgProfile']) ? htmlspecialchars($user['imgProfile']) : 'uploads/default-profile.png'; ?>"
+        alt="Profile" style="width: 40px; height: 40px; border-radius: 50%; margin-right: 20px;">
     </div>
 
-    <!-- Sidebar -->
-    <div class="sidebar" id="sidebar">
-        <ul>
-            <li><a href="index.html">DASHBOARD</a></li>
-            <li><a href="about.html">ABOUT</a></li>
-            <li><a href="profile.html">MY PROFILE</a></li>
-            <li><a href="articles.html">ARTICLE</a></li>
-            <li><a href="user_feedback.php">FEEDBACK</a></li>
-            <li><a href="logout.html">LOG OUT</a></li>
+    <!-- Notifications Dropdown -->
+    <div id="notifications-dropdown" style="display: none; position: absolute; right: 20px; top: 60px; background-color: #fff; border: 1px solid #ddd; border-radius: 8px; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1); width: 300px; max-height: 400px; overflow-y: auto;">
+      <h5 style="background-color: #3cacae; color: white; padding: 10px; margin: 0; border-radius: 8px 8px 0 0;">Notifications</h5>
+      <?php if (empty($notifications)): ?>
+        <p style="padding: 10px; color: #666;">No new notifications.</p>
+      <?php else: ?>
+        <ul style="list-style: none; padding: 0; margin: 0;">
+          <?php foreach ($notifications as $notification): ?>
+            <li>
+              <a href="readarticle.php?id=<?php echo htmlspecialchars($notification['articleID']); ?>"
+                onclick="markAsRead(<?php echo $notification['notificationID']; ?>)"
+                style="text-decoration: none; color: black;">
+                <p style="margin: 0;"><?php echo htmlspecialchars($notification['messages']); ?></p>
+                <small style="color: grey;"><?php echo $notification['timePosted']; ?></small>
+              </a>
+            </li>
+          <?php endforeach; ?>
         </ul>
+      <?php endif; ?>
+
+          </div>
+
+          <div class="hamburger" onclick="toggleSidebar()">
+      <span></span>
+      <span></span>
+      <span></span>
     </div>
+  </div>
+
+
+    <!-- Sidebar -->
+  <div class="sidebar">
+    <div class="title"><?php echo "Welcome, " . htmlspecialchars($username); ?></div>
+    <a href="user_home.php">Home</a>
+    <a href="user_about.php">About</a>
+    <a href="user_profile.php">My Profile</a>
+    <a href="user_article.php">Article</a>
+    <a href="user_feedback.php" class="active">Feedback</a>
+    <a href="logout.php" class="logout">Logout</a>
+  </div>
 
     <!-- Main Content -->
     <div class="main-content" id="content">
@@ -364,14 +528,79 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <footer>
         &copy; 2024 Mindful Pathway | All Rights Reserved
     </footer>
+<!-- Back to Top Button -->
+<button class="back-to-top" onclick="scrollToTop()">↑</button>
 
-    <script>
-        function toggleSidebar() {
-            const sidebar = document.getElementById('sidebar');
-            const content = document.getElementById('content');
-            sidebar.classList.toggle('active');
-            content.classList.toggle('collapsed');
-        }
-    </script>
+<script>
+  // Close the search bar
+  function closeSearch() {
+    document.getElementById('search-input').value = '';
+  }
+
+  // Scroll to top function
+  function scrollToTop() {
+    window.scrollTo({
+      top: 0,
+      behavior: 'smooth'
+    });
+  }
+
+  function showNotifications() {
+    var dropdown = document.getElementById("notifications-dropdown");
+    if (dropdown.style.display === "none" || dropdown.style.display === "") {
+      dropdown.style.display = "block";
+    } else {
+      dropdown.style.display = "none";
+    }
+  }
+
+  // Close dropdown when clicking outside
+  document.addEventListener("click", function(event) {
+    var dropdown = document.getElementById("notifications-dropdown");
+    var bellIcon = document.querySelector(".fas.fa-bell");
+    if (!dropdown.contains(event.target) && event.target !== bellIcon) {
+      dropdown.style.display = "none";
+    }
+  });
+
+  function markAsRead(notificationID) {
+    // Make an AJAX request to mark the notification as read
+    $.ajax({
+      url: 'noti_mark_as_read.php', // PHP script to mark as read
+      method: 'POST',
+      data: {
+        notificationID: notificationID
+      },
+      success: function(response) {
+        console.log('Notification marked as read:', response);
+      },
+      error: function() {
+        console.error('Error marking notification as read.');
+      }
+    });
+  }
+
+
+
+  function toggleSidebar() {
+    var sidebar = document.querySelector('.sidebar');
+    if (sidebar.style.display === 'none' || sidebar.style.display === '') {
+      sidebar.style.display = 'block';
+    } else {
+      sidebar.style.display = 'none';
+    }
+  }
+  window.addEventListener('resize', function() {
+    var sidebar = document.querySelector('.sidebar');
+    if (window.innerWidth > 768) {
+      sidebar.style.display = 'block';
+    } else {
+      sidebar.style.display = 'none';
+    }
+  });
+</script>
+<script>
+(function(){if(!window.chatbase||window.chatbase("getState")!=="initialized"){window.chatbase=(...arguments)=>{if(!window.chatbase.q){window.chatbase.q=[]}window.chatbase.q.push(arguments)};window.chatbase=new Proxy(window.chatbase,{get(target,prop){if(prop==="q"){return target.q}return(...args)=>target(prop,...args)}})}const onLoad=function(){const script=document.createElement("script");script.src="https://www.chatbase.co/embed.min.js";script.id="Bim8_kBed-XDQ_TodjahJ";script.domain="www.chatbase.co";document.body.appendChild(script)};if(document.readyState==="complete"){onLoad()}else{window.addEventListener("load",onLoad)}})();
+</script>
 </body>
 </html>
