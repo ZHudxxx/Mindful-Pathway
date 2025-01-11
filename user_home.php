@@ -467,7 +467,7 @@ if ($resultN) {
     <a href="user_about.php">About</a>
     <a href="user_profile.php">My Profile</a>
     <a href="user_article.php">Article</a>
-    <a href="feedback.html">Feedback</a>
+    <a href="user_feedback.php">Feedback</a>
     <a href="logout.php" class="logout">Logout</a>
   </div>
 

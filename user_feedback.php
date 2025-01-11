@@ -333,7 +333,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <li><a href="about.html">ABOUT</a></li>
             <li><a href="profile.html">MY PROFILE</a></li>
             <li><a href="articles.html">ARTICLE</a></li>
-            <li><a href="feedback.html">FEEDBACK</a></li>
+            <li><a href="user_feedback.php">FEEDBACK</a></li>
             <li><a href="logout.html">LOG OUT</a></li>
         </ul>
     </div>
