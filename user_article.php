@@ -78,6 +78,8 @@ if ($resultN) {
 
 <head>
     <meta charset="UTF-8">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Mindful Pathway | Daily Articles</title>
     <link rel="shortcut icon" href="img/favicon.png" type="image/x-icon">
