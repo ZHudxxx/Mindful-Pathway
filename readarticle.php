@@ -551,10 +551,10 @@ if ($row) {
     <!-- Sidebar -->
     <div class="sidebar">
         <div class="title"><?php echo "Welcome, " . htmlspecialchars($username); ?></div>
-        <a href="user_home.php" class="active">Home</a>
+        <a href="user_home.php">Home</a>
         <a href="user_about.php">About</a>
         <a href="user_profile.php">My Profile</a>
-        <a href="user_article.php">Article</a>
+        <a href="user_article.php" class="active">Article</a>
         <a href="user_feedback.php">Feedback</a>
         <a href="logout.php" class="logout">Logout</a>
     </div>
@@ -611,6 +611,11 @@ if ($row) {
 
                             // Reply link and hidden form
                             echo '<a href="javascript:void(0);" onclick="toggleReplyForm(' . $comment['commentID'] . ')" style="color: #3cacae; text-decoration: none; margin-left: 10px;">Reply</a>';
+                            // Delete link
+                            echo '<a href="delete_comment.php?comment_id=' . htmlspecialchars($comment['commentID']) . '" 
+                            onclick="return confirm(\'Are you sure you want to delete this comment and all its replies?\')" 
+                            style="color: red; text-decoration: none; margin-left: 10px;">Delete</a>';
+
                             echo '<form id="reply-form-' . $comment['commentID'] . '" action="add_comment.php" method="post" style="display: none; margin-top: 5px;">';
                             echo '<input type="hidden" name="article_id" value="' . htmlspecialchars($_GET['id']) . '">';
                             echo '<input type="hidden" name="parent_id" value="' . htmlspecialchars($comment['commentID']) . '">';
@@ -618,6 +623,7 @@ if ($row) {
                             style="width: 100%; padding: 10px; border-radius: 5px; border: 1px solid #ccc;"></textarea>';
                             echo '<button type="submit" style="margin-top: 10px; background-color: #3cacae; color: white; border: none; border-radius: 5px; cursor: pointer;">Reply</button>';
                             echo '</form>';
+
                             echo '</div>';
                             // Recursive call for child comments
                             displayComments($comments, $comment['commentID'], $level + 1);

@@ -478,10 +478,10 @@ if ($resultN) {
     <!-- Sidebar -->
     <div class="sidebar">
         <div class="title"><?php echo "Welcome, " . htmlspecialchars($username); ?></div>
-        <a href="user_home.php" class="active">Home</a>
+        <a href="user_home.php">Home</a>
         <a href="user_about.php">About</a>
         <a href="user_profile.php">My Profile</a>
-        <a href="user_article.php">Article</a>
+        <a href="user_article.php" class="active">Article</a>
         <a href="user_feedback.php">Feedback</a>
         <a href="logout.php" class="logout">Logout</a>
     </div>
@@ -540,21 +540,21 @@ if ($resultN) {
                 if ($result && mysqli_num_rows($result) > 0) {
                     $articles = mysqli_fetch_all($result, MYSQLI_ASSOC);
 
-                    
+
                     foreach ($articles as $article) {
                         // Prepare variables, handling NULL values gracefully
                         $title = htmlspecialchars($article['title'] ?? 'Untitled');
                         $timePosted = htmlspecialchars($article['timePosted'] ?? 'Unknown');
                         $username = htmlspecialchars($article['username'] ?? 'Anonymous');
                         $contentPreview = htmlspecialchars(substr($article['content'] ?? '', 0, 500));
-                        
+
                         echo '<div class="fact">';
-                        
+
                         // Only display the image if coverIMG is not NULL
                         if (!empty($article['coverIMG'])) {
                             echo '<img src="img/' . htmlspecialchars($article['coverIMG']) . '" >';
                         }
-                        
+
                         echo '    <div class="title">
                                     <a href="readarticle.php?id=' . htmlspecialchars($article['articleID']) . '">' . $title . '</a>
                                 </div>
@@ -567,8 +567,6 @@ if ($resultN) {
                                 </div>
                             </div><br>';
                     }
-
-
                 } else {
                     echo "No Articles found."; // Display a message if the database is empty
                 }
