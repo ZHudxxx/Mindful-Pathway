@@ -60,6 +60,21 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 }
 
+$articles = [];
+
+// Query to fetch the latest articles
+$query = "SELECT * FROM article WHERE status = 'approved' ORDER BY timePosted DESC LIMIT 3";
+$result = mysqli_query($dbc, $query);
+
+if (!$result) {
+    die("Query failed: " . mysqli_error($dbc));
+}
+
+// Fetch articles into array
+while ($row = mysqli_fetch_assoc($result)) {
+    $articles[] = $row;
+}
+
 // Fetch unread notifications for the logged-in user
 $userID = $_SESSION['userID']; // Assuming userID is stored in the session
 $notifications = [];
@@ -72,23 +87,17 @@ if ($resultN) {
     echo "Error fetching notifications: " . mysqli_error($dbc);
 }
 ?>
-
 <!DOCTYPE html>
 <html lang="en">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mindful Pathway | Daily Articles</title>
+    <title>Mindful Pathway | User Dashboard</title>
     <link rel="shortcut icon" href="img/favicon.png" type="image/x-icon">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
-
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
-        integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
-        crossorigin="anonymous">
-    </script>
     <style>
         body {
             margin: 0;
@@ -179,6 +188,111 @@ if ($resultN) {
 
         .sidebar .logout:hover {
             background-color: #b1fcff;
+        }
+
+        /* Main Content Area */
+        .main-content {
+            margin-left: 250px;
+            padding: 20px;
+            transition: margin-left 0.3s;
+        }
+
+        .main-content h1 {
+            font-size: 34px;
+            font-weight: bold;
+            text-align: left;
+            color: rgb(0, 0, 0);
+            margin-top: 4px;
+            margin-bottom: 0;
+            text-shadow: 2px 2px 2px #00000066;
+        }
+
+        .main-content i {
+            font-size: 15px;
+            text-align: left;
+            color: rgb(0, 0, 0);
+            display: block;
+            margin-top: 0;
+            margin-bottom: 10px;
+        }
+
+        .banner {
+            width: 100%;
+            height: 300px;
+            background-image: url('img/banner1.png');
+            background-size: cover;
+            background-position: center;
+            margin-bottom: 30px;
+        }
+
+        .recommended-articles {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+
+        .article-card {
+            width: 500px;
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            margin-bottom: 50px;
+        }
+
+        .article-card img {
+            width: 50px;
+            height: 50px;
+            object-fit: cover;
+        }
+
+        .article-card .content {
+            padding: 10px;
+        }
+
+        .article-card .content h3 {
+            margin: 0;
+            font-size: 18px;
+            color: #333;
+        }
+
+        .article-card .content p {
+            color: #555;
+            font-size: 14px;
+        }
+
+        .article-button {
+            display: inline-block;
+            padding: 10px 20px;
+            background-color: #3cacae;
+            color: white;
+            text-decoration: none;
+            border-radius: 25px;
+            font-weight: bold;
+            text-align: center;
+            transition: background-color 0.3s, transform 0.3s;
+            margin-top: 10px;
+        }
+
+        .article-button:hover {
+            background-color: #2b8c8b;
+            transform: translateY(-3px);
+        }
+
+        .article-button:active {
+            background-color: #1f6363;
+            transform: translateY(1px);
+        }
+
+        footer {
+            text-align: center;
+            background-color: #3cacae;
+            color: white;
+            padding: 15px;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            z-index: 2;
         }
 
         .back-to-top {
@@ -300,138 +414,11 @@ if ($resultN) {
             border-radius: 8px 8px 0 0;
             font-size: 16px;
         }
-
-        /* Main Banner */
-        .main-banner {
-            text-align: center;
-            padding: 20px;
-            background-color: white;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-            border-radius: 10px;
-            margin: 20px auto;
-            max-width: 900px;
-        }
-
-        .main-banner h2 {
-            color: #3cacae;
-            margin-bottom: 10px;
-        }
-
-        .main-banner img {
-            width: 100%;
-            max-width: 600px;
-            margin-top: 10px;
-            border-radius: 10px;
-        }
-
-        .main-banner button {
-            background-color: #5ce1e6;
-            color: white;
-            padding: 10px 20px;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 16px;
-            margin-top: 10px;
-        }
-
-        .main-banner button:hover {
-            background-color: #3cacae;
-        }
-
-        .nav-arrows {
-            display: flex;
-            justify-content: space-between;
-            margin: 10px auto;
-            max-width: 900px;
-        }
-
-        .nav-arrows button {
-            background-color: #3cacae;
-            color: white;
-            border: none;
-            border-radius: 50%;
-            width: 40px;
-            height: 40px;
-            cursor: pointer;
-            font-size: 18px;
-        }
-
-        .nav-arrows button:hover {
-            background-color: #5ce1e6;
-        }
-
-        /* Facts Section */
-        .facts {
-            background-color: white;
-            padding: 20px;
-            border-radius: 10px;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-            margin: 20px auto;
-            margin-top: 50px;
-            max-width: 900px;
-            text-align: center;
-        }
-
-        .title a {
-            text-decoration: none;
-            font-size: 20px;
-
-        }
-
-        .detail {
-            color: lightgray;
-        }
-
-        .content {
-            font-size: 12px;
-
-            a {
-                text-decoration: none;
-                color: white;
-            }
-        }
-
-        .fact-box {
-            display: flex;
-            justify-content: space-between;
-            flex-wrap: wrap;
-            gap: 15px;
-        }
-
-        .fact {
-            background-color: #3cacae;
-            color: white;
-            padding: 15px;
-            border-radius: 10px;
-            flex: 1;
-            min-width: 400px;
-        }
-
-        .fact img {
-            width: 350px;
-            height: auto;
-        }
-
-        .content {
-            flex: 1;
-            padding: 20px;
-
-        }
-
-
-
-        footer {
-            text-align: center;
-            background-color: #3cacae;
-            color: white;
-            padding: 10px 20px;
-            margin-top: 20px;
-        }
     </style>
 </head>
 
 <body>
+
     <!-- Header -->
     <div class="header">
         <div class="logo">
@@ -484,102 +471,7 @@ if ($resultN) {
         <a href="logout.php" class="logout">Logout</a>
     </div>
 
-    <div class="content">
-        <div class="facts ">
-            <table style="width: 100%;">
-                <tr>
-                    <td style="width: 70%; vertical-align: top; text-align: left; padding-right: 50px;">
-                        <h2>Article : Mental Health Awareness</h2>
-                        <p>"The more that you read, the more things you will know. The more that you learn, the more places you'll go." — Dr. Seuss</p>
-                    </td>
-                    <td style="width: 30%; vertical-align: top; text-align: left;">
-                        <i>What do you want to learn today?</i>
-                        <form action="searcharticle.php" method="post" style="margin-bottom: 10px;">
-                            <div style="display: flex; align-items: center;">
-                                <input type="text" name="query" placeholder="Search" required
-                                    style="flex: 1; padding: 10px; border-radius: 5px; border: 1px solid #ccc; font-size: 16px;">
-                                <button type="submit"
-                                    style="margin-left: 10px; background-color: #3cacae; color: white; padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer;">
-                                    >
-                                </button>
-                            </div>
-                        </form>
-                        <a href="postarticle.php" role="button"
-                            style="display: inline-block; background-color: #3cacae; color: white; padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer;">
-                            POST ARTICLE
-                        </a>
-                    </td>
-                </tr>
-            </table>
-
-
-
-            <div class="fact-box">
-                <?php
-                include "DBConnect.php";
-
-                // Enable error reporting for debugging
-                error_reporting(E_ALL);
-                ini_set('display_errors', 1);
-
-                $sql = "SELECT article.*, user.username 
-        FROM article 
-        JOIN user ON article.authorID = user.userID
-        ORDER BY timePosted";
-
-                $result = mysqli_query($dbc, $sql);
-
-                // Check if the query executed successfully
-                if (!$result) {
-                    die("Query failed: " . mysqli_error($dbc));
-                }
-
-                // Check if articles exist in the database
-                if ($result && mysqli_num_rows($result) > 0) {
-                    $articles = mysqli_fetch_all($result, MYSQLI_ASSOC);
-
-                    
-                    foreach ($articles as $article) {
-                        // Prepare variables, handling NULL values gracefully
-                        $title = htmlspecialchars($article['title'] ?? 'Untitled');
-                        $timePosted = htmlspecialchars($article['timePosted'] ?? 'Unknown');
-                        $username = htmlspecialchars($article['username'] ?? 'Anonymous');
-                        $contentPreview = htmlspecialchars(substr($article['content'] ?? '', 0, 500));
-                        
-                        echo '<div class="fact">';
-                        
-                        // Only display the image if coverIMG is not NULL
-                        if (!empty($article['coverIMG'])) {
-                            echo '<img src="img/' . htmlspecialchars($article['coverIMG']) . '" >';
-                        }
-                        
-                        echo '    <div class="title">
-                                    <a href="readarticle.php?id=' . htmlspecialchars($article['articleID']) . '">' . $title . '</a>
-                                </div>
-                                <div class="detail">
-                                    ' . $timePosted . ', by ' . $username . '
-                                </div>
-                                <div class="content">
-                                    ' . $contentPreview . '...
-                                    <a href="readarticle.php?id=' . htmlspecialchars($article['articleID']) . '">See more</a>
-                                </div>
-                            </div><br>';
-                    }
-
-
-                } else {
-                    echo "No Articles found."; // Display a message if the database is empty
-                }
-
-                // Free the result set and close the connection
-                mysqli_free_result($result);
-                mysqli_close($dbc);
-                ?>
-
-
-            </div>
-        </div>
-    </div>
+    
 
     <!-- Footer -->
     <footer>
@@ -588,8 +480,6 @@ if ($resultN) {
 
     <!-- Back to Top Button -->
     <button class="back-to-top" onclick="scrollToTop()">↑</button>
-
-
 
     <script>
         // Close the search bar
@@ -691,7 +581,6 @@ if ($resultN) {
             }
         })();
     </script>
-
 </body>
 
 </html>
