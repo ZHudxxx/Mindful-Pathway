@@ -99,6 +99,8 @@ while ($row = $result_users->fetch_assoc()) {
       z-index: 1000;
     }
 
+    
+
         .header .logo {
             font-size: 24px;
             font-weight: bold;
@@ -154,42 +156,44 @@ while ($row = $result_users->fetch_assoc()) {
         }
 
         .sidebar a {
-            padding: 15px 20px;
-            text-decoration: none;
-            font-size: 18px;
-            color: white;
-            display: block;
-            transition: background-color 0.3s;
-        }
+      padding: 10px 15px;
+      text-decoration: none;
+      font-size: 18px;
+      color: white;
+      display: block;
+      transition: background-color 0.3s ease;
+      text-align: center;
+      margin-bottom: 10px;
+    }
+    .sidebar a:hover {
+      background-color: #575757;
+    }
 
-        .sidebar a:hover {
-            background-color: #575757;
-        }
+    .sidebar .title {
+      font-size: 24px;
+      padding-left: 20px;
+      margin-bottom: 30px;
+      margin-top: 20px;
+    }
 
-        .sidebar .title {
-            font-size: 24px;
-            padding-left: 20px;
-            margin-bottom: 30px;
-        }
+    .sidebar .active {
+      background-color: #5ce1e6;
+    }
 
-        .sidebar .active {
-            background-color: #5ce1e6;
-        }
+    .sidebar .logout {
+      background-color: #5ce1e6;
+      color: #333;
+      width: 80%;
+      text-align: center;
+      padding: 10px 10px;
+      border-radius: 25px;
+      margin: 20px auto 0;
+      margin-top: 80px;
+    }
 
-        .sidebar .logout {
-            background-color: #5ce1e6;
-            color: #333;
-            text-align: center;
-            padding: 10px 20px;
-            border-radius: 25px;
-            margin: 20px auto 0;
-            display: block;
-            width: 80%;
-        }
-
-        .sidebar .logout:hover {
-            background-color: #b1fcff;
-        }
+    .sidebar .logout:hover {
+      background-color: #b1fcff;
+    }
 
         /* Main Content Area */
         .main-content {
