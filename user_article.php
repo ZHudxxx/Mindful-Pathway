@@ -411,10 +411,15 @@ if ($resultN) {
         }
 
         .fact img {
-            width: 350px;
-            height: auto;
+            height: 200px;
+            /* Set a fixed height */
+            width: auto;
+            max-width: 400px;
+            object-fit: cover;
+            
         }
 
+        
         .content {
             flex: 1;
             padding: 20px;
@@ -525,9 +530,10 @@ if ($resultN) {
                 ini_set('display_errors', 1);
 
                 $sql = "SELECT article.*, user.username 
-        FROM article 
-        JOIN user ON article.authorID = user.userID
-        ORDER BY timePosted";
+                FROM article 
+                JOIN user ON article.authorID = user.userID
+                WHERE article.status = 'approved' 
+                ORDER BY timePosted";
 
                 $result = mysqli_query($dbc, $sql);
 
@@ -546,13 +552,14 @@ if ($resultN) {
                         $title = htmlspecialchars($article['title'] ?? 'Untitled');
                         $timePosted = htmlspecialchars($article['timePosted'] ?? 'Unknown');
                         $username = htmlspecialchars($article['username'] ?? 'Anonymous');
-                        $contentPreview = htmlspecialchars(substr($article['content'] ?? '', 0, 500));
+                        $content = $article['content'] ?? '';
+                        $contentPreview = htmlspecialchars(substr($content, 0, (empty($article['coverIMG']) ? 1500 : 500)));
 
                         echo '<div class="fact">';
 
                         // Only display the image if coverIMG is not NULL
                         if (!empty($article['coverIMG'])) {
-                            echo '<img src="img/' . htmlspecialchars($article['coverIMG']) . '" >';
+                            echo '<img src="img/' . htmlspecialchars($article['coverIMG']) . '" style="height: 200px; width: auto;">';
                         }
 
                         echo '    <div class="title">

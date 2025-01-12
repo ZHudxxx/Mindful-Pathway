@@ -53,8 +53,17 @@ $result = $stmt->get_result();
 $admin = $result->fetch_assoc();
 
 // Fetch articles
-$pending_query = "SELECT article.*, user.username FROM article LEFT JOIN user ON article.authorID = user.userID WHERE article.status IS NULL ORDER BY article.timePosted DESC";
-$approved_query = "SELECT article.*, user.username FROM article LEFT JOIN user ON article.authorID = user.userID ORDER BY article.timePosted DESC";
+$pending_query = "SELECT article.*, user.username 
+                  FROM article 
+                  LEFT JOIN user ON article.authorID = user.userID 
+                  WHERE article.status = 'Pending'
+                  ORDER BY article.timePosted DESC";
+$approved_query = "SELECT article.*, user.username 
+                   FROM article 
+                   LEFT JOIN user ON article.authorID = user.userID 
+                   WHERE article.status != 'Pending'
+                   ORDER BY article.timePosted DESC";
+
 
 $pending_result = $conn->query($pending_query);
 $approved_result = $conn->query($approved_query);

@@ -538,10 +538,13 @@ if ($row) {
         }
 
         .title h1 {
-            font-weight: 900;
-            font-family: cursive;
-            -webkit-text-stroke: 2px #3cacae;
-            color: #5ce1e6;
+            font-size: 28px;
+            font-weight: bold;
+            text-align: left;
+            color: rgb(0, 0, 0);
+            margin-top: 4px;
+            margin-bottom: 0;
+            text-shadow: 2px 2px 2px #00000066;
         }
 
         .comments {
@@ -655,10 +658,10 @@ if ($row) {
                                 echo '<br><small style="color: grey; font-size: 0.8em;">Posted on ' . htmlspecialchars($comment['timePosted']) . '</small>';
 
 
-                                    echo '<a href="delete_comment.php?comment_id=' . htmlspecialchars($comment['commentID'], ENT_QUOTES, 'UTF-8') . '" 
+                                echo '<a href="delete_comment.php?comment_id=' . htmlspecialchars($comment['commentID'], ENT_QUOTES, 'UTF-8') . '" 
                                         onclick="return confirm(\'Are you sure you want to delete this comment and all its replies?\')" 
                                         style="color: red; text-decoration: none; margin-left: 10px;">Delete</a>';
-                                
+
 
 
                                 echo '</div>';
@@ -678,7 +681,7 @@ if ($row) {
                             echo '<p>No comments yet. Be the first to share your thoughts!</p>';
                         }
                         ?>
-                        
+
                     </div>
                 </div>
             </div>

@@ -454,10 +454,13 @@ if ($row) {
         }
 
         .title h1 {
-            font-weight: 900;
-            font-family: cursive;
-            -webkit-text-stroke: 2px #3cacae;
-            color: #5ce1e6;
+            font-size: 34px;
+            font-weight: bold;
+            text-align: left;
+            color: rgb(0, 0, 0);
+            margin-top: 4px;
+            margin-bottom: 0;
+            text-shadow: 2px 2px 2px #00000066;
         }
 
         .comments {
