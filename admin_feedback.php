@@ -15,32 +15,6 @@ if (!isset($_SESSION['adminID'])) {
 }
 
 $adminID = $_SESSION['adminID'];
-
-// Handle profile updates
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $email = $_POST['email'];
-    $bio = $_POST['bio'];
-    $imgProfile = $_FILES['imgProfile'];
-
-    // Image upload handling
-    if ($imgProfile['size'] > 0 && $imgProfile['error'] === UPLOAD_ERR_OK) {
-        $targetFile = $targetDir . uniqid() . "-" . basename($imgProfile['name']);
-        move_uploaded_file($imgProfile['tmp_name'], $targetFile);
-    } else {
-        $uploadedImage = $_POST['existingImgProfile'] ?? 'uploads/default-profile.png';
-    }
-    
-
-    // Update admin profile
-    $query = "UPDATE admin SET email = ?, bio = ?, imgProfile = ? WHERE adminID = ?";
-    $stmt = $conn->prepare($query);
-    $stmt->bind_param("sssi", $email, $bio, $uploadedImage, $adminID);
-    if ($stmt->execute()) {
-        echo "<script>alert('Profile updated successfully!');</script>";
-    } else {
-        echo "<script>alert('Failed to update profile.');</script>";
-    }
-}
     
 if (isset($_SESSION['username'])) {
     $username = $_SESSION['username'];
@@ -103,14 +77,14 @@ while ($row = $result_users->fetch_assoc()) {
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
-         body {
-      margin: 0;
-      font-family: Arial, sans-serif;
-      background-color: #f5f5f5;
-      padding-top: 60px;
-    }
+    body {
+            margin: 0;
+            font-family: 'Roboto', Arial, sans-serif;
+            background-color: #f5f5f5;
+            padding-top: 60px;
+        }
 
-    /* Header */
+        /* Header */
     .header {
       background-color: #3cacae;
       color: white;
@@ -125,125 +99,149 @@ while ($row = $result_users->fetch_assoc()) {
       z-index: 1000;
     }
 
-    .header .logo {
-      font-size: 24px;
-      font-weight: bold;
-      display: flex;
-      align-items: center;
-    }
+        .header .logo {
+            font-size: 24px;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+        }
 
-    .header .logo img {
-      width: 40px;
-      height: 40px;
-      margin-right: 10px;
-    }
-    /* Sidebar */
-    .sidebar {
-      height: 100%;
-      width: 250px;
-      position: fixed;
-      top: 0;
-      left: 0;
-      background-color: #3ea3a4;
-      padding-top: 60px;
-      z-index: 500;
-      color: white;
-      box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
-      transition: 0.3s;
-    }
+        .header .logo img {
+            width: 40px;
+            height: 40px;
+            margin-right: 10px;
+        }
 
-    .sidebar a {
-      padding: 10px 15px;
-      text-decoration: none;
-      font-size: 18px;
-      color: white;
-      display: block;
-      transition: background-color 0.3s ease;
-      text-align: center;
-      margin-bottom: 10px;
-    }
+        .header .menu img {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+        }
 
-    .sidebar a:hover {
-      background-color: #575757;
-    }
+        .hamburger {
+            display: none;
+            background: none;
+            border: none;
+            font-size: 24px;
+            color: white;
+            cursor: pointer;
+            margin-right: 20px;
+        }
 
-    .sidebar .title {
-      font-size: 24px;
-      padding-left: 20px;
-      margin-bottom: 30px;
-      margin-top: 20px;
-    }
+        .hamburger span {
+            display: block;
+            background-color: white;
+            height: 2px;
+            width: 20px;
+            margin: 5px auto;
+            transition: 0.3s;
+        }
 
-    .sidebar .active {
-      background-color: #5ce1e6;
-    }
+        /* Sidebar */
+        .sidebar {
+            height: 100%;
+            width: 250px;
+            position: fixed;
+            top: 0;
+            left: 0;
+            background-color: #3ea3a4;
+            padding-top: 60px;
+            z-index: 500;
+            color: white;
+            box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+            display: block;
+            transition: 0.3s;
+        }
 
-.sidebar .logout {
-  background-color: #5ce1e6;
-  color: #333;
-  width: 80%; 
-  text-align: center;
-  padding: 10px 10px;
-  border-radius: 25px; 
-  margin: 20px auto 0; 
-  margin-top: 80px;
-}
+        .sidebar a {
+            padding: 15px 20px;
+            text-decoration: none;
+            font-size: 18px;
+            color: white;
+            display: block;
+            transition: background-color 0.3s;
+        }
 
-.sidebar .logout:hover {
-  background-color: #b1fcff; 
-}
+        .sidebar a:hover {
+            background-color: #575757;
+        }
+
+        .sidebar .title {
+            font-size: 24px;
+            padding-left: 20px;
+            margin-bottom: 30px;
+        }
+
+        .sidebar .active {
+            background-color: #5ce1e6;
+        }
+
+        .sidebar .logout {
+            background-color: #5ce1e6;
+            color: #333;
+            text-align: center;
+            padding: 10px 20px;
+            border-radius: 25px;
+            margin: 20px auto 0;
+            display: block;
+            width: 80%;
+        }
+
+        .sidebar .logout:hover {
+            background-color: #b1fcff;
+        }
 
         /* Main Content Area */
-    .main-content {
-      margin-left: 250px;
-      padding: 20px;
-      transition: margin-left 0.3s;
-    }
-    .main-content h1 {
-  font-size: 34px;
-  font-weight: bold;
-  text-align: left;
-  color: rgb(0, 0, 0);
-  margin-top: 4px; 
-  margin-bottom:0; 
-  text-shadow: 2px 2px 2px #00000066; 
-}
+        .main-content {
+            margin-left: 250px;
+            padding: 20px;
+            transition: margin-left 0.3s;
+        }
 
-.main-content i {
-  font-size: 15px;
-  text-align: left;
-  color: rgb(0, 0, 0);
-  display: block; 
-  margin-top: 0;
-  margin-bottom: 10px;
-}
-    .banner {
-      width: 100%;
-      height: 300px;
-      background-image: url('img/banner1.png'); 
-      background-size: cover;
-      background-position: center;
-      margin-bottom: 30px;
-    }
-    table {
-    margin-left: 20px; /* Atau nilai yang sesuai */
-    margin-right: auto;
-    width: 90%; /* Pastikan jadual tidak melebihi ruang */
-}
+        .main-content h1 {
+            font-size: 34px;
+            font-weight: bold;
+            margin-bottom: 10px;
+            color: #333;
+            text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.2);
+        }
 
-th, td {
-    text-align: center;
-    padding: 10px; /* Ruang antara teks dengan border */
-}
+        .banner {
+            width: 100%;
+            height: 300px;
+            background-image: url('img/banner1.png');
+            background-size: cover;
+            background-position: center;
+            margin-bottom: 30px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
 
         th, td {
             padding: 10px;
-            text-align: left;
+            text-align: center;
+            border: 1px solid #ddd;
         }
+
+        th {
+            background-color: #3cacae;
+            color: white;
+        }
+
         form {
-            margin: 10px 0;
-        } 
-            /* Footer */
+            display: inline-block;
+        }
+
+        form select, form textarea, form button {
+            margin-top: 5px;
+            font-size: 14px;
+        }
+
+        /* Footer */
         footer {
             background-color: #3cacae;
             color: white;
@@ -254,55 +252,50 @@ th, td {
             left: 0;
             width: 100%;
             box-shadow: 0 -2px 4px rgba(0, 0, 0, 0.1);
-            font-size: 14px;
         }
-        .hamburger {
-  display: none;
-  background: none;
-  border: none;
-  font-size: 24px;
-  color: white;
-  cursor: pointer;
-  margin-right: 20px;
-}
 
-.hamburger span {
-  display: block;
-  background-color: white;
-  height: 2px;
-  width: 20px;
-  margin: 5px auto;
-  transition: 0.3s;
-}
-/* Desktop View */
-@media (min-width: 769px) {
-  .sidebar {
-    display: block; 
-  }
+        .back-to-top {
+            display: none;
+            position: fixed;
+            bottom: 70px;
+            right: 20px;
+            background-color: #3cacae;
+            color: white;
+            padding: 10px;
+            border-radius: 50%;
+            font-size: 16px;
+            cursor: pointer;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+        }
 
-  .hamburger {
-    display: none;
-  }
+        /* Responsive: Mobile View */
+        @media (max-width: 768px) {
+            .sidebar {
+                display: none;
+            }
 
-  .main-content {
-    margin-left: 250px; 
-  }
-}
+            .hamburger {
+                display: block;
+            }
 
-    /* Responsive: Mobile View */
-@media (max-width: 768px) {
-  .sidebar {
-    display: none; 
-  }
+            .main-content {
+                margin-left: 0;
+            }
+        }
 
-  .hamburger {
-    display: block;
-  }
+        @media (min-width: 769px) {
+            .sidebar {
+                display: block;
+            }
 
-  .main-content {
-    margin-left: 0; 
-  }
-}
+            .hamburger {
+                display: none;
+            }
+
+            .main-content {
+                margin-left: 250px;
+            }
+        }
     </style>
 </head>
 <!DOCTYPE html>
@@ -344,12 +337,11 @@ th, td {
   <a href="logout.php" class="logout">Logout</a>
 </div>
 
-<div class="content">  
-<h1>User Feedback Management (Admin)</h1>
-
-<?php if (!empty($message)) { ?>
-    <p style="color: green;"><?php echo $message; ?></p>
-<?php } ?>
+<div class="main-content">
+        <h1>User Feedback Management (Admin)</h1>
+        <?php if (!empty($message)) { ?>
+            <p style="color: green;"><?php echo $message; ?></p>
+        <?php } ?>
 
 <table>
     <thead>
