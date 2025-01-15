@@ -447,7 +447,7 @@ if ($resultN) {
         </div>
         <div class="menu">
             <i class="fas fa-bell" style="font-size: 20px; margin-right: 20px;" onclick="showNotifications()"></i>
-            <img src="<?php echo !empty($user['imgProfile']) ? htmlspecialchars($user['imgProfile']) : 'uploads/default-profile.png'; ?>"
+            <img src="<?php echo !empty($user['imgProfile']) ? htmlspecialchars($user['imgProfile']) : 'uploads/default_profile.jpg'; ?>"
                 alt="Profile" style="width: 40px; height: 40px; border-radius: 50%; margin-right: 20px;">
         </div>
 
@@ -559,7 +559,7 @@ if ($resultN) {
 
                         // Only display the image if coverIMG is not NULL
                         if (!empty($article['coverIMG'])) {
-                            echo '<img src="img/' . htmlspecialchars($article['coverIMG']) . '" style="height: 200px; width: auto;">';
+                            echo '<img src="uploads/' . htmlspecialchars($article['coverIMG']) . '" style="height: 200px; width: auto;">';
                         }
 
                         echo '    <div class="title">

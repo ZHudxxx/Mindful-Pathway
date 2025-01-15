@@ -584,6 +584,7 @@ if ($row) {
                 $commentsQuery = "
                         SELECT 
                             comment.commentID, 
+                            comment.userID,
                             comment.content, 
                             comment.timePosted, 
                             comment.parentID, 
@@ -615,10 +616,13 @@ if ($row) {
                             // Reply link and hidden form
                             echo '<a href="javascript:void(0);" onclick="toggleReplyForm(' . $comment['commentID'] . ')" style="color: #3cacae; text-decoration: none; margin-left: 10px;">Reply</a>';
                             // Delete link
-                            echo '<a href="delete_comment.php?comment_id=' . htmlspecialchars($comment['commentID']) . '" 
-                            onclick="return confirm(\'Are you sure you want to delete this comment and all its replies?\')" 
-                            style="color: red; text-decoration: none; margin-left: 10px;">Delete</a>';
-
+                            $currentUserID = $_SESSION['userID'];
+                            if ($comment['userID'] == $currentUserID) {
+                                // Display the "Delete" button
+                                echo '<a href="user_delete_comment.php?comment_id=' . htmlspecialchars($comment['commentID']) . '" 
+                                onclick="return confirm(\'Are you sure you want to delete this comment and all its replies?\')" 
+                                style="color: red; text-decoration: none; margin-left: 10px;">Delete</a>';
+                            }
                             echo '<form id="reply-form-' . $comment['commentID'] . '" action="add_comment.php" method="post" style="display: none; margin-top: 5px;">';
                             echo '<input type="hidden" name="article_id" value="' . htmlspecialchars($_GET['id']) . '">';
                             echo '<input type="hidden" name="parent_id" value="' . htmlspecialchars($comment['commentID']) . '">';

@@ -134,17 +134,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     <!-- Main Content Area -->
     <div class="main-content">
-        
+
 
         <div class="banner">
 
             <div class="content">
-                <header>
-                    <h1>ARTICLES</h1>
-                </header>
+
                 <section class="form-section">
                     <form id="article-form" action="" method="POST" enctype="multipart/form-data">
                         <div class="form-group">
+                            <header>
+                                <h1 style="padding-top: 22px;">ARTICLES</h1>
+                            </header>
                             <label for="title">Article Title</label>
                             <input type="text" id="title" name="title" placeholder="Enter the title of your article">
 

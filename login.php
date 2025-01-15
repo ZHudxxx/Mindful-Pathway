@@ -61,7 +61,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
     }
 
-    echo "<script>alert('Invalid username or password!'); window.location.href='login.php';</script>";
+    echo "<script>alert('Invalid username or password!'); window.location.href='login.html';</script>";
 }
 
 $conn->close();

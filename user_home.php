@@ -28,7 +28,7 @@ $user = $result->fetch_assoc();
 $username = $user['username'] ?? 'Guest'; // Default to 'Guest' if username is null
 $email = $user['email'] ?? '';
 $bio = $user['bio'] ?? '';
-$imgProfile = $user['imgProfile'] ?? 'uploads/default-profile.png';
+$imgProfile = $user['imgProfile'] ?? 'uploads/default_profile.jpg';
 
 // Handle profile updates
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -46,7 +46,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
           echo "<script>alert('Failed to upload the image.');</script>";
       }
   } else {
-      $uploadedImage = $_POST['existingImgProfile'] ?? 'uploads/default-profile.png';
+      $uploadedImage = $_POST['existingImgProfile'] ?? 'uploads/default_profile.jpg';
   }
 
   // Update user profile
@@ -63,7 +63,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 $articles = [];
 
 // Query to fetch the latest articles
-$query = "SELECT * FROM article WHERE status = 'approved' ORDER BY timePosted DESC LIMIT 3";
+$query = "SELECT * FROM article WHERE status = 'approved' ORDER BY timePosted DESC LIMIT 4";
 $result = mysqli_query($dbc, $query);
 
 if (!$result) {
@@ -427,7 +427,7 @@ if ($resultN) {
     </div>
     <div class="menu">
       <i class="fas fa-bell" style="font-size: 20px; margin-right: 20px;" onclick="showNotifications()"></i>
-      <img src="<?php echo !empty($user['imgProfile']) ? htmlspecialchars($user['imgProfile']) : 'uploads/default-profile.png'; ?>"
+      <img src="<?php echo !empty($user['imgProfile']) ? htmlspecialchars($user['imgProfile']) : 'uploads/default_profile.jpg'; ?>"
         alt="Profile" style="width: 40px; height: 40px; border-radius: 50%; margin-right: 20px;">
     </div>
 
@@ -485,7 +485,7 @@ if ($resultN) {
       <?php else: ?>
         <?php foreach ($articles as $article): ?>
           <div class="article-card">
-            <img src="img/<?php echo htmlspecialchars($article['coverIMG'] ?: 'default.png'); ?>"
+            <img src="uploads/<?php echo htmlspecialchars($article['coverIMG'] ?: 'defaultIMGg.png'); ?>"
               alt="<?php echo htmlspecialchars($article['title']); ?>">
             <div class="content">
               <h3><?php echo htmlspecialchars($article['title']); ?></h3>
